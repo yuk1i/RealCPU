@@ -25,6 +25,9 @@ test:
 		li $t2, 9
 		slt $s0, $t1, $t2
 		sltu $s1, $t1, $t2
+		slti $s2, $t1, 10
+		slti $s2, $t1, 0
+		slti $s2, $t1, -2
 		jal qqq
 		j test
 
