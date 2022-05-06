@@ -1,22 +1,27 @@
-CC = mipsel-linux-gnu-gcc
-AS = mipsel-linux-gnu-as
-LD = mipsel-linux-gnu-ld
-OBJCOPY = mipsel-linux-gnu-objcopy
-OBJDUMP = mipsel-linux-gnu-objdump
+CC=mipsel-linux-gnu-gcc
+AS=mipsel-linux-gnu-as
+LD=mipsel-linux-gnu-ld
+OBJCOPY=mipsel-linux-gnu-objcopy
+OBJDUMP=mipsel-linux-gnu-objdump
 
 # Configures for bin file
 
-TEXT_START_AT = 0x0
-DATA_START_AT = 0x1000
+TEXT_START_AT=0x0
+DATA_START_AT=0x1000
 
 AS_FLAGS=--alternate -call_nonpic -mno-ginv -mips32r6 -msoft-float --fatal-warnings -O0
 LD_FLAGS=--gc-sections --relax -Ttext $(TEXT_START_AT) -Tdata $(DATA_START_AT) --entry main
 
-objs = cputest.o
+objs=
 
-.DEFAULT_GOAL := dump
+.DEFAULT_GOAL := cputest
+
+%:
+	@make objs=$@.o dump
+	@echo "\n[*] Compile and dump successfully\n"
 
 %.o : %.s
+	@echo "[#] compiling $<"
 	$(AS) $(AS_FLAGS) $< -o $@
 
 link: $(objs)
@@ -36,8 +41,6 @@ objdump:
 
 readelf:
 	readelf -a a.out
-
-.PHONY: clean objdump dump
 
 clean:
 	rm -f a.out *.o tmp/*.bin *.coe
