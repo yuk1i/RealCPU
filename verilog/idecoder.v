@@ -104,13 +104,15 @@ module idecoder(
     always @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin
             for (i = 0; i<32; i=i+1) begin
-                register[i] = 32'h0;
+                register[i] <= 32'h0;
             end 
         end else begin
-            if (reg_write_i && reg_write_id_i!=5'b00000) begin
-                register[reg_write_id_i] <= reg_write_data_i;
-            end else begin
-                register[reg_write_data_i] <= register[reg_write_data_i];
+            register[0] <= 32'b0;
+            for (i = 1; i<32; i=i+1) begin
+                if (reg_write_i && i==reg_write_id_i)
+                    register[i] <= reg_write_data_i;
+                else
+                    register[i] <= register[i];
             end
         end
     end
@@ -132,12 +134,15 @@ module idecoder(
     always @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin
             for (c0i = 0; c0i<32; c0i=c0i+1) begin
-                co0_regs[c0i] = 32'h0;
+                co0_regs[c0i] <= 32'h0;
             end 
         end else begin
-            if (C0_op && move_to_co) begin
-                co0_regs[rd_id] <= register[rt_id];
-            end
+            for (c0i = 0; c0i<32; c0i=c0i+1) begin
+                if (C0_op && move_to_co && c0i == rd_id)
+                    co0_regs[c0i] <= register[rt_id];
+                else
+                    co0_regs[c0i] <= co0_regs[c0i];
+            end 
         end
     end
     // ***** END Coprocessor 0 ***** //
