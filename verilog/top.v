@@ -35,7 +35,6 @@ module top(
     wire [31:0] d_reg_read1;
     wire [31:0] d_reg_read2;
 
-    wire d_mem_to_reg;    
     wire d_mem_to_reg;
     wire d_mem_write;
     wire d_alu_src;
