@@ -10,7 +10,7 @@ TEXT_START_AT=0x0
 DATA_START_AT=0x1000
 
 AS_FLAGS=--alternate -call_nonpic -mno-ginv -mips32r6 -msoft-float --fatal-warnings -O0
-LD_FLAGS=--gc-sections --relax -Ttext $(TEXT_START_AT) -Tdata $(DATA_START_AT) --entry main
+LD_FLAGS=--relax -Ttext $(TEXT_START_AT) -Tdata $(DATA_START_AT) --entry main
 
 objs=
 
