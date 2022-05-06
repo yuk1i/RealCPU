@@ -93,7 +93,7 @@ module l1cache
             l1_mmu_req_addr <= 32'b0;
             l1_mmu_write_data <= 32'b0;
             for (i=0;i<=SIZE;i=i+1)
-                cache[i] <= 54'b0;
+                cache[i] <= 55'b0;
         end else begin
             if (status == STATUS_IDLE) begin
                 // IDLE
@@ -105,39 +105,58 @@ module l1cache
                             status <= STATUS_WAIT_WRITE;
                             l1_mmu_req_addr <= {c_o_tag, addr_idx, 2'b00};
                             l1_mmu_write_data <= c_o_data;
+                            for (i=0; i<=SIZE; i=i+1)
+                                cache[i] <= cache[i];
                         end else begin
                             // not hit, just read from mmu
                             status <= STATUS_WAIT_READ;
                             l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
                             l1_mmu_write_data <= 32'b0;
+                            for (i=0; i<=SIZE; i=i+1)
+                                cache[i] <= cache[i];
                         end
                     end else begin
                         // working, cache hit
                         if (c_o_volatile) begin
+                            // volatile cache line hit
                             if (l1_read) begin
                                 // volatile read
                                 status <= STATUS_WAIT_READ;
                                 l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
                                 l1_mmu_write_data <= 32'b0;
+                                for (i=0; i<=SIZE; i=i+1)
+                                    cache[i] <= cache[i];
                             end else begin
                                 // volatile write
                                 status <= STATUS_WAIT_VOLATILE_WRITE;
                                 l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
                                 l1_mmu_write_data <= need_write_data;
-                                cache[addr_idx] <= {c_o_volatile, 1'b1, c_o_valid, c_o_tag, need_write_data};
+                                for (i=0; i<=SIZE; i=i+1) begin
+                                    if (i == addr_idx)
+                                        cache[i] <= {c_o_volatile, 1'b1, c_o_valid, c_o_tag, need_write_data};
+                                    else
+                                        cache[i] <= cache[i];
+                                end
                             end
                         end else if (l1_write) begin
-                            cache[addr_idx] <= {c_o_volatile, 1'b1, c_o_valid, c_o_tag, need_write_data};
+                            // simple write
+                            for (i=0; i<=SIZE; i=i+1) begin
+                                    if (i == addr_idx)
+                                        cache[i] <= {c_o_volatile, 1'b1, c_o_valid, c_o_tag, need_write_data};
+                                    else
+                                        cache[i] <= cache[i];
+                            end
                         end else begin
-                            cache[addr_idx] <= cache[addr_idx];
+                            for (i=0; i<=SIZE; i=i+1)
+                                cache[i] <= cache[i];
                         end
                     end
                 end else begin
-                    if (c_work && c_hit && l1_write) begin
-                    end
                     status <= STATUS_IDLE;
                     l1_mmu_req_addr <= 32'b0;
                     l1_mmu_write_data <= 32'b0;
+                    for (i=0; i<=SIZE; i=i+1)
+                        cache[i] <= cache[i];
                 end
             end else if (status == STATUS_WAIT_WRITE) begin
                 // waiting write result
@@ -146,10 +165,14 @@ module l1cache
                     status <= STATUS_WAIT_READ;
                     l1_mmu_req_addr <= {l1_addr[31:1], 2'b00};
                     l1_mmu_write_data <= 32'b0;
+                    for (i=0; i<=SIZE; i=i+1)
+                        cache[i] <= cache[i];
                 end else begin
                     status <= status;
                     l1_mmu_req_addr <= l1_mmu_req_addr;
                     l1_mmu_write_data <= l1_mmu_write_data;
+                    for (i=0; i<=SIZE; i=i+1)
+                        cache[i] <= cache[i];
                 end
             end else if (status == STATUS_WAIT_READ) begin
                 // waiting read result
@@ -158,11 +181,18 @@ module l1cache
                     l1_mmu_req_addr <= 32'b0;
                     l1_mmu_write_data <= 32'b0;
                     // read done, write it to cache
-                    cache[addr_idx] <= {mmu_l1_volatile, 1'b0, 1'b1, addr_tag, mmu_l1_read_data};
+                    for (i=0; i<=SIZE; i=i+1) begin
+                            if (i == addr_idx)
+                                cache[i] <= {mmu_l1_volatile, 1'b0, 1'b1, addr_tag, mmu_l1_read_data};
+                            else
+                                cache[i] <= cache[i];
+                    end
                 end else begin
                     status <= status;
                     l1_mmu_req_addr <= l1_mmu_req_addr;
                     l1_mmu_write_data <= l1_mmu_write_data;
+                    for (i=0; i<=SIZE; i=i+1)
+                        cache[i] <= cache[i];
                 end
             end
         end
