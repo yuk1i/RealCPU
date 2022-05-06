@@ -1,9 +1,6 @@
 #!/bin/python3
 
-from lib2to3.pgen2.token import COMMENT
 import sys
-
-from numpy import pad
 
 src = sys.argv[1]
 out = sys.argv[2]

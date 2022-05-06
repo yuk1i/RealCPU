@@ -1,8 +1,5 @@
 #!/bin/python3
 
-from mailbox import MMDFMessage
-
-
 TOTAL = 4096
 
 text=open("text.bin", "rb")
