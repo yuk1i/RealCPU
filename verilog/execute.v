@@ -154,7 +154,7 @@ module execute(
 
     // Jump & Branch
     // I:[j,jal], R:[jr, jalr]
-    // {5'b sign | 25'b ins_j_addr | 2'b00 }
+    // {4'b next_pc | 26'b ins_j_addr | 2'b00 }
     wire [31:0] _jump_addr_ext = {next_pc[31:28], ins_j_addr[25:0] , 2'b0};
     wire [31:0] _branch_addr_ext = next_pc + {immd[29:0] , 2'b0};
     always @* begin
