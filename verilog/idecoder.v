@@ -72,9 +72,9 @@ module idecoder(
     // 1:rd, 0:rt
     assign reg_dst = R_op;
     // alu_src: I-type, exclude [beq 04, bne 05, blez 06, bgtz 07]
-    assign alu_src = I_op & (!(opcode==6'h04|opcode==6'h05));
+    assign alu_src = I_op & opcode[5:2] != 4'b0001;
     // use zero extension: [andi c,ori d,xori e,lui f], otherwise signed ext
-    wire zero_ext = opcode==6'b0011xx;
+    wire zero_ext = opcode[5:2]==4'b0011;
     assign ext_immd = zero_ext ? {16'b0, ins_i[15:0]} : {{16{ins_i[15]}}, ins_i[15:0]};
     // mem_to_reg: 1: ALU->Address; 0: ALU->Reg [lb 20, lh 21, lwl 22, lw, 23, lbu 24, lhu 25, lwr 26],[ll to ldc2]
     assign mem_to_reg = opcode[5:3]==3'b100; // ignore [ll to ldc2] 6'b110xxx
