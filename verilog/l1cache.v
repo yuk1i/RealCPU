@@ -25,25 +25,27 @@ module l1cache
 
     input mmu_l1_read_done,
     input mmu_l1_write_done,
+    input mmu_l1_volatile,    // dont cache when access MMIO, only valid when read_done
     input [31:0] mmu_l1_read_data
 );
     wire c_work = l1_read || l1_write;
 
     // L1 Cache, 1024 * 4B = 4K
-    // [dirty 1b][valid 1b][tag 20b][data 32b]
-    reg [53:0] cache [0:SIZE];
+    // [volatile 1b][dirty 1b][valid 1b][tag 20b][data 32b]
+    reg [54:0] cache [0:SIZE];
 
     wire [19:0] addr_tag = l1_addr[15:12];
     wire [9:0] addr_idx = l1_addr[11:2];
     // cache addr: [tag 20b][idx 10b][2'b00]
     
-    wire [53:0] c_o        = cache[addr_idx];
-    wire        c_o_dirty  = c_o[53];
-    wire        c_o_valid  = c_o[52];
-    wire [19:0] c_o_tag    = c_o[51:32];
-    wire [31:0] c_o_data   = c_o[31:0];
+    wire [54:0] c_o          = cache[addr_idx];
+    wire        c_o_volatile = c_o[54];
+    wire        c_o_dirty    = c_o[53];
+    wire        c_o_valid    = c_o[52];
+    wire [19:0] c_o_tag      = c_o[51:32];
+    wire [31:0] c_o_data     = c_o[31:0];
     
-    wire c_hit = c_o_valid && c_o_tag == addr_tag;
+    wire c_hit = !c_o_volatile && c_o_valid && c_o_tag == addr_tag;
     wire c_need_flush_dirty = c_o_dirty && c_o_valid && c_o_tag != addr_tag;
     // need to write back cache line first, then read out new cache line
 
@@ -63,13 +65,16 @@ module l1cache
 
 
     parameter   STATUS_IDLE=2'b00,
-                STATUS_WAIT_READ=2'b10,
-                STATUS_WAIT_WRITE=2'b11;
+                STATUS_WAIT_READ=2'b01,
+                STATUS_WAIT_WRITE=2'b10,
+                STATUS_WAIT_VOLATILE_WRITE=2'b11;
 
     reg [1:0] status;
 
     // IDLE -- not hit --- need_write_dirty:Y --- WAIT_WRITE --- write_done --- WAIT_READ --- read_done --- IDLE 
     //                                  \---N --- WAIT_READ  --- read_done  --- IDLE
+    // IDLE -- hit && volatile --- req read --- WAIT_READ -- read_done --- IDLE
+    //                         \-- req write --- WAIT_VOLATILE_WRITE --- write_done --- IDLE
 
     // L1 Interfaces
     assign stall = status != STATUS_IDLE;
@@ -78,7 +83,7 @@ module l1cache
 
     // MMU Interfaces
     assign l1_mmu_req_read  = status == STATUS_WAIT_READ;
-    assign l1_mmu_req_write = status == STATUS_WAIT_WRITE;
+    assign l1_mmu_req_write = status == STATUS_WAIT_WRITE || status == STATUS_WAIT_VOLATILE_WRITE;
     assign l1_mmu_req       = l1_mmu_req_read || l1_mmu_req_write;
 
     integer i;
@@ -92,22 +97,43 @@ module l1cache
         end else begin
             if (status == STATUS_IDLE) begin
                 // IDLE
-                if (c_work && !c_hit) begin 
-                    // working and cache not hit
-                    if (c_need_flush_dirty) begin
-                        // flush dirty cache line first
-                        status <= STATUS_WAIT_WRITE;
-                        l1_mmu_req_addr <= {c_o_tag, addr_idx, 2'b00};
-                        l1_mmu_write_data <= c_o_data;
+                if (c_work) begin
+                    if (!c_hit) begin
+                        // working and cache not hit
+                        if (c_need_flush_dirty) begin
+                            // flush dirty cache line first
+                            status <= STATUS_WAIT_WRITE;
+                            l1_mmu_req_addr <= {c_o_tag, addr_idx, 2'b00};
+                            l1_mmu_write_data <= c_o_data;
+                        end else begin
+                            // not hit, just read from mmu
+                            status <= STATUS_WAIT_READ;
+                            l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
+                            l1_mmu_write_data <= 32'b0;
+                        end
                     end else begin
-                        // not hit, just read from mmu
-                        status <= STATUS_WAIT_READ;
-                        l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
-                        l1_mmu_write_data <= 32'b0;
+                        // working, cache hit
+                        if (c_o_volatile) begin
+                            if (l1_read) begin
+                                // volatile read
+                                status <= STATUS_WAIT_READ;
+                                l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
+                                l1_mmu_write_data <= 32'b0;
+                            end else begin
+                                // volatile write
+                                status <= STATUS_WAIT_VOLATILE_WRITE;
+                                l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
+                                l1_mmu_write_data <= need_write_data;
+                                cache[addr_idx] <= {c_o_volatile, 1'b1, c_o_valid, c_o_tag, need_write_data};
+                            end
+                        end else if (l1_write) begin
+                            cache[addr_idx] <= {c_o_volatile, 1'b1, c_o_valid, c_o_tag, need_write_data};
+                        end else begin
+                            cache[addr_idx] <= cache[addr_idx];
+                        end
                     end
                 end else begin
                     if (c_work && c_hit && l1_write) begin
-                        cache[addr_idx] <= {1'b1, cache[addr_idx][52:32], need_write_data};
                     end
                     status <= STATUS_IDLE;
                     l1_mmu_req_addr <= 32'b0;
@@ -132,7 +158,7 @@ module l1cache
                     l1_mmu_req_addr <= 32'b0;
                     l1_mmu_write_data <= 32'b0;
                     // read done, write it to cache
-                    cache[addr_idx] <= {1'b0, 1'b1, addr_tag, mmu_l1_read_data};
+                    cache[addr_idx] <= {mmu_l1_volatile, 1'b0, 1'b1, addr_tag, mmu_l1_read_data};
                 end else begin
                     status <= status;
                     l1_mmu_req_addr <= l1_mmu_req_addr;

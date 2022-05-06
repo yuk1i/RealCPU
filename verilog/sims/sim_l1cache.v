@@ -24,6 +24,7 @@ module sim_l1cache();
 
     reg mmu_l1_read_done;
     reg mmu_l1_write_done;
+    reg mmu_l1_volatile;
     reg [31:0] mmu_l1_read_data;
     
     initial begin 
@@ -37,6 +38,7 @@ module sim_l1cache();
 
         mmu_l1_read_done = 0;
         mmu_l1_write_done = 0;
+        mmu_l1_volatile = 0;
         mmu_l1_read_data = 32'b0;
 
         #8 rst_n = 1;
@@ -114,6 +116,69 @@ module sim_l1cache();
         l1_addr = 32'b1100_00000_00011_11;
         l1_write_data = 32'H00000078;
 
+
+        #40
+        l1_read = 0; 
+        l1_write = 0;
+        mmu_l1_volatile = 1;
+
+        #15 
+        l1_read = 1;
+        l1_addr = 32'b1111_00000_00011_11;
+
+        #40 
+        l1_read = 0;
+
+        #40 
+        l1_read = 1;
+        l1_addr = 32'b1100_00000_00011_11;
+
+        #40 
+        l1_read = 0;
+        l1_write = 1;
+        l1_addr = 32'b1100_00000_00011_11;
+        l1_write_data = 32'hAAAABBBB;
+
+        #40 
+        l1_read = 1;
+        l1_write = 0;
+        l1_addr = 32'b1111_00000_00011_11;
+        l1_write_data = 0;
+
+        #40
+        l1_read = 1;
+        l1_write = 0;
+        l1_addr = 32'b1100_00000_00011_10;
+
+        #40
+        l1_read = 0;
+        l1_write = 1;
+        l1_write_type = 2'b01;
+        l1_addr = 32'b1100_00000_00011_00;
+        l1_write_data = 32'H0000ABCD;
+
+        #40
+        l1_addr = 32'b1100_00000_00011_10;
+        l1_write_data = 32'H0000FFFF;
+
+        #40
+        l1_write_type = 2'b10;
+        l1_addr = 32'b1100_00000_00011_00;
+        l1_write_data = 32'H00000012;
+        
+        #40
+        l1_addr = 32'b1100_00000_00011_01;
+        l1_write_data = 32'H00000034;
+
+        #40
+        l1_addr = 32'b1100_00000_00011_10;
+        l1_write_data = 32'H00000056;
+
+        #40
+        l1_addr = 32'b1100_00000_00011_11;
+        l1_write_data = 32'H00000078;
+
+
     end
 
     l1cache l1cache_s(
@@ -137,6 +202,7 @@ module sim_l1cache();
 
         .mmu_l1_read_done(mmu_l1_read_done),
         .mmu_l1_write_done(mmu_l1_write_done),
+        .mmu_l1_volatile(mmu_l1_volatile),
         .mmu_l1_read_data(mmu_l1_read_data)
     );
 
