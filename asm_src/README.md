@@ -12,3 +12,9 @@
 1. Create a .s asm file, such as test.s
 2. use `make test` to compile it and generate coe files
 3. Default target is cputest.s if executing `make`.
+
+## References
+
+1. gcc mips32 options https://gcc.gnu.org/onlinedocs/gcc/MIPS-Options.html
+
+
