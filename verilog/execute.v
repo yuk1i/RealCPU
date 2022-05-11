@@ -47,38 +47,31 @@ module execute(
     reg alu_of; // overflow flag
     reg [31:0] result_mux;
     always @* begin
-        if (is_def) begin
-            casex (def_exe)
-                3'b00x: {alu_cf,result_mux} = reg1 + op2;  // 0: of, 1:u no of
-                3'b01x: {alu_cf,result_mux} = reg1 + inv_op2;  
-                3'b100: {alu_cf,result_mux} = reg1 & op2;
-                3'b101: {alu_cf,result_mux} = reg1 | op2;
-                3'b110: {alu_cf,result_mux} = reg1 ^ op2;
-                3'b111: {alu_cf,result_mux} = is_lui ? {immd[15:0], 16'b0} : ~ (reg1 | op2);
-            endcase
-            // Set condition registers
-            if (def_exe[2] == 0) begin
-                if (def_exe[0] == 1) begin
-                    // unsigned
-                    alu_sf = 0;
-                    alu_of = alu_cf;
-                end else begin
-                    // signed, 2's complement
-                    if (def_exe[1] == 0) begin  // add
-                        alu_sf = result_mux[31];
-                        alu_of = (reg1[31] & op2[31] & ~result_mux[31]) | (~reg1[31] & ~op2[31] & result_mux[31]);
-                    end else begin              // minus
-                        alu_sf = result_mux[31];
-                        alu_of = (reg1[31] & inv_op2[31] & ~result_mux[31]) | (~reg1[31] & ~inv_op2[31] & result_mux[31]);
-                    end
-                end
-            end else begin
+        casex (def_exe)
+            3'b00x: {alu_cf,result_mux} = reg1 + op2;  // 0: of, 1:u no of
+            3'b01x: {alu_cf,result_mux} = reg1 + inv_op2;  
+            3'b100: {alu_cf,result_mux} = reg1 & op2;
+            3'b101: {alu_cf,result_mux} = reg1 | op2;
+            3'b110: {alu_cf,result_mux} = reg1 ^ op2;
+            3'b111: {alu_cf,result_mux} = is_lui ? {immd[15:0], 16'b0} : ~ (reg1 | op2);
+        endcase
+        // Set condition registers
+        if (def_exe[2] == 0) begin
+            if (def_exe[0] == 1) begin
+                // unsigned
                 alu_sf = 0;
-                alu_of = 0;
+                alu_of = alu_cf;
+            end else begin
+                // signed, 2's complement
+                if (def_exe[1] == 0) begin  // add
+                    alu_sf = result_mux[31];
+                    alu_of = (reg1[31] & op2[31] & ~result_mux[31]) | (~reg1[31] & ~op2[31] & result_mux[31]);
+                end else begin              // minus
+                    alu_sf = result_mux[31];
+                    alu_of = (reg1[31] & inv_op2[31] & ~result_mux[31]) | (~reg1[31] & ~inv_op2[31] & result_mux[31]);
+                end
             end
         end else begin
-            result_mux = 32'b0;
-            alu_cf = 0;
             alu_sf = 0;
             alu_of = 0;
         end
@@ -89,32 +82,24 @@ module execute(
     wire slt_unsgn = opcode[0]==1 || (R_op && func[0]==1); // only defined when is_set_op
     reg slt_result;
     always @* begin
-        if (is_set_op) begin
-            if (slt_unsgn) begin
-                // unsigned comparision
-                slt_result = !alu_cf;
-            end else begin
-                // signed comparision
-                slt_result = alu_of ^ alu_sf;
-            end
+        if (slt_unsgn) begin
+            // unsigned comparision
+            slt_result = !alu_cf;
         end else begin
-            slt_result = 0;
+            // signed comparision
+            slt_result = alu_of ^ alu_sf;
         end
     end
 
     // Branch Comparator: is_branch, [beq, bneq, blez, bgez]
     reg do_branch;
     always @* begin 
-        if (is_branch) begin
-            case (opcode[1:0])
-                2'b00: do_branch = reg1 == reg2;
-                2'b01: do_branch = ~(reg1 == reg2);
-                2'b10: do_branch = reg1 == 0 || reg1[31] == 1;  // Signed comparison, less or equal to zero
-                2'b11: do_branch = reg1[31] == 0;               // Signed comparison
-            endcase
-        end else begin
-            do_branch = 0;
-        end
+        case (opcode[1:0])
+            2'b00: do_branch = reg1 == reg2;
+            2'b01: do_branch = ~(reg1 == reg2);
+            2'b10: do_branch = reg1 == 0 || reg1[31] == 1;  // Signed comparison, less or equal to zero
+            2'b11: do_branch = reg1[31] == 0;               // Signed comparison
+        endcase
     end
 
     // Shifter: is_shift
@@ -122,16 +107,12 @@ module execute(
     // use ins shamt with [sll,srl,sra]
     wire [4:0] real_shamt = func[5:2] == 4'b0000 ? ins_shamt : reg1[4:0];
     always @* begin
-        if (is_shift) begin
-            case (func[1:0])
-                2'b00: shift_out = reg2 << real_shamt;  // sll
-                2'b01: shift_out = 0;                   // undefined
-                2'b10: shift_out = $unsigned(reg2) >> real_shamt;  // srl
-                2'b11: shift_out = $signed(reg2) >>> real_shamt; // sra
-            endcase
-        end else begin
-            shift_out = 32'b0;
-        end
+        case (func[1:0])
+            2'b00: shift_out = reg2 << real_shamt;  // sll
+            2'b01: shift_out = 0;                   // undefined
+            2'b10: shift_out = $unsigned(reg2) >> real_shamt;  // srl
+            2'b11: shift_out = $signed(reg2) >>> real_shamt; // sra
+        endcase
     end
 
     // Mux Output

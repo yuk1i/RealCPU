@@ -80,16 +80,34 @@ module idecoder(
     assign mem_to_reg = opcode[5:3]==3'b100; // ignore [ll to ldc2] 6'b110xxx
     // mem_write: [sb,sh,swl,sw], [swr], [sc swc1 swc2]
     assign mem_write = opcode[5:2]==4'b1010 || opcode==6'b101110 || opcode[5:3]==3'b111;
-    // reg_write: R{,[sll,srl,sra,sllv,srlv,srav],[NO jr, jalr,movz,movn],[mfhi,mflo],
+    // reg_write: R{,[sll,srl,sra,sllv,srlv,srav],[jr,jalr,movz,movn],
     //               [add,addu,sub,subu, and,or,xor,nor]
     //               [slt,  sltu]
-    assign reg_write = (R_op && (func[5:3]==3'b000 
-                            || (func[5:3]==3'b001 && func!=6'b001000) 
-                            || func==6'b010000 || func==6'b010010
-                            || func[5:3]==3'b100
-                            || func[5:1]==5'b10101)
-                       )
-                        || opcode[5:3]==3'b001 || opcode[5:3]==3'b100 || opcode == 6'b000011 || (C0_op && move_from_co);
+    // assign reg_write = (R_op && (func[5:3]==3'b000 
+    //                         || (func[5:3]==3'b001 && func!=6'b001000) 
+    //                         || func==6'b010000 || func==6'b010010
+    //                         || func[5:3]==3'b100
+    //                         || func[5:1]==5'b10101)
+    //                    )
+    //                     || opcode[5:3]==3'b001 || opcode[5:3]==3'b100 || opcode == 6'b000011 || (C0_op && move_from_co);
+    reg _reg_write_r;
+    reg _reg_write_i;
+    always @* begin
+        casez(func)
+            6'b000zzz : _reg_write_r = 1;   // [sll,srl,sra,sllv,srlv,srav]
+            6'b0010zz : _reg_write_r = 1;   // MIPS32r6: jalr
+            6'b0110zz : _reg_write_r = 1;   // MIPS32r6: [mul, div] 
+            6'b10zzzz : _reg_write_r = 1;   // [add,addu,sub,subu, and,or,xor,nor], [slt, sltu]
+            default   : _reg_write_r = 0;
+        endcase
+        casez(opcode)
+            6'b000011 : _reg_write_i = 1;   // jal
+            6'b001zzz : _reg_write_i = 1;   // [add,addu,sub,subu, and,or,xor,nor]
+            6'b100zzz : _reg_write_i = 1;   // [lb,lh,lw, lbu, lhu]
+            default   : _reg_write_i = 0;
+        endcase
+    end
+    assign reg_write = (R_op && _reg_write_r) || _reg_write_i;
     // ***** END Controller ***** //
 
     // ***** BEGIN Registers ***** //
