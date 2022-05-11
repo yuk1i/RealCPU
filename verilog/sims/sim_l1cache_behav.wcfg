@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="62.052 ns"></ZoomStartTime>
-      <ZoomEndTime time="165.474 ns"></ZoomEndTime>
-      <Cursor1Time time="112.000 ns"></Cursor1Time>
+      <ZoomStartTime time="151.770 ns"></ZoomStartTime>
+      <ZoomEndTime time="221.021 ns"></ZoomEndTime>
+      <Cursor1Time time="166.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="213"></NameColumnWidth>
-      <ValueColumnWidth column_width="99"></ValueColumnWidth>
+      <ValueColumnWidth column_width="87"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="26" />
+   <WVObjectSize size="29" />
    <wvobject type="logic" fp_name="/sim_l1cache/sys_clk">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -31,6 +31,8 @@
    <wvobject type="logic" fp_name="/sim_l1cache/l1_read">
       <obj_property name="ElementShortName">l1_read</obj_property>
       <obj_property name="ObjectShortName">l1_read</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/l1_write">
       <obj_property name="ElementShortName">l1_write</obj_property>
@@ -49,17 +51,23 @@
    <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/addr_tag">
       <obj_property name="ElementShortName">addr_tag[16:0]</obj_property>
       <obj_property name="ObjectShortName">addr_tag[16:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/addr_idx">
       <obj_property name="ElementShortName">addr_idx[9:0]</obj_property>
       <obj_property name="ObjectShortName">addr_idx[9:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/addr_w_off">
       <obj_property name="ElementShortName">addr_w_off[2:0]</obj_property>
       <obj_property name="ObjectShortName">addr_w_off[2:0]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1_write_type">
       <obj_property name="ElementShortName">l1_write_type[1:0]</obj_property>
@@ -68,22 +76,32 @@
    <wvobject type="array" fp_name="/sim_l1cache/l1_write_data">
       <obj_property name="ElementShortName">l1_write_data[31:0]</obj_property>
       <obj_property name="ObjectShortName">l1_write_data[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1_data_o">
       <obj_property name="ElementShortName">l1_data_o[31:0]</obj_property>
       <obj_property name="ObjectShortName">l1_data_o[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/stall">
       <obj_property name="ElementShortName">stall</obj_property>
       <obj_property name="ObjectShortName">stall</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/l1_mmu_req_read">
       <obj_property name="ElementShortName">l1_mmu_req_read</obj_property>
       <obj_property name="ObjectShortName">l1_mmu_req_read</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/l1_mmu_req_write">
       <obj_property name="ElementShortName">l1_mmu_req_write</obj_property>
       <obj_property name="ObjectShortName">l1_mmu_req_write</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1_mmu_req_addr">
       <obj_property name="ElementShortName">l1_mmu_req_addr[31:0]</obj_property>
@@ -95,6 +113,8 @@
    <wvobject type="array" fp_name="/sim_l1cache/l1_mmu_write_data">
       <obj_property name="ElementShortName">l1_mmu_write_data[255:0]</obj_property>
       <obj_property name="ObjectShortName">l1_mmu_write_data[255:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/mmu_l1_read_done">
       <obj_property name="ElementShortName">mmu_l1_read_done</obj_property>
@@ -107,6 +127,8 @@
    <wvobject type="array" fp_name="/sim_l1cache/mmu_l1_read_data">
       <obj_property name="ElementShortName">mmu_l1_read_data[255:0]</obj_property>
       <obj_property name="ObjectShortName">mmu_l1_read_data[255:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/status">
       <obj_property name="ElementShortName">status[1:0]</obj_property>
@@ -118,9 +140,23 @@
       <obj_property name="ObjectShortName">c_o[274:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
+   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/c_o_tag">
+      <obj_property name="ElementShortName">c_o_tag[16:0]</obj_property>
+      <obj_property name="ObjectShortName">c_o_tag[16:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/c_o_data">
+      <obj_property name="ElementShortName">c_o_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">c_o_data[255:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/l1cache_s/c_hit">
       <obj_property name="ElementShortName">c_hit</obj_property>
       <obj_property name="ObjectShortName">c_hit</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/l1cache_s/c_o_dirty">
       <obj_property name="ElementShortName">c_o_dirty</obj_property>
@@ -134,16 +170,22 @@
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/c_o_tag">
-      <obj_property name="ElementShortName">c_o_tag[16:0]</obj_property>
-      <obj_property name="ObjectShortName">c_o_tag[16:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/write_src_word">
+      <obj_property name="ElementShortName">write_src_word[31:0]</obj_property>
+      <obj_property name="ObjectShortName">write_src_word[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/c_o_data">
-      <obj_property name="ElementShortName">c_o_data[255:0]</obj_property>
-      <obj_property name="ObjectShortName">c_o_data[255:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/nw_word">
+      <obj_property name="ElementShortName">nw_word[31:0]</obj_property>
+      <obj_property name="ObjectShortName">nw_word[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/nw_cache_line">
+      <obj_property name="ElementShortName">nw_cache_line[255:0]</obj_property>
+      <obj_property name="ObjectShortName">nw_cache_line[255:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
 </wave_config>

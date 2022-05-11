@@ -72,7 +72,19 @@ module l1cache(
             4'b11xx : nw_word = 32'b0;
         endcase
     end
-    wire [255:0] nw_cache_line = {write_src[addr_w_off*32+32+:32], nw_word, write_src[addr_w_off*32+:32]};
+    reg [255:0] nw_cache_line;
+    always @* begin
+        case(addr_w_off)
+            3'b000 : nw_cache_line = {write_src[255:32], nw_word};
+            3'b001 : nw_cache_line = {write_src[255:1*32+32], nw_word, write_src[1*32-1:0]};
+            3'b010 : nw_cache_line = {write_src[255:2*32+32], nw_word, write_src[2*32-1:0]};
+            3'b011 : nw_cache_line = {write_src[255:3*32+32], nw_word, write_src[3*32-1:0]};
+            3'b100 : nw_cache_line = {write_src[255:4*32+32], nw_word, write_src[4*32-1:0]};
+            3'b101 : nw_cache_line = {write_src[255:5*32+32], nw_word, write_src[5*32-1:0]};
+            3'b110 : nw_cache_line = {write_src[255:6*32+32], nw_word, write_src[6*32-1:0]};
+            3'b111 : nw_cache_line = {nw_word, write_src[223:0]};
+        endcase
+    end
 
     parameter   STATUS_IDLE                 = 2'b00,
                 STATUS_WAIT_READ            = 2'b01,
@@ -188,8 +200,12 @@ module l1cache(
                         end
                     end else begin
                         // if request read
-                        for (i=0; i<=SIZE; i=i+1)
-                            cache[i] <= cache[i];
+                        for (i=0; i<=SIZE; i=i+1) begin
+                            if (i == addr_idx)
+                                cache[i] <= {1'b0, 1'b1, addr_tag, mmu_l1_read_data};
+                            else
+                                cache[i] <= cache[i];
+                        end
                     end
                 end else begin
                     // read not done

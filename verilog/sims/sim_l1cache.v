@@ -24,15 +24,14 @@ module sim_l1cache();
 
     reg mmu_l1_read_done;
     reg mmu_l1_write_done;
-    reg [255:0] mmu_l1_read_data;
+    wire [255:0] mmu_l1_read_data;
     
-    wire [255:0] ram_o_dout;
     reg ram_i_write;
     sim_ram ram(
-        .clka(sys_clk),
+        .clka(~sys_clk),
         .addra(l1_mmu_req_addr[16:5]),
         .dina(l1_mmu_write_data),
-        .douta(ram_o_dout),
+        .douta(mmu_l1_read_data),
         .wea(ram_i_write)
     );
 
@@ -47,14 +46,13 @@ module sim_l1cache();
 
         mmu_l1_read_done = 0;
         mmu_l1_write_done = 0;
-        mmu_l1_read_data = 256'b0;
 
         #8 rst_n = 1;
     end
     reg [2:0] waiter;
     always @(posedge sys_clk) begin
         if (l1_mmu_req_read || l1_mmu_req_write) begin
-            if (waiter != 4) begin
+            if (waiter != 2) begin
                 mmu_l1_read_done <= 0;
                 mmu_l1_write_done <= 0;
                 ram_i_write <= l1_mmu_req_write;
@@ -62,17 +60,17 @@ module sim_l1cache();
             end else begin
                 if (l1_mmu_req_read) begin
                     mmu_l1_read_done <= 1;
-                    mmu_l1_read_data <= ram_o_dout;
                 end else begin
                     mmu_l1_write_done <= 1;
                 end
                 waiter <= 0;
+                ram_i_write <= 0;
             end
         end else begin
             mmu_l1_read_done <= 0;
             mmu_l1_write_done <= 0;
-            mmu_l1_read_data <= 256'b0;
             waiter <= 0;
+            ram_i_write <= 0;
         end
     end
 
@@ -97,32 +95,84 @@ module sim_l1cache();
         // write to cached
 
         #16
+        l1_read =0;
+        l1_write=1;
+        l1_addr = 32'b010_00000_00000_00000;
+        l1_write_data = 32'HEEEEFFFF;
+
+        #32
         l1_read = 1;
         l1_write = 0;
         l1_addr = 32'b001_00000_00000_01100;
         l1_write_data = 0;
         // read cached
 
-        #16
+        #32
         l1_read = 0;
         l1_write = 1;
         l1_addr = 32'b011_00000_00000_01100;
         l1_write_data = 32'hBBB00CCC;
         // write uncached, dirty 
 
-        #16
+        #32
+        l1_read = 1;
+        l1_write = 0;
+        l1_addr = 32'b001_00000_00000_01100;
+        // flush out cache
+
+        // Test SW
+        #32
         l1_read = 0;
         l1_write = 1;
+        l1_write_type = 2'b00;
+        l1_addr = 32'b010_00000_00000_00000;
+        l1_write_data = 32'H11112222;
+
+        #32
+        l1_addr = 32'b010_00000_00000_00100;
+        l1_write_data = 32'H33334444;
+
+        #4
+        l1_addr = 32'b010_00000_00000_01000;
+        l1_write_data = 32'H55556666;
+
+        #4
+        l1_addr = 32'b010_00000_00000_01100;
+        l1_write_data = 32'H77778888;        
+        
+        #4
+        l1_addr = 32'b010_00000_00000_10000;
+        l1_write_data = 32'H9999AAAA;
+
+        #4
+        l1_addr = 32'b010_00000_00000_10100;
+        l1_write_data = 32'HBBBBCCCC;
+
+        #4
+        l1_addr = 32'b010_00000_00000_11000;
+        l1_write_data = 32'HDDDDEEEE;
+
+        #4
+        l1_addr = 32'b010_00000_00000_11100;
+        l1_write_data = 32'HFFFF0000;
+
+        // test sh
+        #4
         l1_write_type = 2'b01;
-        l1_addr = 32'b010_00000_00000_01110;
-        l1_write_data = 32'H0000ABCD;
+        l1_addr = 32'b010_00000_00000_00000;
+        l1_write_data = 32'H00001234;
+        #4
+        l1_addr = 32'b010_00000_00000_00010;
+        l1_write_data = 32'H00001234;
+        #4
+        l1_addr = 32'b010_00000_00000_00100;
+        l1_write_data = 32'H00001234;
 
         #16
-        l1_read = 0;
-        l1_write = 1;
-        l1_write_type = 2'b01;
-        l1_addr = 32'b010_00000_00000_01110;
-        l1_write_data = 32'H00001234;
+        l1_read = 1;
+        l1_write = 0;
+        l1_write_type = 2'b00;
+        l1_addr = 32'b010_00000_00000_01100;
 
     end
 
