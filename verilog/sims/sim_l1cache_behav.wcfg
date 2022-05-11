@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="527.080 ns"></ZoomStartTime>
-      <ZoomEndTime time="657.431 ns"></ZoomEndTime>
-      <Cursor1Time time="599.980 ns"></Cursor1Time>
+      <ZoomStartTime time="62.052 ns"></ZoomStartTime>
+      <ZoomEndTime time="165.474 ns"></ZoomEndTime>
+      <Cursor1Time time="112.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="221"></NameColumnWidth>
-      <ValueColumnWidth column_width="91"></ValueColumnWidth>
+      <NameColumnWidth column_width="213"></NameColumnWidth>
+      <ValueColumnWidth column_width="99"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="27" />
+   <WVObjectSize size="26" />
    <wvobject type="logic" fp_name="/sim_l1cache/sys_clk">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -46,6 +46,21 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
    </wvobject>
+   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/addr_tag">
+      <obj_property name="ElementShortName">addr_tag[16:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_tag[16:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/addr_idx">
+      <obj_property name="ElementShortName">addr_idx[9:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_idx[9:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/addr_w_off">
+      <obj_property name="ElementShortName">addr_w_off[2:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_w_off[2:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1_write_type">
       <obj_property name="ElementShortName">l1_write_type[1:0]</obj_property>
       <obj_property name="ObjectShortName">l1_write_type[1:0]</obj_property>
@@ -61,10 +76,6 @@
    <wvobject type="logic" fp_name="/sim_l1cache/stall">
       <obj_property name="ElementShortName">stall</obj_property>
       <obj_property name="ObjectShortName">stall</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_l1cache/l1_mmu_req">
-      <obj_property name="ElementShortName">l1_mmu_req</obj_property>
-      <obj_property name="ObjectShortName">l1_mmu_req</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/l1_mmu_req_read">
       <obj_property name="ElementShortName">l1_mmu_req_read</obj_property>
@@ -82,8 +93,8 @@
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1_mmu_write_data">
-      <obj_property name="ElementShortName">l1_mmu_write_data[31:0]</obj_property>
-      <obj_property name="ObjectShortName">l1_mmu_write_data[31:0]</obj_property>
+      <obj_property name="ElementShortName">l1_mmu_write_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">l1_mmu_write_data[255:0]</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/mmu_l1_read_done">
       <obj_property name="ElementShortName">mmu_l1_read_done</obj_property>
@@ -93,21 +104,9 @@
       <obj_property name="ElementShortName">mmu_l1_write_done</obj_property>
       <obj_property name="ObjectShortName">mmu_l1_write_done</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/sim_l1cache/mmu_l1_volatile">
-      <obj_property name="ElementShortName">mmu_l1_volatile</obj_property>
-      <obj_property name="ObjectShortName">mmu_l1_volatile</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/mmu_l1_read_data">
-      <obj_property name="ElementShortName">mmu_l1_read_data[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mmu_l1_read_data[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/need_write_data">
-      <obj_property name="ElementShortName">need_write_data[31:0]</obj_property>
-      <obj_property name="ObjectShortName">need_write_data[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/cache">
-      <obj_property name="ElementShortName">cache[0:1023][54:0]</obj_property>
-      <obj_property name="ObjectShortName">cache[0:1023][54:0]</obj_property>
+      <obj_property name="ElementShortName">mmu_l1_read_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">mmu_l1_read_data[255:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/status">
       <obj_property name="ElementShortName">status[1:0]</obj_property>
@@ -115,12 +114,13 @@
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/c_o">
-      <obj_property name="ElementShortName">c_o[54:0]</obj_property>
-      <obj_property name="ObjectShortName">c_o[54:0]</obj_property>
+      <obj_property name="ElementShortName">c_o[274:0]</obj_property>
+      <obj_property name="ObjectShortName">c_o[274:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/sim_l1cache/l1cache_s/c_o_volatile">
-      <obj_property name="ElementShortName">c_o_volatile</obj_property>
-      <obj_property name="ObjectShortName">c_o_volatile</obj_property>
+   <wvobject type="logic" fp_name="/sim_l1cache/l1cache_s/c_hit">
+      <obj_property name="ElementShortName">c_hit</obj_property>
+      <obj_property name="ObjectShortName">c_hit</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/sim_l1cache/l1cache_s/c_o_dirty">
       <obj_property name="ElementShortName">c_o_dirty</obj_property>
@@ -135,14 +135,14 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/c_o_tag">
-      <obj_property name="ElementShortName">c_o_tag[19:0]</obj_property>
-      <obj_property name="ObjectShortName">c_o_tag[19:0]</obj_property>
+      <obj_property name="ElementShortName">c_o_tag[16:0]</obj_property>
+      <obj_property name="ObjectShortName">c_o_tag[16:0]</obj_property>
       <obj_property name="CustomSignalColor">#FF0080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_l1cache/l1cache_s/c_o_data">
-      <obj_property name="ElementShortName">c_o_data[31:0]</obj_property>
-      <obj_property name="ObjectShortName">c_o_data[31:0]</obj_property>
+      <obj_property name="ElementShortName">c_o_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">c_o_data[255:0]</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
