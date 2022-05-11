@@ -6,13 +6,14 @@ struct pixel {
 volatile unsigned short * ptr = (unsigned short*) 0xFFFF0004;
 
 int main() {
+	register int a;
 	while(*ptr) {
 		asm("nop");
 		asm("nop");
 		asm("nop");
 		asm("nop");
 		asm("nop");
-		*ptr = 1234;
+		a = *ptr / 10;
 	}
 	
 }
