@@ -1,6 +1,9 @@
 `timescale 1ns / 1ps
 
 module execute(
+    input sys_clk,
+    input rst_n,
+
     input [31:0] reg1,  // rs
     input [31:0] reg2,  // rt
     input [31:0] immd,
@@ -24,7 +27,8 @@ module execute(
 
     output reg [31:0] result,
     output reg do_jump,
-    output reg [31:0] j_addr
+    output reg [31:0] j_addr,
+    output stall            // stall request from multiplier
 );
     // [slti, sltiu], R:[slt, sltu]
     wire is_set_op = opcode[5:1] == 5'b00101 || (R_op && (func[5:1] == 5'b10101));
@@ -115,12 +119,26 @@ module execute(
         endcase
     end
 
+    // Multiplier
+    wire is_mul = R_op && func[5:1] == 5'b01100;
+    wire mul_unsign = func[0];
+    wire mul_done;
+
+    // module here
+
+    wire [63:0] mul_out;
+    wire mul_low = shamt == 5'b00010;
+    wire [31:0] mul_mux = mul_low ? mul_out[31:0] ? mul_out[63:32];
+    wire stall = is_mul && !mul_done;
+
     // Mux Output
     always @* begin
         if (alu_bypass)
             result = bypass_immd;
         else if (is_set_op)
             result = {31'b0, slt_result};
+        else if (is_mul)
+            result = mul_mux;
         else if (is_def)
             result = result_mux;
         else if (shift_out)
@@ -129,7 +147,7 @@ module execute(
             result = 0;
         else if (is_jal)
             result = next_pc + 4;
-        else 
+        else
             result = 0;
     end
 

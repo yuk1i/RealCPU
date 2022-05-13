@@ -46,6 +46,7 @@ module top(
     wire [31:0] e_result;
     wire e_do_jump;
     wire [31:0] e_j_addr;
+    wire e_stall;
 
     wire [31:0] m_mem_data;
     wire m_stall;
@@ -55,6 +56,8 @@ module top(
     wire [4:0] wb_reg_write_id = d_reg_dst ? d_rd_id : d_rt_id;
     wire [31:0] wb_data = d_mem_to_reg ? m_mem_data : e_result;
     
+    wire fecth_stall = e_stall || m_stall;
+
     ifetch fetch(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
@@ -62,7 +65,7 @@ module top(
         .do_jump(e_do_jump),
         .jump_addr(e_j_addr),
 
-        .stall(m_stall),
+        .stall(fecth_stall),
 
         .ins_out(f_ins),
         .pc_out(f_pc),
@@ -108,6 +111,9 @@ module top(
     );
 
     execute ex(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+
         .reg1(d_reg_read1),
         .reg2(d_reg_read2),
         .immd(d_ext_immd),
@@ -130,7 +136,8 @@ module top(
         
         .result(e_result),
         .do_jump(e_do_jump),
-        .j_addr(e_j_addr)
+        .j_addr(e_j_addr),
+        .stall(e_stall)
     );
 
     mmu mmud(

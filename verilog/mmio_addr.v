@@ -5,7 +5,7 @@ module mmio_addr(
 );
     always @* begin
         casex(addr)
-            31'hFFFFxxxx:   is_mmio = 1;
+            31'hFFFF????:   is_mmio = 1;
             default:        is_mmio = 0;
         endcase
     end
