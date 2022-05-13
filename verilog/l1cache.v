@@ -8,7 +8,7 @@ module l1cache(
     input l1_read,
     input l1_write,
     input [31:0] l1_addr,
-    input [1:0] l1_write_type, // 00: sw, 01: sh, 10: sb, 11: undefined
+    input [1:0] l1_write_type, // 00: sb, 01: sh, 10: undefined, 11: sb
     input [31:0] l1_write_data,
 
     output [31:0] l1_data_o,
@@ -62,14 +62,14 @@ module l1cache(
     reg [31:0] nw_word; // only valid when cache is hit
     always @* begin
         casex ({l1_write_type, addr_b_off})
-            4'b00xx : nw_word = l1_write_data;                              // sw
+            4'b11xx : nw_word = l1_write_data;                              // sw
             4'b010x : nw_word = {write_src_word[31:16], l1_write_data[15:0]};     // sh, lower 0
             4'b011x : nw_word = {l1_write_data[15:0], write_src_word[15:0]};     // sh, lower 1
-            4'b1000 : nw_word = {write_src_word[31:8],    l1_write_data[7:0]};
-            4'b1001 : nw_word = {write_src_word[31:16],   l1_write_data[7:0], write_src_word[7:0]};
-            4'b1010 : nw_word = {write_src_word[31:24],   l1_write_data[7:0], write_src_word[15:0]};
-            4'b1011 : nw_word = {l1_write_data[7:0], write_src_word[23:0]};
-            4'b11xx : nw_word = 32'b0;
+            4'b0000 : nw_word = {write_src_word[31:8],    l1_write_data[7:0]};
+            4'b0001 : nw_word = {write_src_word[31:16],   l1_write_data[7:0], write_src_word[7:0]};
+            4'b0010 : nw_word = {write_src_word[31:24],   l1_write_data[7:0], write_src_word[15:0]};
+            4'b0011 : nw_word = {l1_write_data[7:0], write_src_word[23:0]};
+            4'b10xx : nw_word = 32'b0;
         endcase
     end
     reg [255:0] nw_cache_line;
@@ -109,7 +109,7 @@ module l1cache(
         if (!rst_n) begin
             status <= STATUS_IDLE;
             l1_mmu_req_addr <= 32'b0;
-            l1_mmu_write_data <= 32'b0;
+            l1_mmu_write_data <= 256'b0;
             mmio_ret <= 32'b0;
             for (i=0;i<=SIZE;i=i+1)
                 cache[i] <= 275'b0;
@@ -122,7 +122,7 @@ module l1cache(
                             // read action
                             status <= STATUS_WAIT_READ;
                             l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
-                            l1_mmu_write_data <= 255'b0;
+                            l1_mmu_write_data <= 256'b0;
                             mmio_ret <= 32'b0;
                             for (i=0; i<=SIZE; i=i+1)
                                 cache[i] <= cache[i];
@@ -130,7 +130,7 @@ module l1cache(
                             // write action
                             status <= STATUS_WAIT_WRITE;
                             l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
-                            l1_mmu_write_data <= {223'b0, l1_write_data};
+                            l1_mmu_write_data <= {224'b0, l1_write_data};
                             mmio_ret <= 32'b0;
                             for (i=0; i<=SIZE; i=i+1)
                                 cache[i] <= cache[i];
@@ -141,7 +141,7 @@ module l1cache(
                             // read out data first, then flush dirty cache line
                             status <= STATUS_WAIT_READ_THEN_WRITE;
                             l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
-                            l1_mmu_write_data <= 255'b0;
+                            l1_mmu_write_data <= 256'b0;
                             mmio_ret <= 32'b0;
                             for (i=0; i<=SIZE; i=i+1)
                                 cache[i] <= cache[i];
@@ -149,7 +149,7 @@ module l1cache(
                             // no need write dirty, just read from mmu
                             status <= STATUS_WAIT_READ;
                             l1_mmu_req_addr <= {l1_addr[31:2], 2'b00};
-                            l1_mmu_write_data <= 255'b0;
+                            l1_mmu_write_data <= 256'b0;
                             mmio_ret <= 32'b0;
                             for (i=0; i<=SIZE; i=i+1)
                                 cache[i] <= cache[i];
@@ -157,7 +157,7 @@ module l1cache(
                     end else begin
                         status <= STATUS_IDLE;
                         l1_mmu_req_addr <= 32'b0;
-                        l1_mmu_write_data <= 255'b0;
+                        l1_mmu_write_data <= 256'b0;
                         mmio_ret <= 32'b0;
                         // working, cache hit
                         if (l1_write) begin
@@ -177,7 +177,7 @@ module l1cache(
                     // IDLE, not working
                     status <= STATUS_IDLE;
                     l1_mmu_req_addr <= 32'b0;
-                    l1_mmu_write_data <= 255'b0;
+                    l1_mmu_write_data <= 256'b0;
                     mmio_ret <= 32'b0;
                     for (i=0; i<=SIZE; i=i+1)
                         cache[i] <= cache[i];
@@ -221,7 +221,7 @@ module l1cache(
                 if (mmu_l1_read_done) begin
                     status <= STATUS_IDLE;
                     l1_mmu_req_addr <= 32'b0;
-                    l1_mmu_write_data <= 255'b0;
+                    l1_mmu_write_data <= 256'b0;
                     if (addr_mmio) begin
                         mmio_ret <= mmu_l1_read_data[31:0];
                         for (i=0; i<=SIZE; i=i+1)
@@ -248,7 +248,7 @@ module l1cache(
                 if (mmu_l1_write_done) begin
                     status <= STATUS_IDLE;
                     l1_mmu_req_addr <= 32'b0;
-                    l1_mmu_write_data <= 255'b0;
+                    l1_mmu_write_data <= 256'b0;
                 end else begin
                     status <= status;
                     l1_mmu_req_addr <= l1_mmu_req_addr;

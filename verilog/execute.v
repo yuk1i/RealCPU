@@ -128,7 +128,7 @@ module execute(
 
     wire [63:0] mul_out;
     wire mul_low = shamt == 5'b00010;
-    wire [31:0] mul_mux = mul_low ? mul_out[31:0] ? mul_out[63:32];
+    wire [31:0] mul_mux = mul_low ? mul_out[31:0] : mul_out[63:32];
     wire stall = is_mul && !mul_done;
 
     // Mux Output

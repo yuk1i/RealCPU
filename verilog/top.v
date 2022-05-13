@@ -58,6 +58,12 @@ module top(
     
     wire fecth_stall = e_stall || m_stall;
 
+    // L1 iCache 
+    wire immu_read          = 0;
+    wire [31:0] immu_addr   = 32'b0;
+    wire immu_read_done;
+    wire [255:0] immu_read_data;
+
     ifetch fetch(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
@@ -140,17 +146,101 @@ module top(
         .stall(e_stall)
     );
 
-    mmu mmud(
+    // D Cache
+    wire dmem_read = d_mem_to_reg;
+    wire dmem_write = d_mem_write;
+    wire dmmu_addr = e_result;
+    wire [1:0] dmem_write_type = f_ins[1:0];
+    wire [31:0] dmem_write_data = d_reg_read2;
+
+    wire dmmu_read;
+    wire dmmu_write;
+    wire [31:0] dmmu_addr;
+    wire [255:0] dmmu_write_data;
+    wire dmmu_read_done;
+    wire dmmu_write_done;
+    wire [255:0] dmmu_read_data;
+
+    l1cache dcache(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
 
-        .mem_read(d_mem_to_reg),
-        .mem_addr(e_result),
-        .mem_write(d_mem_write),
-        .mem_wd(d_reg_read2),
+        .l1_read(dmem_read),
+        .l1_write(dmem_write),
+        .l1_addr(dmmu_addr),
+        .l1_write_type(dmem_write_type),
+        .l1_write_data(dmem_write_data),
 
-        .mem_data_o(m_mem_data),
-        .stall(m_stall)
+        .l1_data_o(m_mem_data),
+        .stall(m_stall),
+
+        .l1_mmu_req_read(dmmu_read),
+        .l1_mmu_req_write(dmmu_write),
+        .l1_mmu_req_addr(dmmu_addr),
+        .l1_mmu_write_data(dmmu_write_data),
+        
+        .mmu_l1_read_done(dmmu_read_done),
+        .mmu_l1_write_done(dmmu_write_done),
+        .mmu_l1_read_data(dmmu_read_data)
+    );
+    wire serve_ic           = immu_read;
+    wire mmu_read           = serve_ic ? immu_read : dmmu_read;
+    wire mmu_write          = serve_ic ? 0         : dmmu_write;
+    wire [31:0] mmu_addr    = serve_ic ? immu_addr : dmmu_write;
+    wire [255:0] mmu_write_data = dmmu_write_data;
+
+    wire mmu_read_done;
+    wire mmu_write_done;
+    wire [255:0] mmu_read_data;
+    
+    assign immu_read_done   =  serve_ic && mmu_read_done;
+    assign dmmu_read_done   = !serve_ic && mmu_read_done;
+    assign dmmu_write_done  = mmu_write_done;
+    assign immu_read_data   =  serve_ic && mmu_read_data;
+    assign dmmu_read_data   = !serve_ic && mmu_read_data;
+
+
+    wire mmio_read;
+    wire mmio_write;
+    wire [31:0] mmio_addr;
+    wire [31:0] mmio_write_data;
+    wire mmio_done;
+    wire [31:0] mmio_read_data;
+
+    l1mmu l1mmu1(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+
+        .l1_mmu_req_read(mmu_read),
+        .l1_mmu_req_write(mmu_write),
+        .l1_mmu_req_addr(mmu_addr),
+        .l1_mmu_write_data(mmu_write_data),
+        
+        .mmu_l1_read_done(mmu_read_done),
+        .mmu_l1_write_done(mmu_write_done),
+        .mmu_l1_read_data(mmu_read_data),
+
+        .mmu_mmio_write(mmio_write),
+        .mmu_mmio_read(mmio_read),
+        .mmu_mmio_addr(mmu_addr),
+        .mmu_mmio_write_data(mmio_write_data),
+
+        .mmu_mmio_done(mmio_done),
+        .mmu_mmio_read_data(mmio_read_data)
+    );
+
+    mmio_devs mmiodevs(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+
+        .mmio_read(mmio_read),
+        .mmio_write(mmio_write),
+        .mmio_addr(mmio_addr),
+        .mmio_write_data(mmio_write_data),
+
+        .mmio_read_done(mmio_read_done),
+        .mmio_write_done(mmio_write_done),
+        .mmio_read_data(mmio_read_data)
     );
 
     // wire [31:0] dis;
