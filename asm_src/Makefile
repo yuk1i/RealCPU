@@ -6,42 +6,49 @@ OBJDUMP=mipsel-linux-gnu-objdump
 
 # Configures for bin file
 
-TEXT_START_AT=0x0
+TEXT_START_AT=0x0100
 DATA_START_AT=0x1000
 
-CC_FLAGS=-mips32r6 -Werror -O0 -fno-pic -mcompact-branches=never -mno-llsc
-AS_FLAGS=--alternate -call_nonpic -mno-ginv -mips32r6 -msoft-float --fatal-warnings -O0
-LD_FLAGS=--relax -Ttext $(TEXT_START_AT) -Tdata $(DATA_START_AT) --entry main
+CC_FLAGS=-mips32r6 -Werror -O0 -fno-pic -mcompact-branches=never -mno-llsc -mno-float
+AS_FLAGS=--alternate -mgp32 -g -call_nonpic -non_shared -mno-ginv -mips32r6 -msoft-float --fatal-warnings -O0
+LD_FLAGS=--script linker.ld --no-compact-branches -nostdlib
 
-objs=
+BUILDDIR=tmp
+SRCS=
+OBJS=$(SRCS:%=$(BUILDDIR)/%.o)
+
 
 .DEFAULT_GOAL := cputest
 
 %:
-	@make objs=$@.o dump --no-print-directory
+	make SRCS=$@ dump --no-print-directory
 	@echo "\n[*] Compile and dump successfully\n"
 
-%.o : %.c
+$(BUILDDIR)/%.o : %.c
 	@echo "[CC] compile $<"
-	@$(CC) $(CC_FLAGS) -c $< -o tmp/$@
+	@$(CC) $(CC_FLAGS) -c $< -o $@
 
-%.o : %.s
+$(BUILDDIR)/%.o : %.s
 	@echo "[AS] assemble $<"
-	@$(AS) $(AS_FLAGS) $< -o tmp/$@
+	@$(AS) $(AS_FLAGS) $< -o $@
 
-link: $(objs)
+link: $(OBJS)
 	@echo "[LD] link"
-	@cd tmp && \
-	mipsel-linux-gnu-ld $(LD_FLAGS) $(objs) && \
-	cd ../
+	$(LD) $(LD_FLAGS) --verbose $(OBJS) -o $(BUILDDIR)/a.out
+	mipsel-linux-gnu-strip -R .reginfo $(BUILDDIR)/a.out
+	mipsel-linux-gnu-strip -R .MIPS.abiflags $(BUILDDIR)/a.out
+	mipsel-linux-gnu-strip -R .gnu.attributes $(BUILDDIR)/a.out
 
 dump: link
 	@echo "[*]  dump coe"
 	@rm -f *.coe tmp/*.bin
 	@$(OBJCOPY) --dump-section .text=tmp/text.bin tmp/a.out
 	@$(OBJCOPY) --dump-section .data=tmp/data.bin tmp/a.out 
-	@python3 convert.py tmp/text.bin text.coe
+	@python3 convert.py tmp/text.bin text.coe $(TEXT_START_AT)
 	@python3 convert.py tmp/data.bin data.coe $(DATA_START_AT) 16
+	@$(OBJCOPY) -O binary tmp/a.out tmp/unified.bin
+	@python3 convert.py tmp/unified.bin unified.coe 0x0 16
+
 
 objdump:
 	@$(OBJDUMP) -d -t tmp/a.out
