@@ -11,6 +11,11 @@ if len(sys.argv) > 3:
 else:
     padding = 0
 
+if len(sys.argv) > 4:
+    size = int(sys.argv[4])
+else:
+    size = 4
+
 text=open(src, "rb")
 memfile = open(out, "w")
 cnt = 0
@@ -18,11 +23,11 @@ memfile.write("memory_initialization_radix=16;\n")
 memfile.write("memory_initialization_vector=\n")
 arr = list()
 
-for i in range(0, padding//4):
-    arr.append(b"\x00\x00\x00\x00")
+for i in range(0, padding//size):
+    arr.append(b"\x00" * size)
 
 while True:
-    data = text.read(4)
+    data = text.read(size)
     if not data:
         break
     arr.append(data[::-1])

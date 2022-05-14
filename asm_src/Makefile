@@ -41,7 +41,7 @@ dump: link
 	@$(OBJCOPY) --dump-section .text=tmp/text.bin tmp/a.out
 	@$(OBJCOPY) --dump-section .data=tmp/data.bin tmp/a.out 
 	@python3 convert.py tmp/text.bin text.coe
-	@python3 convert.py tmp/data.bin data.coe $(DATA_START_AT)
+	@python3 convert.py tmp/data.bin data.coe $(DATA_START_AT) 16
 
 objdump:
 	@$(OBJDUMP) -d -t tmp/a.out
