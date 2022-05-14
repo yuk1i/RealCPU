@@ -33,7 +33,7 @@ module l1mmu(
     
     reg acc_hi;
     reg [127:0] tmp_low;
-    wire [31:0] _req_addr = !l1_addr_mmio ? {l1_mmu_req_addr[31:5], acc_hi, 4'b0} : 32'b0;
+    wire [31:0] _req_addr = !l1_addr_mmio ? {4'b0, l1_mmu_req_addr[31:5], acc_hi} : 32'b0;
     wire [127:0] _dout;
     wire [127:0] _wr_data = acc_hi ? l1_mmu_write_data[255:128] : l1_mmu_write_data[127:0];
     wire mig_write = !l1_addr_mmio && l1_mmu_req_write;
@@ -60,7 +60,7 @@ module l1mmu(
             mmu_l1_write_done <= 0;
             mmu_l1_read_data <= 256'b0;
         end else begin
-            if (l1_addr_mmio) begin
+            if (l1_addr_mmio && (l1_mmu_req_read || l1_mmu_req_write)) begin
                 // MMIO Requests
                 status <= STATUS_IDLE;
                 tmp_low <= 0;
@@ -86,6 +86,13 @@ module l1mmu(
                         mmu_l1_read_done <= 1;
                         mmu_l1_write_done <= 0;
                         mmu_l1_read_data <= {_dout, tmp_low};
+                    end else begin
+                        acc_hi <= 0;
+                        status <= STATUS_IDLE;
+                        tmp_low <= 128'b0;
+                        mmu_l1_read_done <= 0;
+                        mmu_l1_write_done <= 0;
+                        mmu_l1_read_data <= 256'b0;
                     end
                 end else if (l1_mmu_req_write) begin
                     if (status==STATUS_IDLE && !mmu_l1_write_done) begin
@@ -103,6 +110,13 @@ module l1mmu(
                         acc_hi <= 0;
                         mmu_l1_read_done <= 0;
                         mmu_l1_write_done <= 1;
+                        mmu_l1_read_data <= 256'b0;
+                    end else begin
+                        acc_hi <= 0;
+                        status <= STATUS_IDLE;
+                        tmp_low <= 128'b0;
+                        mmu_l1_read_done <= 0;
+                        mmu_l1_write_done <= 0;
                         mmu_l1_read_data <= 256'b0;
                     end
                 end else begin

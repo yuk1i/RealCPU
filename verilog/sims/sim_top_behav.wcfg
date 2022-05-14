@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,325.001 ns"></ZoomEndTime>
-      <Cursor1Time time="253.000 ns"></Cursor1Time>
+      <ZoomStartTime time="91.699 ns"></ZoomStartTime>
+      <ZoomEndTime time="141.860 ns"></ZoomEndTime>
+      <Cursor1Time time="110.179 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="178"></NameColumnWidth>
-      <ValueColumnWidth column_width="66"></ValueColumnWidth>
+      <NameColumnWidth column_width="201"></NameColumnWidth>
+      <ValueColumnWidth column_width="73"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="32" />
+   <WVObjectSize size="58" />
    <wvobject type="logic" fp_name="/sim_top/sys_clk">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -194,5 +194,109 @@
    <wvobject type="logic" fp_name="/sim_top/ttop/m_stall">
       <obj_property name="ElementShortName">m_stall</obj_property>
       <obj_property name="ObjectShortName">m_stall</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/dmem_read">
+      <obj_property name="ElementShortName">dmem_read</obj_property>
+      <obj_property name="ObjectShortName">dmem_read</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/dmem_write">
+      <obj_property name="ElementShortName">dmem_write</obj_property>
+      <obj_property name="ObjectShortName">dmem_write</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dmem_addr">
+      <obj_property name="ElementShortName">dmem_addr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dmem_addr[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dmem_write_type">
+      <obj_property name="ElementShortName">dmem_write_type[1:0]</obj_property>
+      <obj_property name="ObjectShortName">dmem_write_type[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dmem_write_data">
+      <obj_property name="ElementShortName">dmem_write_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dmem_write_data[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/dcache/c_hit">
+      <obj_property name="ElementShortName">c_hit</obj_property>
+      <obj_property name="ObjectShortName">c_hit</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dcache/c_o_data">
+      <obj_property name="ElementShortName">c_o_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">c_o_data[255:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dcache/l1_write_type">
+      <obj_property name="ElementShortName">l1_write_type[1:0]</obj_property>
+      <obj_property name="ObjectShortName">l1_write_type[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dcache/nw_word">
+      <obj_property name="ElementShortName">nw_word[31:0]</obj_property>
+      <obj_property name="ObjectShortName">nw_word[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dcache/nw_cache_line">
+      <obj_property name="ElementShortName">nw_cache_line[255:0]</obj_property>
+      <obj_property name="ObjectShortName">nw_cache_line[255:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/dmmu_read">
+      <obj_property name="ElementShortName">dmmu_read</obj_property>
+      <obj_property name="ObjectShortName">dmmu_read</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/dmmu_write">
+      <obj_property name="ElementShortName">dmmu_write</obj_property>
+      <obj_property name="ObjectShortName">dmmu_write</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dmmu_addr">
+      <obj_property name="ElementShortName">dmmu_addr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dmmu_addr[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dmmu_read_data">
+      <obj_property name="ElementShortName">dmmu_read_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">dmmu_read_data[255:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/dmmu_write_data">
+      <obj_property name="ElementShortName">dmmu_write_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">dmmu_write_data[255:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/dmmu_read_done">
+      <obj_property name="ElementShortName">dmmu_read_done</obj_property>
+      <obj_property name="ObjectShortName">dmmu_read_done</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/dmmu_write_done">
+      <obj_property name="ElementShortName">dmmu_write_done</obj_property>
+      <obj_property name="ObjectShortName">dmmu_write_done</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/mmu_read">
+      <obj_property name="ElementShortName">mmu_read</obj_property>
+      <obj_property name="ObjectShortName">mmu_read</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/mmu_write">
+      <obj_property name="ElementShortName">mmu_write</obj_property>
+      <obj_property name="ObjectShortName">mmu_write</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/mmu_addr">
+      <obj_property name="ElementShortName">mmu_addr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">mmu_addr[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/mmu_read_data">
+      <obj_property name="ElementShortName">mmu_read_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">mmu_read_data[255:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/mmu_write_data">
+      <obj_property name="ElementShortName">mmu_write_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">mmu_write_data[255:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/mmu_read_done">
+      <obj_property name="ElementShortName">mmu_read_done</obj_property>
+      <obj_property name="ObjectShortName">mmu_read_done</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/mmu_write_done">
+      <obj_property name="ElementShortName">mmu_write_done</obj_property>
+      <obj_property name="ObjectShortName">mmu_write_done</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/l1mmu1/_req_addr">
+      <obj_property name="ElementShortName">_req_addr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">_req_addr[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/l1mmu1/_dout">
+      <obj_property name="ElementShortName">_dout[127:0]</obj_property>
+      <obj_property name="ObjectShortName">_dout[127:0]</obj_property>
    </wvobject>
 </wave_config>

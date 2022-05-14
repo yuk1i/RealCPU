@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="sim_mmu_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="sim_mmu" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="57.640 ns"></ZoomStartTime>
+      <ZoomEndTime time="110.261 ns"></ZoomEndTime>
+      <Cursor1Time time="92.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="213"></NameColumnWidth>
+      <ValueColumnWidth column_width="75"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="20" />
+   <wvobject type="logic" fp_name="/sim_mmu/sys_clk">
+      <obj_property name="ElementShortName">sys_clk</obj_property>
+      <obj_property name="ObjectShortName">sys_clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/rst_n">
+      <obj_property name="ElementShortName">rst_n</obj_property>
+      <obj_property name="ObjectShortName">rst_n</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/l1_read">
+      <obj_property name="ElementShortName">l1_read</obj_property>
+      <obj_property name="ObjectShortName">l1_read</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/l1_write">
+      <obj_property name="ElementShortName">l1_write</obj_property>
+      <obj_property name="ObjectShortName">l1_write</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_mmu/l1_addr">
+      <obj_property name="ElementShortName">l1_addr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">l1_addr[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_mmu/l1_write_type">
+      <obj_property name="ElementShortName">l1_write_type[1:0]</obj_property>
+      <obj_property name="ObjectShortName">l1_write_type[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_mmu/l1_write_data">
+      <obj_property name="ElementShortName">l1_write_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">l1_write_data[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_mmu/l1_data_o">
+      <obj_property name="ElementShortName">l1_data_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">l1_data_o[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/mmu/l1_addr_mmio">
+      <obj_property name="ElementShortName">l1_addr_mmio</obj_property>
+      <obj_property name="ObjectShortName">l1_addr_mmio</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/stall">
+      <obj_property name="ElementShortName">stall</obj_property>
+      <obj_property name="ObjectShortName">stall</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/mmu/l1_mmu_req_read">
+      <obj_property name="ElementShortName">l1_mmu_req_read</obj_property>
+      <obj_property name="ObjectShortName">l1_mmu_req_read</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/mmu/l1_mmu_req_write">
+      <obj_property name="ElementShortName">l1_mmu_req_write</obj_property>
+      <obj_property name="ObjectShortName">l1_mmu_req_write</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_mmu/mmu/l1_mmu_req_addr">
+      <obj_property name="ElementShortName">l1_mmu_req_addr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">l1_mmu_req_addr[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_mmu/mmu/l1_mmu_write_data">
+      <obj_property name="ElementShortName">l1_mmu_write_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">l1_mmu_write_data[255:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/mmu/mmu_l1_read_done">
+      <obj_property name="ElementShortName">mmu_l1_read_done</obj_property>
+      <obj_property name="ObjectShortName">mmu_l1_read_done</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/mmu/mmu_l1_write_done">
+      <obj_property name="ElementShortName">mmu_l1_write_done</obj_property>
+      <obj_property name="ObjectShortName">mmu_l1_write_done</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_mmu/mmu/_dout">
+      <obj_property name="ElementShortName">_dout[127:0]</obj_property>
+      <obj_property name="ObjectShortName">_dout[127:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_mmu/mmu/mmu_l1_read_data">
+      <obj_property name="ElementShortName">mmu_l1_read_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">mmu_l1_read_data[255:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/mmu/acc_hi">
+      <obj_property name="ElementShortName">acc_hi</obj_property>
+      <obj_property name="ObjectShortName">acc_hi</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_mmu/mmu/status">
+      <obj_property name="ElementShortName">status</obj_property>
+      <obj_property name="ObjectShortName">status</obj_property>
+   </wvobject>
+</wave_config>

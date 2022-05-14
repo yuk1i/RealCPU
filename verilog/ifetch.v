@@ -10,6 +10,7 @@ module ifetch(
 
     // From mem: stall if read mem
     input stall,
+    output reg global_stall,
 
     output [31:0] ins_out,
     output reg [31:0] pc_out,
@@ -31,9 +32,11 @@ module ifetch(
         if (!rst_n) begin
             pc_out <= 0;
             next_pc_out <= 0;
+            global_stall <= 0;
         end else begin
             pc_out <= pc;
             next_pc_out <= next_pc;
+            global_stall <= stall;
         end
     end
 

@@ -122,14 +122,14 @@ module execute(
     // Multiplier
     wire is_mul = R_op && func[5:1] == 5'b01100;
     wire mul_unsign = func[0];
-    wire mul_done;
+    wire mul_done = 1;
 
     // module here
 
     wire [63:0] mul_out;
-    wire mul_low = shamt == 5'b00010;
+    wire mul_low = ins_shamt == 5'b00010;
     wire [31:0] mul_mux = mul_low ? mul_out[31:0] : mul_out[63:32];
-    wire stall = is_mul && !mul_done;
+    assign stall = is_mul && !mul_done;
 
     // Mux Output
     always @* begin
@@ -163,7 +163,7 @@ module execute(
                 j_addr = reg1;
             else
                 j_addr = _jump_addr_ext;
-        end else if (do_branch) begin
+        end else if (is_branch && do_branch) begin
             do_jump = 1;
             j_addr = _branch_addr_ext;
         end else begin

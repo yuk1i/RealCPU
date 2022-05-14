@@ -8,7 +8,7 @@ module l1cache(
     input l1_read,
     input l1_write,
     input [31:0] l1_addr,
-    input [1:0] l1_write_type, // 00: sb, 01: sh, 10: undefined, 11: sb
+    input [1:0] l1_write_type, // 00: sb, 01: sh, 10: undefined, 11: sw
     input [31:0] l1_write_data,
 
     output [31:0] l1_data_o,
@@ -95,9 +95,9 @@ module l1cache(
     reg [31:0] mmio_ret;
 
     // L1 Interfaces
-    assign stall = status != STATUS_IDLE;
+    assign stall = !c_hit && c_work;
     // if requesting mmu, stall the pipeline
-    assign l1_data_o = c_hit ? c_o_data : mmio_ret;
+    assign l1_data_o = c_hit ? c_o_data[addr_w_off*32+:32] : mmio_ret;
     
 
     // MMU Interfaces

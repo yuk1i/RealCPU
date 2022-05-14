@@ -4,6 +4,7 @@ module idecoder(
     input sys_clk,
     input rst_n,
     input [31:0] ins_i,
+    input is_stalling,
 
     // From WB
     input reg_write_i,
@@ -127,7 +128,7 @@ module idecoder(
         end else begin
             register[0] <= 32'b0;
             for (i = 1; i<32; i=i+1) begin
-                if (reg_write_i && i==reg_write_id_i)
+                if (reg_write_i && i==reg_write_id_i && !is_stalling)
                     register[i] <= reg_write_data_i;
                 else
                     register[i] <= register[i];

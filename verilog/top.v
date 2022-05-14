@@ -57,6 +57,7 @@ module top(
     wire [31:0] wb_data = d_mem_to_reg ? m_mem_data : e_result;
     
     wire fecth_stall = e_stall || m_stall;
+    wire global_stall;
 
     // L1 iCache 
     wire immu_read          = 0;
@@ -72,6 +73,7 @@ module top(
         .jump_addr(e_j_addr),
 
         .stall(fecth_stall),
+        .global_stall(global_stall),
 
         .ins_out(f_ins),
         .pc_out(f_pc),
@@ -82,6 +84,7 @@ module top(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
         .ins_i(f_ins),
+        .is_stalling(global_stall),
 
         .reg_write_i(wb_reg_write),
         .reg_write_id_i(wb_reg_write_id),
@@ -127,7 +130,7 @@ module top(
         .alu_src(d_alu_src),
         .alu_bypass(d_alu_bypass),
         .bypass_immd(d_bypass_immd),
-        .allow_exp(0),      // TODO: Exception support
+        .allow_exp(1'b0),      // TODO: Exception support
 
         .opcode(d_opcode),
         .func(d_func),
@@ -149,8 +152,8 @@ module top(
     // D Cache
     wire dmem_read = d_mem_to_reg;
     wire dmem_write = d_mem_write;
-    wire dmmu_addr = e_result;
-    wire [1:0] dmem_write_type = f_ins[1:0];
+    wire [31:0] dmem_addr = e_result;
+    wire [1:0] dmem_write_type = d_opcode[1:0];
     wire [31:0] dmem_write_data = d_reg_read2;
 
     wire dmmu_read;
@@ -167,7 +170,7 @@ module top(
 
         .l1_read(dmem_read),
         .l1_write(dmem_write),
-        .l1_addr(dmmu_addr),
+        .l1_addr(dmem_addr),
         .l1_write_type(dmem_write_type),
         .l1_write_data(dmem_write_data),
 
@@ -186,7 +189,7 @@ module top(
     wire serve_ic           = immu_read;
     wire mmu_read           = serve_ic ? immu_read : dmmu_read;
     wire mmu_write          = serve_ic ? 0         : dmmu_write;
-    wire [31:0] mmu_addr    = serve_ic ? immu_addr : dmmu_write;
+    wire [31:0] mmu_addr    = serve_ic ? immu_addr : dmmu_addr;
     wire [255:0] mmu_write_data = dmmu_write_data;
 
     wire mmu_read_done;
@@ -196,8 +199,8 @@ module top(
     assign immu_read_done   =  serve_ic && mmu_read_done;
     assign dmmu_read_done   = !serve_ic && mmu_read_done;
     assign dmmu_write_done  = mmu_write_done;
-    assign immu_read_data   =  serve_ic && mmu_read_data;
-    assign dmmu_read_data   = !serve_ic && mmu_read_data;
+    assign immu_read_data   = mmu_read_data;
+    assign dmmu_read_data   = mmu_read_data;
 
 
     wire mmio_read;
@@ -222,7 +225,7 @@ module top(
 
         .mmu_mmio_write(mmio_write),
         .mmu_mmio_read(mmio_read),
-        .mmu_mmio_addr(mmu_addr),
+        .mmu_mmio_addr(mmio_addr),
         .mmu_mmio_write_data(mmio_write_data),
 
         .mmu_mmio_done(mmio_done),
@@ -238,8 +241,7 @@ module top(
         .mmio_addr(mmio_addr),
         .mmio_write_data(mmio_write_data),
 
-        .mmio_read_done(mmio_read_done),
-        .mmio_write_done(mmio_write_done),
+        .mmio_done(mmio_done),
         .mmio_read_data(mmio_read_data)
     );
 
