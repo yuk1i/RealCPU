@@ -125,11 +125,21 @@ module execute(
     wire mul_done = 1;
 
     // module here
-
     wire [63:0] mul_out;
     wire mul_low = ins_shamt == 5'b00010;
     wire [31:0] mul_mux = mul_low ? mul_out[31:0] : mul_out[63:32];
     assign stall = is_mul && !mul_done;
+    
+    multiplier mult(
+        .clk(sys_clk),
+        .rst_n(rst_n),
+        .enable(is_mul),
+        .is_unsign(mul_unsign),
+        .a(reg1),
+        .b(reg2),
+        .result(mul_out),
+        .done(mul_done)
+    );
 
     // Mux Output
     always @* begin
