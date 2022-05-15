@@ -8,6 +8,7 @@ module l1icache(
     input l1_read,
     input [31:0] l1_addr,
     output [31:0] l1_data_o,
+    output hit,
     output stall,
 
     // MMU Interface
@@ -35,8 +36,8 @@ module l1icache(
     wire         c_hit        = c_o_valid && c_o_tag == addr_tag;
     wire [31:0]  c_o_data;
 
-    reg [18:0]   cache_wd;
-    wire         cache_w = c_work && !c_hit && mmu_l1_done;
+    wire [18:0]  cache_wd = {1'b0, 1'b1, addr_tag};
+    wire         cache_w = c_work && !c_hit && mmu_l1_done && !addr_is_mmio;
 
     l1c_dismem dismem(
         .clk(~sys_clk),
@@ -63,23 +64,34 @@ module l1icache(
         .is_mmio(addr_is_mmio)
     );
 
-    localparam  STATUS_IDLE                 = 2'b00,
-                STATUS_WAITING              = 2'b01;
+    localparam  STATUS_IDLE                 = 1'b0,
+                STATUS_WAITING              = 1'b1;
 
-    reg [1:0] status;
+    reg status;
 
-    always @(posedge sys_clk, negedge rst_n) begin
-        if (addr_is_mmio || !c_work || !rst_n) begin
-            cache_wd = 19'b0;
+    reg _mmio_done;
+    reg [31:0] _mmio_data;
+    always @(negedge sys_clk, negedge rst_n, negedge addr_is_mmio, negedge c_work) begin
+        if (!rst_n || !addr_is_mmio || !c_work) begin
+            _mmio_done <= 0;
+            _mmio_data <= 0;
         end else begin
-            cache_wd = {1'b0, 1'b1, addr_tag};
+            if (mmu_l1_done) begin
+                _mmio_done <= 1;
+                _mmio_data <= mmu_l1_read_data[31:0];
+            end else begin
+                _mmio_done <= _mmio_done;
+                _mmio_data <= _mmio_data;
+            end
         end
     end
+    // _mmio_done signal should aligned to negedge of sys_clk, to make stall signal alignment
 
     // L1 Interfaces
-    assign stall = (!c_hit || (addr_is_mmio && !mmu_l1_done)) && c_work ;
+    assign stall = c_work && ((!addr_is_mmio && !c_hit) || (addr_is_mmio && !_mmio_done));
     // if requesting mmu, stall the pipeline
-    assign l1_data_o = !addr_is_mmio ? c_o_data : mmu_l1_read_data[31:0];
+    assign l1_data_o = !addr_is_mmio ? c_o_data : _mmio_data;
+    assign hit = c_hit;
     
     // MMU Interfaces
     wire mmu_req_read      = (!c_hit || addr_is_mmio) && l1_read;

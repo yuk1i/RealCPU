@@ -1,6 +1,8 @@
 set_property -dict {PACKAGE_PIN Y18 IOSTANDARD LVCMOS33} [get_ports sys_clk]
 #set_property -dict {PACKAGE_PIN P4 IOSTANDARD LVCMOS33} [get_ports sw_clk]
 set_property -dict {PACKAGE_PIN P20 IOSTANDARD LVCMOS33} [get_ports rst_n]
+set_property -dict {PACKAGE_PIN C19 IOSTANDARD LVCMOS33} [get_ports {test}]
+
 
 #set_property -dict {PACKAGE_PIN Y9 IOSTANDARD LVCMOS33} [get_ports sw_pc_ins]
 #set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets sw_clk_IBUF]

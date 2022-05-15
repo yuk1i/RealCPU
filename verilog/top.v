@@ -2,7 +2,8 @@
 
 module top(
     input sys_clk,
-    input rst_n
+    input rst_n,
+    output test
     
     // input sw_clk,
     // input sw_pc_ins,
@@ -10,6 +11,7 @@ module top(
     // wire [7:0] seg7_led,
     // wire [7:0] seg7_select
 );
+    assign test = f_ins[0];
 
     wire [31:0] f_ins;
     wire [31:0] f_pc;
@@ -183,7 +185,7 @@ module top(
     wire dmmu_done;
     wire [255:0] dmmu_read_data;
 
-    l1cache dcache(
+    l1dcache dcache(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
 
@@ -201,8 +203,7 @@ module top(
         .l1_mmu_req_addr(dmmu_addr),
         .l1_mmu_write_data(dmmu_write_data),
         
-        .mmu_l1_read_done(dmmu_done),
-        // .mmu_l1_write_done(dmmu_write_done),
+        .mmu_l1_done(dmmu_done),
         .mmu_l1_read_data(dmmu_read_data)
     );
     wire serve_ic           = immu_read;

@@ -10,7 +10,7 @@ module ifetch(
 
     // From mem and execute: stall if read mem
     input stall,
-    output reg global_stall,
+    output global_stall,
 
     output [31:0] ins_out,
     output reg [31:0] pc_out,
@@ -28,6 +28,7 @@ module ifetch(
     reg working;
     wire [31:0] il1_ins_out;
     wire il1_stall;
+    wire il1_hit;
 
     l1icache il1(
         .sys_clk(sys_clk),
@@ -36,8 +37,9 @@ module ifetch(
         .l1_read(working),
         .l1_addr(pc),
 
-        .l1_data_o(ins_out),
+        .l1_data_o(il1_ins_out),
         .stall(il1_stall),
+        .hit(il1_hit),
 
         .l1_mmu_req_read(immu_read),
         .l1_mmu_req_addr(immu_addr),
@@ -45,21 +47,25 @@ module ifetch(
         .mmu_l1_done(immu_done),
         .mmu_l1_read_data(immu_read_data)
     );
-    
-    wire fecth_stall = stall || il1_stall;
+    reg il1_algn;
+    always @(posedge sys_clk) il1_algn <= il1_stall;
+    assign ins_out = il1_algn ? 32'b0 : il1_ins_out;
+
+    reg out_stall_algn;
+    always @(posedge sys_clk) out_stall_algn <= stall;
+
+    assign global_stall = out_stall_algn || il1_algn || stall;
     
     always @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin
             // ins_out <= 0;
             pc_out <= 0;
             next_pc_out <= 0;
-            global_stall <= 0;
             working <= 0;
         end else begin
             // ins_out <= fecth_stall ? ins_out : il1_ins_out;
             pc_out <= pc;
             next_pc_out <= next_pc;
-            global_stall <= fecth_stall;
             working <= 1;
         end
     end
@@ -79,7 +85,7 @@ module ifetch(
             if (pc == 31'h00008000) begin
                 pc <= pc;
             end else begin
-                if (fecth_stall) 
+                if (il1_stall || stall) 
                     pc <= pc;
                 else if (do_jump) 
                     pc <= jump_addr;

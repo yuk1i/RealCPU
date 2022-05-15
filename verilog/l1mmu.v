@@ -86,6 +86,8 @@ module l1mmu(
                     end else if (status == STATUS_ACC_HI) begin
                         // and second stage r/w done
                         status <= STATUS_DONE;
+                    end else if (status == STATUS_DONE) begin
+                        status <= STATUS_IDLE;
                     end else begin
                         status <= status;
                     end
