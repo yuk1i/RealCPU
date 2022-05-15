@@ -23,3 +23,13 @@ main:
    lhu $t0, w03
    la $a0, w03
    lb $t0, 1($a0)
+
+   j from
+
+   .org 0x1100;
+from:
+   b test     # 0b0_010000100000000
+
+   .org 0x9100;
+test:
+   j main      # 0b1_01000_01000_00000
