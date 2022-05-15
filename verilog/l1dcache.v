@@ -89,6 +89,10 @@ module l1dcache(
     wire        c_flush_dirty   = c_o_dirty && c_o_valid && c_o_tag != addr_tag;
     // need to write back cache line first, then read out new cache line
 
+    reg c_flush_dirty_delayed;
+    always @(posedge sys_clk) c_flush_dirty_delayed <= c_flush_dirty;
+    wire c_flush_dirty_set_mmu_write = c_flush_dirty_delayed && c_flush_dirty;
+
     // Whether this address is MMIO address
     mmio_addr mmio_addr_1(
         .addr(l1_addr),
@@ -131,7 +135,7 @@ module l1dcache(
     
     // MMU Interfaces
     assign l1_mmu_req_read      = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty || (addr_is_mmio && l1_read);
-    assign l1_mmu_req_write     = !addr_is_mmio && c_work && !c_hit &&  c_flush_dirty || (addr_is_mmio && l1_write);
+    assign l1_mmu_req_write     = !addr_is_mmio && c_work && !c_hit &&  c_flush_dirty_set_mmu_write || (addr_is_mmio && l1_write);
     assign l1_mmu_req_addr      = (!addr_is_mmio && c_flush_dirty) ? {c_o_tag, addr_idx, 5'b00000} : l1_addr;
     assign l1_mmu_write_data    = addr_is_mmio ? {224'b0, l1_write_data}: bram_cl_out;
 
