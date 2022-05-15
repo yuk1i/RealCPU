@@ -64,11 +64,6 @@ module l1icache(
         .is_mmio(addr_is_mmio)
     );
 
-    localparam  STATUS_IDLE                 = 1'b0,
-                STATUS_WAITING              = 1'b1;
-
-    reg status;
-
     reg _mmio_done;
     reg [31:0] _mmio_data;
     always @(negedge sys_clk, negedge rst_n, negedge addr_is_mmio, negedge c_work) begin
@@ -100,36 +95,5 @@ module l1icache(
     // assign l1_mmu_write_data    = addr_is_mmio ? {224'b0, l1_write_data}: c_o_data;
     always @(posedge sys_clk)
         l1_mmu_req_read <= mmu_req_read;
-
-    integer i;
-    always @(posedge sys_clk, negedge rst_n) begin
-        if (!rst_n || addr_is_mmio) begin
-            status <= STATUS_IDLE;
-        end else begin
-            if (status == STATUS_IDLE) begin
-                // IDLE
-                if (c_work && !c_hit) begin
-                    status <= STATUS_WAITING;
-                end else begin
-                    // IDLE, not working
-                    status <= status;
-                    // cache_wd <= cache_wd;
-                    // cache_w <= 0;
-                end
-            end else if (status == STATUS_WAITING) begin
-                // read from mmu
-                if (mmu_l1_done) begin
-                    status <= STATUS_IDLE;
-                    // cache it
-                    // cache_wd <= {1'b0, 1'b1, addr_tag};
-                    // cache_w <= 1;
-                end else begin
-                    status <= status;
-                    // cache_wd <= c_o;
-                    // cache_w <= 0;
-                end
-            end 
-        end
-    end
 
 endmodule
