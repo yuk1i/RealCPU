@@ -61,7 +61,7 @@ module multiplier(
     assign result = is_unsign ? re_unsign : re_sign;
 
     
-    always @* begin
+    always @(posedge clk) begin
         if (!rst_n) start = 0;
         else if (!start && enable == 1 && !done)
             start = 1;
