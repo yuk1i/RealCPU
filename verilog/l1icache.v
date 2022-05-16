@@ -12,7 +12,7 @@ module l1icache(
     output stall,
 
     // MMU Interface
-    output reg l1_mmu_req_read,
+    output l1_mmu_req_read,
     output [31:0] l1_mmu_req_addr,      // the lower 5bit is ignored if cached
     
     input mmu_l1_done,
@@ -63,37 +63,32 @@ module l1icache(
         .addr(l1_addr),
         .is_mmio(addr_is_mmio)
     );
-
     reg _mmio_done;
-    reg [31:0] _mmio_data;
-    always @(negedge sys_clk, negedge rst_n, negedge addr_is_mmio, negedge c_work) begin
-        if (!rst_n || !addr_is_mmio || !c_work) begin
-            _mmio_done <= 0;
-            _mmio_data <= 0;
-        end else begin
-            if (mmu_l1_done) begin
-                _mmio_done <= 1;
-                _mmio_data <= mmu_l1_read_data[31:0];
-            end else begin
-                _mmio_done <= _mmio_done;
-                _mmio_data <= _mmio_data;
-            end
-        end
+    reg [31:0] _mmio_ins_buf;
+    always @(posedge sys_clk) begin
+        _mmio_ins_buf <= mmu_l1_read_data[31:0];
+        _mmio_done <= mmu_l1_done && addr_is_mmio;
     end
-    // _mmio_done signal should aligned to negedge of sys_clk, to make stall signal alignment
+    reg _mmio_done_neg;
+    always @(negedge sys_clk) _mmio_done_neg <= mmu_l1_done && addr_is_mmio;
+    wire _mmio_available = _mmio_done_neg || _mmio_done;
 
     // L1 Interfaces
-    assign stall = c_work && ((!addr_is_mmio && !c_hit) || (addr_is_mmio && !_mmio_done));
+    // stall here should be sync to negedge
+    assign stall = c_work && ((!addr_is_mmio && !c_hit) || (addr_is_mmio && !_mmio_available));
     // if requesting mmu, stall the pipeline
-    assign l1_data_o = !addr_is_mmio ? c_o_data : _mmio_data;
+    assign l1_data_o = _mmio_done ? _mmio_ins_buf : c_o_data;
     assign hit = c_hit;
     
     // MMU Interfaces
-    wire mmu_req_read      = (!c_hit || addr_is_mmio) && l1_read;
+    wire mmu_req_read_cache     = !c_hit && l1_read;
     // assign l1_mmu_req_write     = c_work && !c_hit &&  c_need_flush_dirty || (addr_is_mmio && l1_write);
     assign l1_mmu_req_addr      = l1_addr;
     // assign l1_mmu_write_data    = addr_is_mmio ? {224'b0, l1_write_data}: c_o_data;
-    always @(posedge sys_clk)
-        l1_mmu_req_read <= mmu_req_read;
 
+    reg mmu_rcache_pos_sync;
+    always @(posedge sys_clk) mmu_rcache_pos_sync <= mmu_req_read_cache;
+    // mmu_req_read_cache is changed at negedge, so sync it to posedge
+
+    assign l1_mmu_req_read = mmu_rcache_pos_sync && !addr_is_mmio || (addr_is_mmio && l1_read && !_mmio_done);
 endmodule

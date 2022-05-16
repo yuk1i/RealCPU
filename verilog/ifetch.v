@@ -8,7 +8,7 @@ module ifetch(
     input do_jump,
     input [31:0] jump_addr,
 
-    // From mem and execute: stall if read mem
+    // From mem and execute: stall if read mem, stall should go down at negedge
     input stall,
     output global_stall,
 
@@ -54,7 +54,7 @@ module ifetch(
     reg out_stall_algn;
     always @(posedge sys_clk) out_stall_algn <= stall;
 
-    assign global_stall = out_stall_algn || il1_algn || stall;
+    assign global_stall = il1_algn || stall;
     
     always @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin
@@ -80,7 +80,7 @@ module ifetch(
 
     always @(negedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin
-            pc <= 32'h00001000;
+            pc <= 32'hFFFFE000;
         end else begin
             if (pc == 31'h00008000) begin
                 pc <= pc;

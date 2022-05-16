@@ -3,7 +3,7 @@ AS=mipsel-linux-gnu-as
 LD=mipsel-linux-gnu-ld
 OBJCOPY=mipsel-linux-gnu-objcopy
 OBJDUMP=mipsel-linux-gnu-objdump
-
+STRIP=mipsel-linux-gnu-strip
 # Configures for bin file
 
 TEXT_START_AT=0x0100
@@ -20,6 +20,16 @@ OBJS=$(SRCS:%=$(BUILDDIR)/%.o)
 
 .DEFAULT_GOAL := cputest
 
+rom:
+	@LD_FLAGS=
+	@$(AS) $(AS_FLAGS) rom.s -o tmp/rom.o
+	@$(LD) --Ttext 0xFFFFE000 -Tdata 0xFFFFFA00 --no-compact-branches -nostdlib --entry __rom_start tmp/rom.o -o tmp/rom.out
+	@mipsel-linux-gnu-strip -R .reginfo $(BUILDDIR)/rom.out
+	@mipsel-linux-gnu-strip -R .MIPS.abiflags $(BUILDDIR)/rom.out
+	@mipsel-linux-gnu-strip -R .gnu.attributes $(BUILDDIR)/rom.out
+	@$(OBJCOPY) -O binary tmp/rom.out tmp/rom.bin
+	@python3 convert.py tmp/rom.bin rom.coe
+
 %:
 	make SRCS=$@ dump --no-print-directory
 	@echo "\n[*] Compile and dump successfully\n"
@@ -35,9 +45,9 @@ $(BUILDDIR)/%.o : %.s
 link: $(OBJS)
 	@echo "[LD] link"
 	$(LD) $(LD_FLAGS) --verbose $(OBJS) -o $(BUILDDIR)/a.out
-	mipsel-linux-gnu-strip -R .reginfo $(BUILDDIR)/a.out
-	mipsel-linux-gnu-strip -R .MIPS.abiflags $(BUILDDIR)/a.out
-	mipsel-linux-gnu-strip -R .gnu.attributes $(BUILDDIR)/a.out
+	@mipsel-linux-gnu-strip -R .reginfo $(BUILDDIR)/a.out
+	@mipsel-linux-gnu-strip -R .MIPS.abiflags $(BUILDDIR)/a.out
+	@mipsel-linux-gnu-strip -R .gnu.attributes $(BUILDDIR)/a.out
 
 dump: link
 	@echo "[*]  dump coe"
@@ -60,4 +70,4 @@ readelf:
 
 clean:
 	@echo "[*] clean done"
-	@rm -f a.out *.o tmp/*.bin *.coe tmp/*.o tmp/a.out
+	@rm -f a.out *.o tmp/*.bin *.coe tmp/*.o tmp/*.out
