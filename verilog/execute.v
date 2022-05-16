@@ -122,7 +122,7 @@ module execute(
     // Multiplier
     wire is_mul = R_op && func[5:1] == 5'b01100;
     wire mul_unsign = func[0];
-    wire mul_done = 1;
+    wire mul_done;
 
     // module here
     wire [63:0] mul_out;

@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="682.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="933.501 ns"></ZoomEndTime>
-      <Cursor1Time time="755.100 ns"></Cursor1Time>
+      <ZoomStartTime time="72.662 ns"></ZoomStartTime>
+      <ZoomEndTime time="324.963 ns"></ZoomEndTime>
+      <Cursor1Time time="131.062 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="253"></NameColumnWidth>
-      <ValueColumnWidth column_width="99"></ValueColumnWidth>
+      <ValueColumnWidth column_width="91"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="47" />
+   <WVObjectSize size="17" />
    <wvobject type="logic" fp_name="/sim_top/sys_clk">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -89,130 +89,153 @@
          <obj_property name="ElementShortName">stall</obj_property>
          <obj_property name="ObjectShortName">stall</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/status">
-         <obj_property name="ElementShortName">status</obj_property>
-         <obj_property name="ObjectShortName">status</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group2513">
+      <obj_property name="label">Decoder</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/sim_top/ttop/d_opcode">
+         <obj_property name="ElementShortName">d_opcode[5:0]</obj_property>
+         <obj_property name="ObjectShortName">d_opcode[5:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/d_func">
+         <obj_property name="ElementShortName">d_func[5:0]</obj_property>
+         <obj_property name="ObjectShortName">d_func[5:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/d_ext_immd">
+         <obj_property name="ElementShortName">d_ext_immd[31:0]</obj_property>
+         <obj_property name="ObjectShortName">d_ext_immd[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/decoder/I_op">
+         <obj_property name="ElementShortName">I_op</obj_property>
+         <obj_property name="ObjectShortName">I_op</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/decoder/R_op">
+         <obj_property name="ElementShortName">R_op</obj_property>
+         <obj_property name="ObjectShortName">R_op</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/decoder/J_op">
+         <obj_property name="ElementShortName">J_op</obj_property>
+         <obj_property name="ObjectShortName">J_op</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/d_is_jump">
+         <obj_property name="ElementShortName">d_is_jump</obj_property>
+         <obj_property name="ObjectShortName">d_is_jump</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/d_is_jal">
+         <obj_property name="ElementShortName">d_is_jal</obj_property>
+         <obj_property name="ObjectShortName">d_is_jal</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/d_is_jr">
+         <obj_property name="ElementShortName">d_is_jr</obj_property>
+         <obj_property name="ObjectShortName">d_is_jr</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/d_is_branch">
+         <obj_property name="ElementShortName">d_is_branch</obj_property>
+         <obj_property name="ObjectShortName">d_is_branch</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/d_is_load_store">
+         <obj_property name="ElementShortName">d_is_load_store</obj_property>
+         <obj_property name="ObjectShortName">d_is_load_store</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/d_rs_id">
+         <obj_property name="ElementShortName">d_rs_id[4:0]</obj_property>
+         <obj_property name="ObjectShortName">d_rs_id[4:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/d_rt_id">
+         <obj_property name="ElementShortName">d_rt_id[4:0]</obj_property>
+         <obj_property name="ObjectShortName">d_rt_id[4:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/d_rd_id">
+         <obj_property name="ElementShortName">d_rd_id[4:0]</obj_property>
+         <obj_property name="ObjectShortName">d_rd_id[4:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/d_reg_read1">
+         <obj_property name="ElementShortName">d_reg_read1[31:0]</obj_property>
+         <obj_property name="ObjectShortName">d_reg_read1[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#F0E68C</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/d_reg_read2">
+         <obj_property name="ElementShortName">d_reg_read2[31:0]</obj_property>
+         <obj_property name="ObjectShortName">d_reg_read2[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#F0E68C</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/decoder/register">
+         <obj_property name="ElementShortName">register[0:31][31:0]</obj_property>
+         <obj_property name="ObjectShortName">register[0:31][31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/decoder/co0_regs">
+         <obj_property name="ElementShortName">co0_regs[0:31][31:0]</obj_property>
+         <obj_property name="ObjectShortName">co0_regs[0:31][31:0]</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/d_opcode">
-      <obj_property name="ElementShortName">d_opcode[5:0]</obj_property>
-      <obj_property name="ObjectShortName">d_opcode[5:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
-      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/d_func">
-      <obj_property name="ElementShortName">d_func[5:0]</obj_property>
-      <obj_property name="ObjectShortName">d_func[5:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
-      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/d_ext_immd">
-      <obj_property name="ElementShortName">d_ext_immd[31:0]</obj_property>
-      <obj_property name="ObjectShortName">d_ext_immd[31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/decoder/I_op">
-      <obj_property name="ElementShortName">I_op</obj_property>
-      <obj_property name="ObjectShortName">I_op</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/decoder/R_op">
-      <obj_property name="ElementShortName">R_op</obj_property>
-      <obj_property name="ObjectShortName">R_op</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/decoder/J_op">
-      <obj_property name="ElementShortName">J_op</obj_property>
-      <obj_property name="ObjectShortName">J_op</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/d_is_jump">
-      <obj_property name="ElementShortName">d_is_jump</obj_property>
-      <obj_property name="ObjectShortName">d_is_jump</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/d_is_jal">
-      <obj_property name="ElementShortName">d_is_jal</obj_property>
-      <obj_property name="ObjectShortName">d_is_jal</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/d_is_jr">
-      <obj_property name="ElementShortName">d_is_jr</obj_property>
-      <obj_property name="ObjectShortName">d_is_jr</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/d_is_branch">
-      <obj_property name="ElementShortName">d_is_branch</obj_property>
-      <obj_property name="ObjectShortName">d_is_branch</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/d_is_load_store">
-      <obj_property name="ElementShortName">d_is_load_store</obj_property>
-      <obj_property name="ObjectShortName">d_is_load_store</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/d_rs_id">
-      <obj_property name="ElementShortName">d_rs_id[4:0]</obj_property>
-      <obj_property name="ObjectShortName">d_rs_id[4:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/d_rt_id">
-      <obj_property name="ElementShortName">d_rt_id[4:0]</obj_property>
-      <obj_property name="ObjectShortName">d_rt_id[4:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/d_rd_id">
-      <obj_property name="ElementShortName">d_rd_id[4:0]</obj_property>
-      <obj_property name="ObjectShortName">d_rd_id[4:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/d_reg_read1">
-      <obj_property name="ElementShortName">d_reg_read1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">d_reg_read1[31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#F0E68C</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/d_reg_read2">
-      <obj_property name="ElementShortName">d_reg_read2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">d_reg_read2[31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#F0E68C</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
+   <wvobject type="group" fp_name="group2514">
+      <obj_property name="label">Execute</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/sim_top/ttop/e_do_jump">
+         <obj_property name="ElementShortName">e_do_jump</obj_property>
+         <obj_property name="ObjectShortName">e_do_jump</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/e_j_addr">
+         <obj_property name="ElementShortName">e_j_addr[31:0]</obj_property>
+         <obj_property name="ObjectShortName">e_j_addr[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="group" fp_name="group2512">
+         <obj_property name="label">Multiplier</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_mul">
+            <obj_property name="ElementShortName">is_mul</obj_property>
+            <obj_property name="ObjectShortName">is_mul</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mul_done">
+            <obj_property name="ElementShortName">mul_done</obj_property>
+            <obj_property name="ObjectShortName">mul_done</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/mul_out">
+            <obj_property name="ElementShortName">mul_out[63:0]</obj_property>
+            <obj_property name="ObjectShortName">mul_out[63:0]</obj_property>
+         </wvobject>
+      </wvobject>
    </wvobject>
    <wvobject type="array" fp_name="/sim_top/ttop/e_result">
       <obj_property name="ElementShortName">e_result[31:0]</obj_property>
       <obj_property name="ObjectShortName">e_result[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/e_do_jump">
-      <obj_property name="ElementShortName">e_do_jump</obj_property>
-      <obj_property name="ObjectShortName">e_do_jump</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/e_j_addr">
-      <obj_property name="ElementShortName">e_j_addr[31:0]</obj_property>
-      <obj_property name="ObjectShortName">e_j_addr[31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/decoder/register">
-      <obj_property name="ElementShortName">register[0:31][31:0]</obj_property>
-      <obj_property name="ObjectShortName">register[0:31][31:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/decoder/co0_regs">
-      <obj_property name="ElementShortName">co0_regs[0:31][31:0]</obj_property>
-      <obj_property name="ObjectShortName">co0_regs[0:31][31:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_top/ttop/wb_reg_write_id">
       <obj_property name="ElementShortName">wb_reg_write_id[4:0]</obj_property>
@@ -242,7 +265,6 @@
    <wvobject type="group" fp_name="group4096">
       <obj_property name="label">L1D Cache</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/sim_top/ttop/dcache/l1_addr">
          <obj_property name="ElementShortName">l1_addr[31:0]</obj_property>
          <obj_property name="ObjectShortName">l1_addr[31:0]</obj_property>
@@ -372,58 +394,9 @@
          <obj_property name="ObjectShortName">dmmu_write_data[255:0]</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/mmu_read">
-      <obj_property name="ElementShortName">mmu_read</obj_property>
-      <obj_property name="ObjectShortName">mmu_read</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/mmu_write">
-      <obj_property name="ElementShortName">mmu_write</obj_property>
-      <obj_property name="ObjectShortName">mmu_write</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/mmu_addr">
-      <obj_property name="ElementShortName">mmu_addr[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mmu_addr[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/l1mmu1/acc_hi">
-      <obj_property name="ElementShortName">acc_hi</obj_property>
-      <obj_property name="ObjectShortName">acc_hi</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/l1mmu1/_dout">
-      <obj_property name="ElementShortName">_dout[127:0]</obj_property>
-      <obj_property name="ObjectShortName">_dout[127:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/l1mmu1/stage">
-      <obj_property name="ElementShortName">stage[127:0]</obj_property>
-      <obj_property name="ObjectShortName">stage[127:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/mmu_read_data">
-      <obj_property name="ElementShortName">mmu_read_data[255:0]</obj_property>
-      <obj_property name="ObjectShortName">mmu_read_data[255:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/mmu_write_data">
-      <obj_property name="ElementShortName">mmu_write_data[255:0]</obj_property>
-      <obj_property name="ObjectShortName">mmu_write_data[255:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/l1mmu1/mmu_l1_done">
-      <obj_property name="ElementShortName">mmu_l1_done</obj_property>
-      <obj_property name="ObjectShortName">mmu_l1_done</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/sim_top/ttop/l1mmu1/status">
-      <obj_property name="ElementShortName">status[1:0]</obj_property>
-      <obj_property name="ObjectShortName">status[1:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/sys_clk">
-      <obj_property name="ElementShortName">sys_clk</obj_property>
-      <obj_property name="ObjectShortName">sys_clk</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/ttop/l1mmu1/mig_write">
-      <obj_property name="ElementShortName">mig_write</obj_property>
-      <obj_property name="ObjectShortName">mig_write</obj_property>
-   </wvobject>
    <wvobject type="group" fp_name="group2049">
-      <obj_property name="label">L1 MMU</obj_property>
+      <obj_property name="label">MMU</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/l1mmu1/sys_clk">
          <obj_property name="ElementShortName">sys_clk</obj_property>
          <obj_property name="ObjectShortName">sys_clk</obj_property>
