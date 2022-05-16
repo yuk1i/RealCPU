@@ -11,13 +11,15 @@ SECTIONS
   . = __TEXT_START_AT;
   
   .text . : {
-    . = ALIGN(4);
+    *(.start)
     *(.text) 
   }
   
   . = __DATA_START_AT;
-  
-  .data . : { *(.data) } 
-  .bss  . : { *(.bss) } 
+  .data . : {
+    *(.data)
+    *(.bss)
+    LONG(0x00000000);
+  }
 }
 start = __TEXT_START_AT;

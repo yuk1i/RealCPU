@@ -9,7 +9,7 @@ STRIP=mipsel-linux-gnu-strip
 TEXT_START_AT=0x0100
 DATA_START_AT=0x1000
 
-CC_FLAGS=-mips32r6 -Werror -O0 -fno-pic -mcompact-branches=never -mno-llsc -mno-float
+CC_FLAGS=-mips32r6 -Werror -O0 -fno-pic -mcompact-branches=never -mno-llsc -msoft-float -mno-abicalls
 AS_FLAGS=--alternate -mgp32 -g -call_nonpic -non_shared -mno-ginv -mips32r6 -msoft-float --fatal-warnings -O0
 LD_FLAGS=--script linker.ld --no-compact-branches -nostdlib
 
@@ -19,6 +19,10 @@ OBJS=$(SRCS:%=$(BUILDDIR)/%.o)
 
 
 .DEFAULT_GOAL := cputest
+
+system: SRCS="system start"
+system:
+	make SRCS=$(SRCS) dump
 
 rom:
 	@LD_FLAGS=

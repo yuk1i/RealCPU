@@ -1,7 +1,7 @@
 .globl __rom_start
+.globl cmain
 .text
 __rom_start:
-    li $a0, 1000
     li $sp, 0x18000
     .set noat
     li $at, 0x00001000
@@ -14,3 +14,8 @@ __rom_start:
     # end:  0xFFFF 0b1111111111111111
     # size: 0x2000      11111111111
     # 8K size
+
+
+    # text: 0x1000
+    # data: 0xf000
+    # sp  : 0x17000

@@ -12,7 +12,8 @@ module top(
     // wire [7:0] seg7_select
     
     // IO Devices
-    input [23:0] switches_pin
+    input [23:0] switches_pin,
+    output [23:0] leds_pin
 );
     assign test = f_ins[0];
 
@@ -273,7 +274,8 @@ module top(
         .mmio_done(mmio_done),
         .mmio_read_data(mmio_read_data),
 
-        .switches_pin(switches_pin)
+        .switches_pin(switches_pin),
+        .leds_pin(leds_pin)
     );
 
     // wire [31:0] dis;

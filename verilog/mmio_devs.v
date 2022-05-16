@@ -13,7 +13,9 @@ module mmio_devs(
 
     // **** IO Pins ***** //
     // 1. Switches
-    input [23:0] switches_pin
+    input [23:0] switches_pin,
+    // 2. LEDs
+    output [23:0] leds_pin
 
 );
     wire addr_is_mmio;
@@ -59,6 +61,24 @@ module mmio_devs(
         .mmio_read_data(rom_rdata)
     );
 
+    wire        led_work;
+    wire        led_done;
+    wire [31:0] led_rdata;
+    mmio_leds mmio_led(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+        
+        .mmio_read(mmio_read),
+        .mmio_write(mmio_write),
+        .mmio_addr(mmio_addr),
+        .mmio_write_data(mmio_write_data),
+
+        .mmio_work(led_work),
+        .mmio_done(led_done),
+        .mmio_read_data(led_rdata),
+
+        .leds_pin(leds_pin)
+    );
 
     always @* begin
         if (addr_is_mmio) begin
@@ -68,6 +88,9 @@ module mmio_devs(
             end else if (rom_work) begin
                 mmio_done = rom_done;
                 mmio_read_data = rom_rdata;
+            end else if (led_work) begin
+                mmio_done = led_done;
+                mmio_read_data = led_rdata;
             end else begin
                 mmio_done = 0;
                 mmio_read_data = 0;
