@@ -11,20 +11,32 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="55.200 ns"></ZoomStartTime>
-      <ZoomEndTime time="316.801 ns"></ZoomEndTime>
-      <Cursor1Time time="130.000 ns"></Cursor1Time>
+      <ZoomStartTime time="218.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="5,464.001 ns"></ZoomEndTime>
+      <Cursor1Time time="3,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="238"></NameColumnWidth>
+      <NameColumnWidth column_width="230"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="22" />
-   <wvobject type="logic" fp_name="/sim_top/sys_clk">
+   <WVObjectSize size="25" />
+   <wvobject type="logic" fp_name="/sim_top/ttop/bank_sys_clk">
+      <obj_property name="ElementShortName">bank_sys_clk</obj_property>
+      <obj_property name="ObjectShortName">bank_sys_clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/bank_rst">
+      <obj_property name="ElementShortName">bank_rst</obj_property>
+      <obj_property name="ObjectShortName">bank_rst</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/sys_clk">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/sim_top/rst_n">
+   <wvobject type="logic" fp_name="/sim_top/ttop/sys_clk_lock">
+      <obj_property name="ElementShortName">sys_clk_lock</obj_property>
+      <obj_property name="ObjectShortName">sys_clk_lock</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/rst_n">
       <obj_property name="ElementShortName">rst_n</obj_property>
       <obj_property name="ObjectShortName">rst_n</obj_property>
    </wvobject>

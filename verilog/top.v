@@ -1,9 +1,8 @@
 `timescale 1ns / 1ps
 
 module top(
-    input sys_clk,
-    input rst_n,
-    output test,
+    input bank_sys_clk,
+    input bank_rst,
     
     // input sw_clk,
     // input sw_pc_ins,
@@ -15,7 +14,19 @@ module top(
     input [23:0] switches_pin,
     output [23:0] leds_pin
 );
-    assign test = f_ins[0];
+
+    wire rst_n = !bank_rst && sys_clk_lock;
+
+    wire sys_clk;
+    wire sys_clk_lock;
+
+    clk_wiz clk_gen(
+        .clk_in1(bank_sys_clk),
+        .resetn(!bank_rst),
+        .cpu_clk(sys_clk),
+        .locked(sys_clk_lock)
+    );
+
 
     wire [31:0] f_ins;
     wire [31:0] f_pc;

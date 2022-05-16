@@ -1,7 +1,6 @@
-set_property -dict {PACKAGE_PIN Y18 IOSTANDARD LVCMOS33} [get_ports sys_clk]
+set_property -dict {PACKAGE_PIN Y18 IOSTANDARD LVCMOS33} [get_ports bank_sys_clk]
 #set_property -dict {PACKAGE_PIN P4 IOSTANDARD LVCMOS33} [get_ports sw_clk]
-set_property -dict {PACKAGE_PIN P20 IOSTANDARD LVCMOS33} [get_ports rst_n]
-set_property -dict {PACKAGE_PIN C19 IOSTANDARD LVCMOS33} [get_ports {test}]
+set_property -dict {PACKAGE_PIN P20 IOSTANDARD LVCMOS33} [get_ports bank_rst]
 
 
 #set_property -dict {PACKAGE_PIN Y9 IOSTANDARD LVCMOS33} [get_ports sw_pc_ins]
@@ -48,7 +47,7 @@ set_property -dict {PACKAGE_PIN AB8 IOSTANDARD LVCMOS33} [get_ports {switches_pi
 set_property -dict {PACKAGE_PIN Y8 IOSTANDARD LVCMOS33} [get_ports {switches_pin[20]}]
 set_property -dict {PACKAGE_PIN Y7 IOSTANDARD LVCMOS33} [get_ports {switches_pin[21]}]
 set_property -dict {PACKAGE_PIN W9 IOSTANDARD LVCMOS33} [get_ports {switches_pin[22]}]
-set_property -dict {PACKAGE_PIN Y7 IOSTANDARD LVCMOS33} [get_ports {switches_pin[23]}]
+set_property -dict {PACKAGE_PIN Y9 IOSTANDARD LVCMOS33} [get_ports {switches_pin[23]}]
 
 
 set_property -dict {PACKAGE_PIN N19 IOSTANDARD LVCMOS33} [get_ports {leds_pin[0]}]
