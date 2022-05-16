@@ -51,13 +51,17 @@ main:
 
    lw $t1, ($a0)
 
-   la $s0, d1
-   la $s1, d2
-   lw $t0, ($s0)
-   lw $t0, ($s1)
-   sb $zero, 1($s0)
-   lh $t0, 2($s1)
-   lw $t0, ($s0)
+   la $s0, d1        # cache 1
+   la $s1, d2        # cache 2
+   lw $t0, ($s0)     # load 1
+   lw $t0, ($s1)     # load 2 => read not hit
+   sb $zero, 1($s0)  # store 1 => write not hit
+   lh $t0, 2($s1)    # load 2 => read on dirty
+   lw $t0, ($s0)     # load 1
+   addiu $t0, $t0, 1 
+   sw $t0, ($s0)     # store 1, become dirty
+   sw $s0, 32($s0)  # store 3, change addr line
+   sh $s0, 2($s1)  # store 2, write on dirty     
 
    j from
 

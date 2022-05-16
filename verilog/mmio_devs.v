@@ -8,18 +8,74 @@ module mmio_devs(
     input [31:0] mmio_addr,
     input [31:0] mmio_write_data,
 
-    output mmio_done,
-    output [31:0] mmio_read_data
+    output reg mmio_done,
+    output reg [31:0] mmio_read_data,
+
+    // **** IO Pins ***** //
+    // 1. Switches
+    input [23:0] switches_pin
+
 );
-    wire l1_addr_mmio;
+    wire addr_is_mmio;
     // Whether this address is MMIO address
     mmio_addr mmio_addr_l1addr(
         .addr(mmio_addr),
-        .is_mmio(l1_addr_mmio)
+        .is_mmio(addr_is_mmio)
     );
 
-    assign mmio_done = 1;
-    assign mmio_read_data = 32'h00FFA012;
-    
+    wire        sw_work;
+    wire        sw_done;
+    wire [31:0] sw_rdata;
+    mmio_switch mmio_sw(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+        
+        .mmio_read(mmio_read),
+        .mmio_write(mmio_write),
+        .mmio_addr(mmio_addr),
+        .mmio_write_data(mmio_write_data),
+
+        .mmio_work(sw_work),
+        .mmio_done(sw_done),
+        .mmio_read_data(sw_rdata),
+
+        .switches_pin(switches_pin)
+    );
+
+    wire        rom_work;
+    wire        rom_done;
+    wire [31:0] rom_rdata;
+    mmio_rom mmio_rom1(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+        
+        .mmio_read(mmio_read),
+        .mmio_write(mmio_write),
+        .mmio_addr(mmio_addr),
+        .mmio_write_data(mmio_write_data),
+
+        .mmio_work(rom_work),
+        .mmio_done(rom_done),
+        .mmio_read_data(rom_rdata)
+    );
+
+
+    always @* begin
+        if (addr_is_mmio) begin
+            if (sw_work) begin
+                mmio_done = sw_done;
+                mmio_read_data = sw_rdata;
+            end else if (rom_work) begin
+                mmio_done = rom_done;
+                mmio_read_data = rom_rdata;
+            end else begin
+                mmio_done = 0;
+                mmio_read_data = 0;
+            end
+        end else begin
+            mmio_done = 0;
+            mmio_read_data = 0;
+        end
+    end
 
 endmodule

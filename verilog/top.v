@@ -3,13 +3,16 @@
 module top(
     input sys_clk,
     input rst_n,
-    output test
+    output test,
     
     // input sw_clk,
     // input sw_pc_ins,
 
     // wire [7:0] seg7_led,
     // wire [7:0] seg7_select
+    
+    // IO Devices
+    input [23:0] switches_pin
 );
     assign test = f_ins[0];
 
@@ -260,7 +263,9 @@ module top(
         .mmio_write_data(mmio_write_data),
 
         .mmio_done(mmio_done),
-        .mmio_read_data(mmio_read_data)
+        .mmio_read_data(mmio_read_data),
+
+        .switches_pin(switches_pin)
     );
 
     // wire [31:0] dis;

@@ -99,24 +99,6 @@ module l1dcache(
         .is_mmio(addr_is_mmio)
     );
 
-    reg _mmio_done;
-    reg [31:0] _mmio_data;
-    always @(negedge sys_clk, negedge rst_n, negedge addr_is_mmio) begin
-        if (!rst_n || !addr_is_mmio || !c_work) begin
-            _mmio_done <= 0;
-            _mmio_data <= 0;
-        end else begin
-            if (mmu_l1_done) begin
-                _mmio_done <= 1;
-                _mmio_data <= mmu_l1_read_data[31:0];
-            end else begin
-                _mmio_done <= _mmio_done;
-                _mmio_data <= _mmio_data;
-            end
-        end
-    end
-    // _mmio_done signal should align to negedge of sys_clk, to make stall signal alignment
-
     assign bram_w_a = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty && mmu_l1_done;
     // Retrive new cache line, flush bram at negedge after mmu_done at posedge
     
@@ -129,9 +111,16 @@ module l1dcache(
     parameter   STATUS_IDLE     = 1'b0,
                 STATUS_WAITING  = 1'b1; 
     
+    // wire   read_target_done       = !c_flush_dirty && mmu_l1_done;
+    wire   write_after_mmu_read   = c_work && !addr_is_mmio && l1_write && !c_hit;
+    reg    write_after_mmu_read_alg;
+    always @(posedge sys_clk)  write_after_mmu_read_alg <= write_after_mmu_read;
     // L1 Interfaces
-    assign stall                = c_work && ((!addr_is_mmio && !c_hit) || (addr_is_mmio && !_mmio_done));
-    assign l1_data_o            = addr_is_mmio ? _mmio_data : bram_out;
+    // stall : read not hit          :  down immd after mmu_read_done
+    //       : write not hit         :  (write after mmu) down 1 clk delayed after mmu_read_done
+    //       : read not hit && dirty :  down immd after mmu_read_done
+    assign stall                = c_work && ((!addr_is_mmio && !c_hit && (c_flush_dirty_delayed || !mmu_l1_done) || write_after_mmu_read_alg) || (addr_is_mmio && !mmu_l1_done));
+    assign l1_data_o            = addr_is_mmio ? mmu_l1_read_data[31:0] : bram_out;
     
     // MMU Interfaces
     assign l1_mmu_req_read      = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty || (addr_is_mmio && l1_read);
