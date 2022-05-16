@@ -83,7 +83,7 @@ module l1icache(
     assign hit = c_hit;
     
     // MMU Interfaces
-    wire mmu_req_read_cache     = !c_hit && l1_read;
+    wire mmu_req_read_cache     = !c_hit && l1_read && !addr_is_mmio;
     // assign l1_mmu_req_write     = c_work && !c_hit &&  c_need_flush_dirty || (addr_is_mmio && l1_write);
     assign l1_mmu_req_addr      = l1_addr;
     // assign l1_mmu_write_data    = addr_is_mmio ? {224'b0, l1_write_data}: c_o_data;
