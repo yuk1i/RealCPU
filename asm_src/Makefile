@@ -44,7 +44,7 @@ $(BUILDDIR)/%.o : %.s
 
 link: $(OBJS)
 	@echo "[LD] link"
-	$(LD) $(LD_FLAGS) --verbose $(OBJS) -o $(BUILDDIR)/a.out
+	@$(LD) $(LD_FLAGS) $(OBJS) -o $(BUILDDIR)/a.out
 	@mipsel-linux-gnu-strip -R .reginfo $(BUILDDIR)/a.out
 	@mipsel-linux-gnu-strip -R .MIPS.abiflags $(BUILDDIR)/a.out
 	@mipsel-linux-gnu-strip -R .gnu.attributes $(BUILDDIR)/a.out
