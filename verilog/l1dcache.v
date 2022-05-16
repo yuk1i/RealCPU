@@ -21,7 +21,9 @@ module l1dcache(
     output [255:0] l1_mmu_write_data,
 
     input mmu_l1_done,
-    input [255:0] mmu_l1_read_data
+    input [255:0] mmu_l1_read_data,
+
+    input sync
 );
     wire c_work = l1_read || l1_write;
     

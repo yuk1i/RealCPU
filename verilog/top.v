@@ -32,6 +32,8 @@ module top(
     wire d_is_jr;
     wire d_is_branch;
     wire d_is_load_store;
+    wire d_is_sync_icache;
+    wire d_is_sync_dcache;
 
     wire [4:0] d_rs_id;
     wire [4:0] d_rt_id;
@@ -102,7 +104,9 @@ module top(
         .immu_read(immu_read),
         .immu_addr(immu_addr),
         .immu_done(immu_done),
-        .immu_read_data(immu_read_data)
+        .immu_read_data(immu_read_data),
+
+        .sync(d_is_sync_icache)
     );
 
     idecoder decoder(
@@ -126,6 +130,8 @@ module top(
         .is_jr(d_is_jr),
         .is_branch(d_is_branch),
         .is_load_store(d_is_load_store),
+        .is_sync_icache(d_is_sync_icache),
+        .is_sync_dcache(d_is_sync_dcache),
 
         .rs_id(d_rs_id),
         .rt_id(d_rt_id),
@@ -207,7 +213,9 @@ module top(
         .l1_mmu_write_data(dmmu_write_data),
         
         .mmu_l1_done(dmmu_done),
-        .mmu_l1_read_data(dmmu_read_data)
+        .mmu_l1_read_data(dmmu_read_data),
+
+        .sync(d_is_sync_dcache)
     );
     wire serve_ic           = immu_read;
     wire mmu_read           = serve_ic ? immu_read : dmmu_read;

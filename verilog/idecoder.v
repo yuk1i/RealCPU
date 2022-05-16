@@ -26,6 +26,8 @@ module idecoder(
     output is_jr,
     output is_branch,      // [beq, bneq, beqz, bneqz]
     output is_load_store,
+    output is_sync_icache,
+    output is_sync_dcache,
 
     output [4:0] rs_id,
     output [4:0] rt_id,
@@ -59,6 +61,8 @@ module idecoder(
     assign is_jr = R_op && func[5:1] == 5'b00100;
     assign is_branch = opcode[5:2] == 4'b0001;
     assign is_load_store = mem_to_reg || mem_write;
+    assign is_sync_icache = R_op && func == 6'b001111 && ins_i[6] == 0;
+    assign is_sync_dcache = R_op && func == 6'b001111 && ins_i[6] == 1;
 
     assign rs_id = ins_i[25:21];        // 5 bits
     // override rt when jal only

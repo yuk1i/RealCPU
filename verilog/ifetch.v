@@ -21,7 +21,9 @@ module ifetch(
     output [31:0] immu_addr,
 
     input immu_done,
-    input [255:0] immu_read_data
+    input [255:0] immu_read_data,
+
+    input sync
 );
     reg [31:0] pc;
     reg [31:0] next_pc;
@@ -45,7 +47,9 @@ module ifetch(
         .l1_mmu_req_addr(immu_addr),
 
         .mmu_l1_done(immu_done),
-        .mmu_l1_read_data(immu_read_data)
+        .mmu_l1_read_data(immu_read_data),
+
+        .sync(sync)
     );
     reg il1_algn;
     always @(posedge sys_clk) il1_algn <= il1_stall;
