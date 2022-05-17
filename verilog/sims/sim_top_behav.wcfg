@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="218.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="5,464.001 ns"></ZoomEndTime>
-      <Cursor1Time time="3,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="1,466.340 ns"></ZoomStartTime>
+      <ZoomEndTime time="2,158.341 ns"></ZoomEndTime>
+      <Cursor1Time time="1,815.340 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="230"></NameColumnWidth>
+      <NameColumnWidth column_width="218"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="25" />
@@ -61,7 +61,6 @@
    <wvobject type="group" fp_name="group4095">
       <obj_property name="label">L1 ICache</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/sim_top/ttop/fetch/pc">
          <obj_property name="ElementShortName">pc[31:0]</obj_property>
          <obj_property name="ObjectShortName">pc[31:0]</obj_property>
@@ -189,6 +188,20 @@
       <wvobject type="logic" fp_name="/sim_top/ttop/d_is_load_store">
          <obj_property name="ElementShortName">d_is_load_store</obj_property>
          <obj_property name="ObjectShortName">d_is_load_store</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/decoder/special_link">
+         <obj_property name="ElementShortName">special_link</obj_property>
+         <obj_property name="ObjectShortName">special_link</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/decoder/special_branch">
+         <obj_property name="ElementShortName">special_branch</obj_property>
+         <obj_property name="ObjectShortName">special_branch</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/sim_top/ttop/d_rs_id">
          <obj_property name="ElementShortName">d_rs_id[4:0]</obj_property>
@@ -200,7 +213,7 @@
       <wvobject type="array" fp_name="/sim_top/ttop/d_rt_id">
          <obj_property name="ElementShortName">d_rt_id[4:0]</obj_property>
          <obj_property name="ObjectShortName">d_rt_id[4:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
          <obj_property name="CustomSignalColor">#FFFF00</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
@@ -237,6 +250,10 @@
       <obj_property name="label">Execute</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_regimm_op">
+         <obj_property name="ElementShortName">is_regimm_op</obj_property>
+         <obj_property name="ObjectShortName">is_regimm_op</obj_property>
+      </wvobject>
       <wvobject type="logic" fp_name="/sim_top/ttop/e_do_jump">
          <obj_property name="ElementShortName">e_do_jump</obj_property>
          <obj_property name="ObjectShortName">e_do_jump</obj_property>

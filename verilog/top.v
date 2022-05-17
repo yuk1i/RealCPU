@@ -43,6 +43,7 @@ module top(
     wire d_is_jal;
     wire d_is_jr;
     wire d_is_branch;
+    wire d_is_regimm_op;
     wire d_is_load_store;
     wire d_is_sync_icache;
     wire d_is_sync_dcache;
@@ -141,6 +142,7 @@ module top(
         .is_jal(d_is_jal),
         .is_jr(d_is_jr),
         .is_branch(d_is_branch),
+        .is_regimm_op(d_is_regimm_op),
         .is_load_store(d_is_load_store),
         .is_sync_icache(d_is_sync_icache),
         .is_sync_dcache(d_is_sync_dcache),
@@ -182,6 +184,8 @@ module top(
         .ins_j_addr(d_j_addr),
         .is_jump(d_is_jump),
         .is_branch(d_is_branch),
+        .is_regimm_op(d_is_regimm_op),
+        .rt_id(d_rt_id),
         .is_jal(d_is_jal),
         .is_jr(d_is_jr),
         .is_load_store(d_is_load_store),

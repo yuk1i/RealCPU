@@ -19,6 +19,8 @@ module execute(
     input [25:0] ins_j_addr,
     input is_jump,
     input is_branch,
+    input is_regimm_op,
+    input rt_id,
     input is_jal,
     input is_jr,
     input is_load_store,
@@ -95,15 +97,23 @@ module execute(
         end
     end
 
-    // Branch Comparator: is_branch, [beq, bneq, blez, bgez]
+    // Branch Comparator: is_branch, [beq, bneq, blez, bgtz], REGIMM: [bgez, bal, nal]
     reg do_branch;
-    always @* begin 
-        case (opcode[1:0])
-            2'b00: do_branch = reg1 == reg2;
-            2'b01: do_branch = ~(reg1 == reg2);
-            2'b10: do_branch = reg1 == 0 || reg1[31] == 1;  // Signed comparison, less or equal to zero
-            2'b11: do_branch = reg1[31] == 0;               // Signed comparison
-        endcase
+    always @* begin
+        if (is_regimm_op) begin
+            case (rt_id)
+                5'b00001: do_branch = reg1[31] == 0;            // bgez
+                5'b10001: do_branch = 1;                        // bal
+                default:  do_branch = 0;                        // other, including nal
+            endcase
+        end else begin
+            case (opcode[1:0])
+                2'b00: do_branch = reg1 == reg2;
+                2'b01: do_branch = ~(reg1 == reg2);
+                2'b10: do_branch = reg1 == 0 || reg1[31] == 1;  // Signed comparison, less or equal to zero
+                2'b11: do_branch = $signed(reg1) > 0;               // Signed comparison, greater than zero
+            endcase
+        end
     end
 
     // Shifter: is_shift
@@ -153,10 +163,10 @@ module execute(
             result = result_mux;
         else if (shift_out)
             result = shift_out;
-        else if (is_branch)
-            result = 0;
         else if (is_jal)
             result = next_pc + 4;
+        else if (is_branch)
+            result = 0;
         else
             result = 0;
     end

@@ -28,7 +28,13 @@ test:
 		slti $s2, $t1, 10
 		slti $s2, $t1, 0
 		slti $s2, $t1, -2
-		jal qqq
+		li $a0, 1
+		bgez $a0, testqq
+		addiu $zero, $zero, 1234
+testqq:
+		bal back
+		# nal back
+		bal qqq		# test bal
 		j test
 
 qqq:
@@ -50,3 +56,5 @@ out:
 	li $at, 0xFF000000
 	or $t0, $t0, $at
 
+back:
+	jr $ra

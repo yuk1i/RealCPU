@@ -25,6 +25,7 @@ module idecoder(
     output is_jal,
     output is_jr,
     output is_branch,      // [beq, bneq, beqz, bneqz]
+    output is_regimm_op,
     output is_load_store,
     output is_sync_icache,
     output is_sync_dcache,
@@ -56,17 +57,24 @@ module idecoder(
     
     assign j_addr = J_op ? ins_i[25:0] : 26'b0;
     assign is_jump = opcode[5:1] == 5'b00001 || (R_op && func[5:1]==5'b00100);
-    // is_jal: jal or jalr
-    assign is_jal = opcode == 6'h3 || (R_op && func==6'b001001);
+
+    // [NAL: 10000], [BAL: 10001], [BGEZ: 00001]
+    assign is_regimm_op = opcode == 6'b000001;
+    assign special_link = is_regimm_op && (_real_rt_id[4:1] == 4'b1000);                      // REGIMM: [NAL, BAL]
+    assign special_branch = is_regimm_op && (_real_rt_id == 5'b10001 || _real_rt_id == 5'b00001);   // REGIMM: [BAL, BGEZ]
+
+    // is_jal: jal or jalr or [BAL, NAL]
+    assign is_jal = opcode == 6'h3 || (R_op && func==6'b001001) || special_link;        
     assign is_jr = R_op && func[5:1] == 5'b00100;
-    assign is_branch = opcode[5:2] == 4'b0001;
+    assign is_branch = opcode[5:2] == 4'b0001 || special_branch;
     assign is_load_store = mem_to_reg || mem_write;
     assign is_sync_icache = R_op && func == 6'b001111 && ins_i[6] == 0;
     assign is_sync_dcache = R_op && func == 6'b001111 && ins_i[6] == 1;
 
     assign rs_id = ins_i[25:21];        // 5 bits
     // override rt when jal only
-    assign rt_id = opcode == 6'h3 ? 5'b11111 : ins_i[20:16]; // 5 bits
+    wire [4:0] _real_rt_id = ins_i[20:16];
+    assign rt_id = (opcode == 6'h3 || special_link) ? 5'b11111 : _real_rt_id; // 5 bits
     assign rd_id = ins_i[15:11];        // 5 bits
     
     // ***** END Decoder ***** //
@@ -112,7 +120,7 @@ module idecoder(
             default   : _reg_write_i = 0;
         endcase
     end
-    assign reg_write = (R_op && _reg_write_r) || _reg_write_i;
+    assign reg_write = (R_op && _reg_write_r) || _reg_write_i || special_link;
     // ***** END Controller ***** //
 
     // ***** BEGIN Registers ***** //

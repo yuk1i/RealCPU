@@ -10,7 +10,7 @@ TEXT_START_AT=0x0100
 DATA_START_AT=0x1000
 
 CC_FLAGS=-mips32r6 -Werror -O0 -fno-pic -mcompact-branches=never -mno-llsc -msoft-float -mno-abicalls
-AS_FLAGS=--alternate -mgp32 -g -call_nonpic -non_shared -mno-ginv -mips32r6 -msoft-float --fatal-warnings -O0
+AS_FLAGS=-mips32r6 --alternate -mgp32 -g -call_nonpic -non_shared -mno-ginv -msoft-float --fatal-warnings -O0
 LD_FLAGS=--script linker.ld --no-compact-branches -nostdlib
 
 BUILDDIR=tmp
@@ -26,8 +26,9 @@ system:
 
 rom:
 	@LD_FLAGS=
-	@$(AS) $(AS_FLAGS) rom.s -o tmp/rom.o
-	@$(LD) --Ttext 0xFFFFE000 -Tdata 0xFFFFFA00 --no-compact-branches -nostdlib --entry __rom_start tmp/rom.o -o tmp/rom.out
+	@$(AS) $(AS_FLAGS) bootloader/rom.s -o tmp/rom.o
+	@$(CC) $(CC_FLAGS) -c bootloader/bootloader.c -o tmp/bootloader.o
+	@$(LD) --Ttext 0xFFFFE000 -Tdata 0xFFFFFA00 --no-compact-branches -nostdlib --entry __rom_start tmp/rom.o tmp/bootloader.o -o tmp/rom.out
 	@mipsel-linux-gnu-strip -R .reginfo $(BUILDDIR)/rom.out
 	@mipsel-linux-gnu-strip -R .MIPS.abiflags $(BUILDDIR)/rom.out
 	@mipsel-linux-gnu-strip -R .gnu.attributes $(BUILDDIR)/rom.out
