@@ -30,6 +30,7 @@ module ifetch(
     reg working;
     wire [31:0] il1_ins_out;
     wire il1_stall;
+    wire il1_mmio_stall;
     wire il1_hit;
 
     l1icache il1(
@@ -40,7 +41,9 @@ module ifetch(
         .l1_addr(pc),
 
         .l1_data_o(il1_ins_out),
+        .out_req_stall(stall),
         .stall(il1_stall),
+        .il1_mmio_stall(il1_mmio_stall),
         .hit(il1_hit),
 
         .l1_mmu_req_read(immu_read),
@@ -58,7 +61,7 @@ module ifetch(
     reg out_stall_algn;
     always @(posedge sys_clk) out_stall_algn <= stall;
 
-    assign global_stall = il1_algn || stall;
+    assign global_stall = il1_mmio_stall || il1_algn || stall;
     
     always @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin

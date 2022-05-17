@@ -11,6 +11,10 @@ module l1icache(
     output hit,
     output stall,
 
+    input out_req_stall,          
+    // li1cache should hold instruction from MMIO if out_req_stall
+    output il1_mmio_stall,
+
     // MMU Interface
     output l1_mmu_req_read,
     output [31:0] l1_mmu_req_addr,      // the lower 5bit is ignored if cached
@@ -68,12 +72,19 @@ module l1icache(
     reg _mmio_done;
     reg [31:0] _mmio_ins_buf;
     always @(posedge sys_clk) begin
-        _mmio_ins_buf <= mmu_l1_read_data[31:0];
-        _mmio_done <= mmu_l1_done && addr_is_mmio;
+        if (out_req_stall && addr_is_mmio) begin
+            _mmio_ins_buf <= _mmio_ins_buf;
+            _mmio_done <= _mmio_done;
+        end else begin
+            _mmio_ins_buf <= mmu_l1_read_data[31:0];
+            _mmio_done <= mmu_l1_done && addr_is_mmio;
+        end
     end
     reg _mmio_done_neg;
     always @(negedge sys_clk) _mmio_done_neg <= mmu_l1_done && addr_is_mmio;
     wire _mmio_available = _mmio_done_neg || _mmio_done;
+
+    assign il1_mmio_stall = addr_is_mmio && !_mmio_done;
 
     // L1 Interfaces
     // stall here should be sync to negedge
