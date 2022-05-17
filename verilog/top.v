@@ -14,7 +14,9 @@ module top(
     input [23:0] switches_pin,
     output [23:0] leds_pin,
     output [7:0] seg7_bits_pin, 
-    output [7:0] seg7_led_pin
+    output [7:0] seg7_led_pin,
+    input uart_rx_pin,
+    output uart_tx_pin
 );
 
     wire rst_n = !bank_rst && sys_clk_lock;
@@ -296,7 +298,13 @@ module top(
         .seg7_bits_pin(seg7_bits_pin),
         .seg7_led_pin(seg7_led_pin),
         .bank_sys_clk(bank_sys_clk)
+        
+        ,
+        .uart_rx_pin(uart_rx_pin),
+        .uart_tx_pin(uart_tx_pin)
     );
+
+    // assign uart_tx_pin = uart_rx_pin;
 
     // wire [31:0] dis;
     // assign dis = sw_pc_ins ? pc : ins;

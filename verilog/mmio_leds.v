@@ -46,7 +46,7 @@ module mmio_leds(
             if (mmio_done) begin
                 mmio_done <= 0;
                 mmio_read_data <= 0;
-            end else if (mmio_write || mmio_read) begin
+            end else if (mmio_work) begin
                 mmio_done <= 1;
                 mmio_read_data <= {31'b0, _leds_reg[_addr]};
             end else begin

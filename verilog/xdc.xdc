@@ -6,6 +6,9 @@ set_property -dict {PACKAGE_PIN P20 IOSTANDARD LVCMOS33} [get_ports bank_rst]
 #set_property -dict {PACKAGE_PIN Y9 IOSTANDARD LVCMOS33} [get_ports sw_pc_ins]
 #set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets sw_clk_IBUF]
 
+set_property -dict {PACKAGE_PIN Y19 IOSTANDARD LVCMOS33} [get_ports uart_rx_pin]
+set_property -dict {PACKAGE_PIN V18 IOSTANDARD LVCMOS33} [get_ports uart_tx_pin]
+
 set_property -dict {PACKAGE_PIN E13 IOSTANDARD LVCMOS33} [get_ports {seg7_led_pin[0]}]
 set_property -dict {PACKAGE_PIN C15 IOSTANDARD LVCMOS33} [get_ports {seg7_led_pin[1]}]
 set_property -dict {PACKAGE_PIN C14 IOSTANDARD LVCMOS33} [get_ports {seg7_led_pin[2]}]
@@ -76,3 +79,5 @@ set_property -dict {PACKAGE_PIN K14 IOSTANDARD LVCMOS33} [get_ports {leds_pin[20
 set_property -dict {PACKAGE_PIN M13 IOSTANDARD LVCMOS33} [get_ports {leds_pin[21]}]
 set_property -dict {PACKAGE_PIN L13 IOSTANDARD LVCMOS33} [get_ports {leds_pin[22]}]
 set_property -dict {PACKAGE_PIN K17 IOSTANDARD LVCMOS33} [get_ports {leds_pin[23]}]
+
+

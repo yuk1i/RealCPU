@@ -19,7 +19,10 @@ module mmio_devs(
     // 3. Seg 7
     output [7:0] seg7_bits_pin, 
     output [7:0] seg7_led_pin,
-    input bank_sys_clk
+    input bank_sys_clk,
+    // 4. UART
+    input uart_rx_pin,
+    output uart_tx_pin
 
 );
     wire addr_is_mmio;
@@ -105,6 +108,27 @@ module mmio_devs(
         .bank_sys_clk(bank_sys_clk)
     );
 
+    wire        uart_work;
+    wire        uart_done;
+    wire [31:0] uart_rdata;
+    mmio_uart mmio_uart_ins(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+        
+        .mmio_read(mmio_read),
+        .mmio_write(mmio_write),
+        .mmio_addr(mmio_addr),
+        .mmio_write_data(mmio_write_data),
+
+        .mmio_work(uart_work),
+        .mmio_done(uart_done),
+        .mmio_read_data(uart_rdata),
+
+        .uart_rx_pin(uart_rx_pin),
+        .uart_tx_pin(uart_tx_pin),
+        .bank_sys_clk(bank_sys_clk)
+    );
+
     always @* begin
         if (addr_is_mmio) begin
             if (sw_work) begin
@@ -119,6 +143,9 @@ module mmio_devs(
             end else if (seg7_work) begin
                 mmio_done = seg7_done;
                 mmio_read_data = seg7_rdata;
+            end else if (uart_work) begin
+                mmio_done = uart_done;
+                mmio_read_data = uart_rdata;
             end else begin
                 mmio_done = 0;
                 mmio_read_data = 0;

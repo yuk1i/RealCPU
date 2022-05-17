@@ -32,7 +32,7 @@ module mmio_rom(
         if (!rst_n) begin
             mmio_done <= 0;
         end else begin
-            mmio_done <= (mmio_read || mmio_write) && !mmio_done;
+            mmio_done <= (mmio_read || mmio_write) && !mmio_done && mmio_work;
             // if (mmio_done) begin
             //     mmio_done <= 0;
             // end else if (mmio_write) begin
