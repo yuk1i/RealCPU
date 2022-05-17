@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-module mmio_leds(
+module mmio_seg7(
     input sys_clk,
     input rst_n,
     
@@ -13,25 +13,29 @@ module mmio_leds(
     output reg [31:0] mmio_read_data,
 
     // IO Pins
-    output [23:0] leds_pin 
+    output [7:0] seg7_bits_pin, 
+    output [7:0] seg7_led_pin,
+    input bank_sys_clk
 );
-    // 24 switches
-    // Address: 0xFFFF0080 - 0xFFFF00FF, 32 words, 128 bytes, last 7 bits, last 2 bits ignored
-    //          0b1_0000000
-    wire [4:0] _addr = mmio_addr[6:2];
-    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:7] == 9'b00000000_1;
+    // 8 seg
+    // Address: 0xFFFF0100 - 0xFFFF0120, 8 words, 32 bytes
+    //          0b1000_00000, 0b1001_00000
+    wire [2:0] _addr = mmio_addr[4:2];
+    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:5] == 11'b00000001_000;
     
-    reg [31:0] _leds_reg;
+    reg [7:0] seg7_regs [0:7];
 
-    assign leds_pin = _leds_reg[23:0];
-
+    integer i;
     always @(posedge sys_clk,negedge rst_n) begin
         if (!rst_n) begin
-            _leds_reg <= 0;
+            for (i=0;i<8;i=i+1) begin
+                seg7_regs[i] <= 0;
+            end
         end else begin
-            _leds_reg <= _leds_reg;
+            for (i=0;i<8;i=i+1)
+                seg7_regs[i] <= seg7_regs[i];
             if (mmio_work && mmio_write && !mmio_done)
-                _leds_reg[_addr] <= mmio_write_data[0];
+                seg7_regs[_addr] <= mmio_write_data[7:0];
         end
     end
     
@@ -48,12 +52,22 @@ module mmio_leds(
                 mmio_read_data <= 0;
             end else if (mmio_write || mmio_read) begin
                 mmio_done <= 1;
-                mmio_read_data <= {31'b0, _leds_reg[_addr]};
+                mmio_read_data <= {31'b0, seg7_regs[_addr]};
             end else begin
                 mmio_done <= mmio_done;
                 mmio_read_data <= 0;
             end
         end
     end
+
+    // seg7 module
+
+    seg7 seg7_ins(
+        .clk(bank_sys_clk),
+        .rst_n(rst_n),
+        .numbers({seg7_regs[7],seg7_regs[6],seg7_regs[5],seg7_regs[4],seg7_regs[3],seg7_regs[2],seg7_regs[1],seg7_regs[0]}),
+        .LED_BITS(seg7_bits_pin),
+        .LED(seg7_led_pin)
+    );
 
 endmodule

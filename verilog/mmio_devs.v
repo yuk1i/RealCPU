@@ -15,7 +15,11 @@ module mmio_devs(
     // 1. Switches
     input [23:0] switches_pin,
     // 2. LEDs
-    output [23:0] leds_pin
+    output [23:0] leds_pin,
+    // 3. Seg 7
+    output [7:0] seg7_bits_pin, 
+    output [7:0] seg7_led_pin,
+    input bank_sys_clk
 
 );
     wire addr_is_mmio;
@@ -79,6 +83,27 @@ module mmio_devs(
 
         .leds_pin(leds_pin)
     );
+    
+    wire        seg7_work;
+    wire        seg7_done;
+    wire [31:0] seg7_rdata;
+    mmio_seg7 mmio_seg7_ins(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+        
+        .mmio_read(mmio_read),
+        .mmio_write(mmio_write),
+        .mmio_addr(mmio_addr),
+        .mmio_write_data(mmio_write_data),
+
+        .mmio_work(seg7_work),
+        .mmio_done(seg7_done),
+        .mmio_read_data(seg7_rdata),
+
+        .seg7_bits_pin(seg7_bits_pin),
+        .seg7_led_pin(seg7_led_pin),
+        .bank_sys_clk(bank_sys_clk)
+    );
 
     always @* begin
         if (addr_is_mmio) begin
@@ -91,6 +116,9 @@ module mmio_devs(
             end else if (led_work) begin
                 mmio_done = led_done;
                 mmio_read_data = led_rdata;
+            end else if (seg7_work) begin
+                mmio_done = seg7_done;
+                mmio_read_data = seg7_rdata;
             end else begin
                 mmio_done = 0;
                 mmio_read_data = 0;
@@ -101,4 +129,8 @@ module mmio_devs(
         end
     end
 
+    // Switches: 0xFFFF0000 - 0xFFFF007F, 32 words, 128 bytes, last 7 bits, last 2 bits remain 0
+    // LEDs:     0xFFFF0080 - 0xFFFF00FF, 32 words, 128 bytes, last 7 bits, last 2 bits ignored
+    // SEG7      0xFFFF0100 - 0xFFFF0120, 8  words, 32 bytes
+    // ROM:      
 endmodule

@@ -12,7 +12,9 @@ module top(
     
     // IO Devices
     input [23:0] switches_pin,
-    output [23:0] leds_pin
+    output [23:0] leds_pin,
+    output [7:0] seg7_bits_pin, 
+    output [7:0] seg7_led_pin
 );
 
     wire rst_n = !bank_rst && sys_clk_lock;
@@ -290,7 +292,10 @@ module top(
         .mmio_read_data(mmio_read_data),
 
         .switches_pin(switches_pin),
-        .leds_pin(leds_pin)
+        .leds_pin(leds_pin),
+        .seg7_bits_pin(seg7_bits_pin),
+        .seg7_led_pin(seg7_led_pin),
+        .bank_sys_clk(bank_sys_clk)
     );
 
     // wire [31:0] dis;

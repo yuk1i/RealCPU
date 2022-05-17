@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1,466.340 ns"></ZoomStartTime>
-      <ZoomEndTime time="2,158.341 ns"></ZoomEndTime>
-      <Cursor1Time time="1,815.340 ns"></Cursor1Time>
+      <ZoomStartTime time="2,381.100 ns"></ZoomStartTime>
+      <ZoomEndTime time="3,027.601 ns"></ZoomEndTime>
+      <Cursor1Time time="2,885.100 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="218"></NameColumnWidth>
+      <NameColumnWidth column_width="206"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="25" />
+   <WVObjectSize size="27" />
    <wvobject type="logic" fp_name="/sim_top/ttop/bank_sys_clk">
       <obj_property name="ElementShortName">bank_sys_clk</obj_property>
       <obj_property name="ObjectShortName">bank_sys_clk</obj_property>
@@ -61,6 +61,7 @@
    <wvobject type="group" fp_name="group4095">
       <obj_property name="label">L1 ICache</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/sim_top/ttop/fetch/pc">
          <obj_property name="ElementShortName">pc[31:0]</obj_property>
          <obj_property name="ObjectShortName">pc[31:0]</obj_property>
@@ -112,6 +113,10 @@
       <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/mmu_rcache_pos_sync">
          <obj_property name="ElementShortName">mmu_rcache_pos_sync</obj_property>
          <obj_property name="ObjectShortName">mmu_rcache_pos_sync</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/stall">
+         <obj_property name="ElementShortName">stall</obj_property>
+         <obj_property name="ObjectShortName">stall</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/c_hit">
          <obj_property name="ElementShortName">c_hit</obj_property>
@@ -249,7 +254,6 @@
    <wvobject type="group" fp_name="group2514">
       <obj_property name="label">Execute</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_regimm_op">
          <obj_property name="ElementShortName">is_regimm_op</obj_property>
          <obj_property name="ObjectShortName">is_regimm_op</obj_property>
@@ -446,7 +450,6 @@
    <wvobject type="group" fp_name="group4097">
       <obj_property name="label">L1D - MMU</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/dmmu_read">
          <obj_property name="ElementShortName">dmmu_read</obj_property>
          <obj_property name="ObjectShortName">dmmu_read</obj_property>
@@ -475,7 +478,6 @@
    <wvobject type="group" fp_name="group2049">
       <obj_property name="label">MMU</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/l1mmu1/sys_clk">
          <obj_property name="ElementShortName">sys_clk</obj_property>
          <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -597,6 +599,10 @@
             <obj_property name="ElementShortName">mmio_done</obj_property>
             <obj_property name="ObjectShortName">mmio_done</obj_property>
          </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_rom1/mmio_read_data">
+            <obj_property name="ElementShortName">mmio_read_data[31:0]</obj_property>
+            <obj_property name="ObjectShortName">mmio_read_data[31:0]</obj_property>
+         </wvobject>
       </wvobject>
    </wvobject>
    <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_led/_leds_reg">
@@ -612,6 +618,14 @@
    <wvobject type="logic" fp_name="/sim_top/ttop/mmiodevs/mmio_sw/mmio_done">
       <obj_property name="ElementShortName">mmio_done</obj_property>
       <obj_property name="ObjectShortName">mmio_done</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_seg7_ins/seg7_regs">
+      <obj_property name="ElementShortName">seg7_regs[0:7][7:0]</obj_property>
+      <obj_property name="ObjectShortName">seg7_regs[0:7][7:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/sim_top/ttop/mmiodevs/mmio_seg7_ins/mmio_work">
+      <obj_property name="ElementShortName">mmio_work</obj_property>
+      <obj_property name="ObjectShortName">mmio_work</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_sw/switches_pin">
       <obj_property name="ElementShortName">switches_pin[23:0]</obj_property>

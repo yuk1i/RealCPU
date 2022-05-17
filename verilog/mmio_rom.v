@@ -15,8 +15,8 @@ module mmio_rom(
     // IO Pins
     input [23:0] switches_pin 
 );
-    // 24 switches
-    // Address: 0xFFFF0000 - 0xFFFF007F, 32 words, 128 bytes, last 7 bits, last 2 bits remain 0
+    // ROM
+    // Address: 0xFFFFE000 - 0xFFFFFFFF, 
     wire [10:0] _addr = mmio_addr[12:2];
     assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:13] == 3'b111;
 
