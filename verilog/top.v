@@ -104,6 +104,48 @@ module top(
     wire immu_read_done;
     wire [255:0] immu_read_data;
 
+    // pipeline achievement:
+
+    /*  
+    wire pl_e_do_jump; 
+    wire [31: 0] pl_e_j_jump; 
+
+    pipeline_fundamental_for_instruction_fetch pfetch(
+        .sys_clk(sys_clk), 
+        .rst_n(rst_n), 
+
+        .in_do_jump(e_do_jump), 
+        .in_jump_addr(e_j_addr), 
+        .in_stall(fecth_stall), 
+
+        .do_jump(pl_e_do_jump), 
+        .jump_addr(pl_e_j_jump), 
+
+        .stall(pl_fetch_stall), 
+    );
+    ifetch fetch (
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+
+        .do_jump(pl_e_do_jump),
+        .jump_addr(pl_e_j_addr),
+
+        .stall(pl_fecth_stall),
+        .global_stall(global_stall),
+
+        .ins_out(f_ins),
+        .pc_out(f_pc),
+        .next_pc_out(f_next_pc),
+
+        .immu_read(immu_read),
+        .immu_addr(immu_addr),
+        .immu_done(immu_done),
+        .immu_read_data(immu_read_data),
+
+        .sync(d_is_sync_icache)
+    ); 
+    */ 
+
     ifetch fetch(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
@@ -125,6 +167,61 @@ module top(
 
         .sync(d_is_sync_icache)
     );
+
+    /* 
+    wire [31: 0] p_f_ins_i; 
+    wire p_global_stalling; 
+    pipeline_fundamental_for_decoder pdecoder (
+        .sys_clk(sys_clk), 
+        .rst_n(rst_n), 
+
+        .in_ins_i(f_ins), 
+        .in_is_stalling(global_stall), 
+
+        .ins_i(p_f_ins_i), 
+        .is_stalling(p_global_stalling), 
+    );
+    idecoder decoder(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+        .ins_i(p_f_ins_i),
+        .is_stalling(p_global_stalling),
+
+        .reg_write_i(wb_reg_write),
+        .reg_write_id_i(wb_reg_write_id),
+        .reg_write_data_i(wb_data),
+        
+        .opcode(d_opcode),
+        .shift_amt(d_shift_amt),
+        .func(d_func),
+        .R_op(d_R_op),
+        .ext_immd(d_ext_immd),
+        .j_addr(d_j_addr),
+        .is_jump(d_is_jump),
+        .is_jal(d_is_jal),
+        .is_jr(d_is_jr),
+        .is_branch(d_is_branch),
+        .is_regimm_op(d_is_regimm_op),
+        .is_load_store(d_is_load_store),
+        .is_sync_icache(d_is_sync_icache),
+        .is_sync_dcache(d_is_sync_dcache),
+
+        .rs_id(d_rs_id),
+        .rt_id(d_rt_id),
+        .rd_id(d_rd_id),
+
+        .reg_read1(d_reg_read1),
+        .reg_read2(d_reg_read2),
+
+        .mem_to_reg(d_mem_to_reg),
+        .mem_write(d_mem_write),
+        .alu_src(d_alu_src),
+        .reg_write(d_reg_write),
+        .reg_dst(d_reg_dst),
+        .alu_bypass(d_alu_bypass),
+        .bypass_immd(d_bypass_immd)
+    );
+    */ 
 
     idecoder decoder(
         .sys_clk(sys_clk),
@@ -167,6 +264,111 @@ module top(
         .bypass_immd(d_bypass_immd)
 
     );
+
+/* 
+    wire [31: 0] p_d_reg_read1; 
+    wire [31: 0] p_d_reg_read2; 
+    wire [31: 0] p_d_ext_immd; 
+    wire [31: 0] p_f_next_pc; 
+    wire p_d_alu_src; 
+    wire p_exc_wire;
+    wire [5: 0] p_d_opcode; 
+    wire [5: 0] p_d_func; 
+    wire [4: 0] p_d_shift_amt; 
+    wire p_d_R_op; 
+    wire [25: 0] p_d_j_addr; 
+    wire p_d_is_jump; 
+    wire p_d_is_branch; 
+    wire p_d_is_regium_op; 
+    wire p_d_rt_id; 
+    wire p_d_is_jal; 
+    wire p_d_is_jr; 
+    wire p_d_is_load_store; 
+    wire p_d_alu_bypass; 
+    wire [31: 0] p_d_bypass_immd;
+
+    pipeline_fundamental_for_execute pexecute (
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+
+        .reg1(d_reg_read1),
+        .reg2(d_reg_read2),
+        .immd(d_ext_immd),
+        .next_pc(f_next_pc),
+        .alu_src(d_alu_src),
+        .allow_exp(1'b0),      // TODO: Exception support
+
+        .opcode(d_opcode),
+        .func(d_func),
+        .ins_shamt(d_shift_amt),
+        .R_op(d_R_op),
+        .ins_j_addr(d_j_addr),
+        .is_jump(d_is_jump),
+        .is_branch(d_is_branch),
+        .is_regimm_op(d_is_regimm_op),
+        .rt_id(d_rt_id),
+        .is_jal(d_is_jal),
+        .is_jr(d_is_jr),
+        .is_load_store(d_is_load_store),
+        
+        .alu_bypass(d_alu_bypass),
+        .bypass_immd(d_bypass_immd),
+
+        .reg1_o(p_d_reg_read1),
+        .reg2_o(p_d_reg_read2),
+        .immd_o(p_d_ext_immd),
+        .next_pc_o(p_f_next_pc),
+        .alu_src_o(p_d_alu_src),
+        .allow_exp_o(p_exc_wire), 
+        .opcode_o(p_d_opcode),
+        .func_o(p_d_func),
+        .ins_shamt_o(p_d_shift_amt),
+        .R_op_o(p_d_R_op),
+        .ins_j_addr_o(p_d_j_addr),
+        .is_jump_o(p_d_is_jump),
+        .is_branch_o(p_d_is_branch),
+        .is_regimm_op_o(p_d_is_regimm_op),
+        .rt_id_o(p_d_rt_id),
+        .is_jal_o(p_d_is_jal),
+        .is_jr_o(p_d_is_jr),
+        .is_load_store_o(p_d_is_load_store),
+        
+        .alu_bypass_o(p_d_alu_bypass),
+        .bypass_immd_o(p_d_bypass_immd),
+    )
+
+    execute ex(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+
+        .reg1(p_d_reg_read1),
+        .reg2(p_d_reg_read2),
+        .immd(p_d_ext_immd),
+        .next_pc(p_f_next_pc),
+        .alu_src(p_d_alu_src),
+        .alu_bypass(p_d_alu_bypass),
+        .bypass_immd(p_d_bypass_immd),
+        .allow_exp(p_exc_wire),      // TODO: Exception support
+
+        .opcode(p_d_opcode),
+        .func(p_d_func),
+        .ins_shamt(p_d_shift_amt),
+        .R_op(p_d_R_op),
+        .ins_j_addr(p_d_j_addr),
+        .is_jump(p_d_is_jump),
+        .is_branch(p_d_is_branch),
+        .is_regimm_op(p_d_is_regimm_op),
+        .rt_id(p_d_rt_id),
+        .is_jal(p_d_is_jal),
+        .is_jr(p_d_is_jr),
+        .is_load_store(p_d_is_load_store),
+        
+        .result(e_result),
+        .do_jump(e_do_jump),
+        .j_addr(e_j_addr),
+        .stall(e_stall)
+    );
+    */ 
 
     execute ex(
         .sys_clk(sys_clk),
@@ -213,6 +415,53 @@ module top(
     wire [255:0] dmmu_write_data;
     wire dmmu_done;
     wire [255:0] dmmu_read_data;
+
+/* 
+    wire p_dmem_read; 
+    wire p_dmem_write; 
+    wire [31: 0] p_dmem_addr; 
+    wire [31: 0] p_dmem_write_type; 
+    wire [31: 0] p_dmem_write_data; 
+    pipeline_fundamental_for_memory pmemory (
+        .sys_clk(sys_clk), 
+        .rst_n(rst_n), 
+
+        .l1_read(dmem_read), 
+        .l1_write(dmem_write), 
+        .l1_addr(dmem_addr), 
+        .l1_write_type(dmem_write_type), 
+        .l1_write_data(dmem_write_data) 
+
+        .p_l1_read(p_dmem_read), 
+        .p_l1_write(p_dmem_write), 
+        .p_l1_addr(p_dmem_addr), 
+        .p_l1_write_type(p_dmem_write_type), 
+        .p_l1_write_data(p_dmem_write_data) 
+    ); 
+    l1dcache dcache(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+
+        .l1_read(p_dmem_read),
+        .l1_write(p_dmem_write),
+        .l1_addr(p_dmem_addr),
+        .l1_write_type(p_dmem_write_type),
+        .l1_write_data(p_dmem_write_data),
+
+        .l1_data_o(m_mem_data),
+        .stall(m_stall),
+
+        .l1_mmu_req_read(dmmu_read),
+        .l1_mmu_req_write(dmmu_write),
+        .l1_mmu_req_addr(dmmu_addr),
+        .l1_mmu_write_data(dmmu_write_data),
+        
+        .mmu_l1_done(dmmu_done),
+        .mmu_l1_read_data(dmmu_read_data),
+
+        .sync(d_is_sync_dcache)
+    );
+    */ 
 
     l1dcache dcache(
         .sys_clk(sys_clk),
