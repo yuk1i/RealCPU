@@ -1,7 +1,9 @@
 .globl __rom_start
-.globl cmain
+.globl bootloader
 .text
 __rom_start:
+    li $sp, 0x18000
+    jal bootloader
     li $sp, 0x18000
     .set noat
     li $at, 0x00001000

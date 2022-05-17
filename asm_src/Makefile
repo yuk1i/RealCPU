@@ -56,7 +56,6 @@ link: $(OBJS)
 
 dump: link
 	@echo "[*]  dump coe"
-	@rm -f *.coe tmp/*.bin
 	@$(OBJCOPY) --dump-section .text=tmp/text.bin tmp/a.out
 	@$(OBJCOPY) --dump-section .data=tmp/data.bin tmp/a.out 
 	@python3 convert.py tmp/text.bin text.coe $(TEXT_START_AT)
