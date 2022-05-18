@@ -78,7 +78,7 @@ module mmio_uart(
     wire        tx_fifo_r_ren;
     wire        tx_fifo_empty;
     uart_fifo tx_fifo(
-        .rst(!rst_n),
+        .rst(fifo_rst),
         // write, from host, use cpu clk
         .wr_clk(sys_clk),
         .din(tx_fifo_w_din),
@@ -154,7 +154,7 @@ module mmio_uart(
     wire        rx_fifo_r_en    = mmio_work && mmio_read && acc_rx_fifo && !mmio_done;
     wire        rx_fifo_empty;
     uart_fifo rx_fifo(
-        .rst(!rst_n),
+        .rst(fifo_rst),
         // write, from UART, use uart clk
         .wr_clk(uart_clk),
         .din(rx_fifo_w_din),
@@ -200,4 +200,25 @@ module mmio_uart(
 
         .uart_rxd(uart_rx_pin)
     );
+
+    // Generate RST Signal for FIFOs, active high
+    reg fifo_rst;
+    reg [4:0] rst_cnt;
+    always @(posedge sys_clk, negedge rst_n) begin
+        if (!rst_n) begin
+            fifo_rst <= 1;
+            rst_cnt <= 5'b1;
+        end else begin
+            if (fifo_rst) begin
+                rst_cnt <= rst_cnt + 1;
+                if (rst_cnt == 5'b11111)
+                    fifo_rst <= 0;
+                else
+                    fifo_rst <= fifo_rst;
+            end else begin
+                rst_cnt <= 0;
+                fifo_rst <= 0;
+            end
+        end
+    end 
 endmodule
