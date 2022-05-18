@@ -17,10 +17,34 @@ module sim_top();
     end
 
     always #5 bank_sys_clk = ~bank_sys_clk;
-    
+    wire uart_rx;
     top ttop(
         .bank_sys_clk(bank_sys_clk),
         .bank_rst(bank_rst),
-        .switches_pin(switches_pin)
+        .switches_pin(switches_pin),
+
+        .uart_rx_pin(uart_rx)
     );
+    reg send;
+    reg [7:0] dsend;
+    wire uart_tx_busy;
+    uart_send test_send(
+        .sys_clk(bank_sys_clk),
+        .sys_rst_n(!bank_rst),
+
+        .uart_en(send),
+        .uart_din(dsend),
+        .uart_tx_busy(uart_tx_busy),
+        .uart_txd(uart_rx)
+    );
+
+    initial begin
+        send = 0;
+        #50000
+        dsend = 8'h7f;
+        #20
+        send = 1;
+        #20
+        send = 0;
+    end
 endmodule

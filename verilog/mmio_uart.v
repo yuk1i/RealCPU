@@ -147,8 +147,8 @@ module mmio_uart(
         .uart_txd(uart_tx_pin)
     );
 
-    wire [7:0]  rx_fifo_w_din   = uart_rx_data;
-    wire        rx_fifo_w_en    = uart_rx_done && ! rx_fifo_full;
+    wire [7:0]  rx_fifo_w_din   = uart_rx_data_algn;
+    wire        rx_fifo_w_en    = uart_rx_done_algn && ! rx_fifo_full;
     wire        rx_fifo_full;
     wire [7:0]  rx_fifo_r_dout;
     wire        rx_fifo_r_en    = mmio_work && mmio_read && acc_rx_fifo && !mmio_done;
@@ -161,18 +161,43 @@ module mmio_uart(
         .wr_en(rx_fifo_w_en),
         .full(rx_fifo_full),
         // read, from host, use cpu clk, negedge
-        .rd_clk(~sys_clk),
+        .rd_clk(~sys_clk),   
         .dout(rx_fifo_r_dout),
         .rd_en(rx_fifo_r_en),
         .empty(rx_fifo_empty)
     );
+    reg [7:0] uart_rx_data_algn;
+    reg       uart_rx_done_algn;
+    reg       uart_rx_done_wait_neg;
+    always @(posedge uart_clk, negedge rst_n) begin
+        if (!rst_n) begin
+            uart_rx_data_algn <= 0;
+            uart_rx_done_algn <= 0;
+            uart_rx_done_wait_neg <= 0;
+        end else begin
+            if (uart_rx_done_wait_neg) begin
+                uart_rx_data_algn <= 0;
+                uart_rx_done_algn <= 0;
+                uart_rx_done_wait_neg <= uart_rx_done;
+            end else begin
+                if (!uart_rx_done_algn && uart_rx_done) begin
+                    uart_rx_done_algn <= 1;
+                    uart_rx_data_algn <= uart_rx_data;
+                    uart_rx_done_wait_neg <= 1;
+                end
+            end
+        end
+    end
 
     wire [7:0] uart_rx_data;
     wire uart_rx_done;
     uart_recv uart_rx(
         .sys_clk(uart_clk),
-        .uart_rxd(uart_rx_pin),
+        .sys_rst_n(rst_n),
+        
         .uart_done(uart_rx_done),
-        .uart_data(uart_rx_data)
+        .uart_data(uart_rx_data),
+
+        .uart_rxd(uart_rx_pin)
     );
 endmodule
