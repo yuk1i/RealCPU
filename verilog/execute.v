@@ -20,7 +20,7 @@ module execute(
     input is_jump,
     input is_branch,
     input is_regimm_op,
-    input rt_id,
+    input [4:0] rt_id,
     input is_jal,
     input is_jr,
     input is_load_store,
@@ -44,7 +44,7 @@ module execute(
     wire is_lui = opcode == 6'b001111;
 
     // Default ALU, use addiu to calc addr
-    wire [2:0] def_exe = calc_addr ? 3'b001 : (opcode == 0 ? func[2:0] : opcode[2:0]);
+    wire [2:0] def_exe = calc_addr ? 3'b001 : (R_op ? func[2:0] : opcode[2:0]);
     wire [31:0] op2 = alu_src ? immd : reg2;
     wire [31:0] inv_op2 = ~op2 + 1;
 
@@ -161,7 +161,7 @@ module execute(
             result = mul_mux;
         else if (is_def)
             result = result_mux;
-        else if (shift_out)
+        else if (is_shift)
             result = shift_out;
         else if (is_jal)
             result = next_pc + 4;
