@@ -54,7 +54,7 @@ module mmio_uart(
                 //  rx_fifo_read is done at sys_clk negedge, sampling at posedge 
                 else if (acc_tx_busy)   mmio_read_data <= {31'b0, !tx_fifo_empty};
                 else if (acc_tx_full)   mmio_read_data <= {31'b0, tx_fifo_full};
-                else if (acc_tx_send)  mmio_read_data <= {31'b0,  uart_tx_start};
+                else if (acc_tx_send)   mmio_read_data <= {31'b0,  uart_tx_start};
                 else if (acc_tx_fifo)   mmio_read_data <= 32'b0;
                 else mmio_read_data <= 32'b0;
                 if (mmio_write && acc_tx_send)
@@ -160,7 +160,7 @@ module mmio_uart(
         .din(rx_fifo_w_din),
         .wr_en(rx_fifo_w_en),
         .full(rx_fifo_full),
-        // read, from host, use cpu clk
+        // read, from host, use cpu clk, negedge
         .rd_clk(~sys_clk),
         .dout(rx_fifo_r_dout),
         .rd_en(rx_fifo_r_en),

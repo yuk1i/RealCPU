@@ -297,9 +297,7 @@ module top(
         .leds_pin(leds_pin),
         .seg7_bits_pin(seg7_bits_pin),
         .seg7_led_pin(seg7_led_pin),
-        .bank_sys_clk(bank_sys_clk)
-        
-        ,
+        .bank_sys_clk(bank_sys_clk),
         .uart_rx_pin(uart_rx_pin),
         .uart_tx_pin(uart_tx_pin)
     );

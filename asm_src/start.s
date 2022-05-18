@@ -2,6 +2,5 @@
 .globl cmain
 .section .start
 __start:
-    .set noat
-    li $at, 0x123123
+    addiu $sp, $sp, 0x8000
     jal cmain
