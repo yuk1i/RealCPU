@@ -41,7 +41,8 @@ module execute(
 
     // [addi,addiu,slti,sltiu,andi,ori,xori,*lui*], R:[add,addu,sub,subu,and,or,xor,nor] [load,store]
     wire is_def = opcode[5:3] == 3'b001 || (R_op && (func[5:3] == 3'b100 || func[5:1] == 5'b10101)) || calc_addr;
-    wire is_lui = opcode == 6'b001111;
+    wire is_aui = opcode == 6'b001111;
+    // MIPS32r6 changes: aui
 
     // Default ALU, use addiu to calc addr
     wire [2:0] def_exe = calc_addr ? 3'b001 : (R_op ? func[2:0] : opcode[2:0]);
@@ -59,7 +60,7 @@ module execute(
             3'b100: {alu_cf,result_mux} = reg1 & op2;
             3'b101: {alu_cf,result_mux} = reg1 | op2;
             3'b110: {alu_cf,result_mux} = reg1 ^ op2;
-            3'b111: {alu_cf,result_mux} = is_lui ? {immd[15:0], 16'b0} : ~ (reg1 | op2);
+            3'b111: {alu_cf,result_mux} = is_aui ? ({immd[15:0], 16'b0} + reg1) : ~ (reg1 | op2);
         endcase
         // Set condition registers
         if (def_exe[2] == 0) begin
@@ -110,7 +111,7 @@ module execute(
             case (opcode[1:0])
                 2'b00: do_branch = reg1 == reg2;
                 2'b01: do_branch = ~(reg1 == reg2);
-                2'b10: do_branch = reg1 == 0 || reg1[31] == 1;  // Signed comparison, less or equal to zero
+                2'b10: do_branch = $signed(reg1) <= 0;  // Signed comparison, less or equal to zero
                 2'b11: do_branch = $signed(reg1) > 0;               // Signed comparison, greater than zero
             endcase
         end

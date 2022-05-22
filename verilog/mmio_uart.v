@@ -17,7 +17,7 @@ module mmio_uart(
     output uart_tx_pin,
     input bank_sys_clk
 );
-    wire uart_clk = bank_sys_clk;
+    wire uart_clk = sys_clk;
     // UART
     // Address: 0xFFFF0120 - 0xFFFF013F, 8 words, 32 bytes
     //          0b100100000, 0b100111111
@@ -37,6 +37,8 @@ module mmio_uart(
     wire acc_tx_send    = _addr == 3'b100;  // wr
     wire acc_tx_fifo    = _addr == 3'b101;  // wo
 
+    reg acc_rx_fifo_d;
+    always @(posedge sys_clk) acc_rx_fifo_d <= acc_rx_fifo;
     reg uart_tx_start;
     always @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin
@@ -48,7 +50,10 @@ module mmio_uart(
                 mmio_done <= 0;
                 mmio_read_data <= 0;
             end else if (mmio_work) begin
-                mmio_done <= 1;
+                if (acc_rx_fifo && !acc_rx_fifo_d)
+                    mmio_done <= 0;
+                else 
+                    mmio_done <= 1;
                 if (acc_rx_valid)       mmio_read_data <= {31'b0, !rx_fifo_empty};
                 else if (acc_rx_fifo)   mmio_read_data <= {24'b0, rx_fifo_r_dout};
                 //  rx_fifo_read is done at sys_clk negedge, sampling at posedge 
@@ -150,8 +155,9 @@ module mmio_uart(
     wire [7:0]  rx_fifo_w_din   = uart_rx_data_algn;
     wire        rx_fifo_w_en    = uart_rx_done_algn && ! rx_fifo_full;
     wire        rx_fifo_full;
-    wire [7:0]  rx_fifo_r_dout;
-    wire        rx_fifo_r_en    = mmio_work && mmio_read && acc_rx_fifo && !mmio_done;
+    reg [7:0]  rx_fifo_r_dout;
+    wire [7:0]  rx_fifo_r_dout_w;
+    wire        rx_fifo_r_en    = mmio_work && mmio_read && acc_rx_fifo && !mmio_done && !acc_rx_fifo_d;
     wire        rx_fifo_empty;
     uart_fifo rx_fifo(
         .rst(fifo_rst),
@@ -160,12 +166,18 @@ module mmio_uart(
         .din(rx_fifo_w_din),
         .wr_en(rx_fifo_w_en),
         .full(rx_fifo_full),
-        // read, from host, use cpu clk, negedge
-        .rd_clk(~sys_clk),   
-        .dout(rx_fifo_r_dout),
+        // read, from host, use cpu clk
+        .rd_clk(sys_clk),   
+        .dout(rx_fifo_r_dout_w),
         .rd_en(rx_fifo_r_en),
         .empty(rx_fifo_empty)
     );
+    always @(negedge sys_clk) begin
+        if (mmio_work && mmio_read && acc_rx_fifo && !mmio_done && acc_rx_fifo_d)
+            rx_fifo_r_dout <= rx_fifo_r_dout_w;
+        else 
+            rx_fifo_r_dout <= 8'b0;
+    end
     reg [7:0] uart_rx_data_algn;
     reg       uart_rx_done_algn;
     reg       uart_rx_done_wait_neg;
@@ -184,6 +196,10 @@ module mmio_uart(
                     uart_rx_done_algn <= 1;
                     uart_rx_data_algn <= uart_rx_data;
                     uart_rx_done_wait_neg <= 1;
+                end else begin
+                    uart_rx_done_algn <= 0;
+                    uart_rx_data_algn <= 8'b0;
+                    uart_rx_done_wait_neg <= 0;
                 end
             end
         end

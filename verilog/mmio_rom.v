@@ -10,10 +10,7 @@ module mmio_rom(
 
     output mmio_work,
     output reg mmio_done,
-    output [31:0] mmio_read_data,
-
-    // IO Pins
-    input [23:0] switches_pin 
+    output [31:0] mmio_read_data
 );
     // ROM
     // Address: 0xFFFFE000 - 0xFFFFFFFF, 
