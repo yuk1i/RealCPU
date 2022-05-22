@@ -1,4 +1,5 @@
-
+#ifndef SEG7_H
+#define SEG7_H
 #define SEG7_BASE_ADDR 0xFFFF0100
 
 
@@ -24,4 +25,8 @@
 #define SEG7_CHAR_L ((unsigned int) 0b00011100)
 #define SEG7_CHAR_U ((unsigned int) 0b01111100)
 #define SEG7_CHAR_R ((unsigned int) 0b00001010)
-#define SEG7_CHAR_T ((unsigned int) 0b00001010)
+#define SEG7_CHAR_T ((unsigned int) 0b00011110)
+
+void display(unsigned int d);
+
+#endif

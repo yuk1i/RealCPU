@@ -11,8 +11,9 @@
 void put_char(char a);
 void put_string(char* str);
 int read_string(char* dst, int max_len);
-void put_hex_int32(int d);
+void put_hex_int32(unsigned int d);
 int uart_can_read();
 unsigned int read_hex_int32();
+unsigned char read_byte();
 
 #endif

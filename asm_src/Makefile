@@ -9,9 +9,9 @@ STRIP=mipsel-linux-gnu-strip
 TEXT_START_AT=0x0100
 DATA_START_AT=0x1000
 
-CC_FLAGS=-mips32r6 -Werror -O0 -fno-pic -mcompact-branches=never -mno-llsc -msoft-float -mno-abicalls
+CC_FLAGS=-g -frename-registers -mips32r6 -Werror -O0 -fomit-frame-pointer -fno-pic -mcompact-branches=never -mno-llsc -msoft-float -mno-abicalls -static
 AS_FLAGS=-mips32r6 --alternate -mgp32 -g -call_nonpic -non_shared -mno-ginv -msoft-float --fatal-warnings -O0
-LD_FLAGS=--script linker.ld --no-compact-branches -nostdlib
+LD_FLAGS=--script linker.ld --no-compact-branches -nostdlib -static
 
 BUILDDIR=tmp
 SRCS=
@@ -20,24 +20,30 @@ OBJS=$(SRCS:%=$(BUILDDIR)/%.o)
 
 .DEFAULT_GOAL := cputest
 
-system: SRCS="system start"
+system: SRCS=system_uart utils/uart utils/seg7 utils/string
 system:
-	make SRCS=$(SRCS) dump
+	@make SRCS="$(SRCS)" dump
 
+school:
+	@make SRCS="system" dump
+
+rom:SRCS:=bootloader/rom bootloader/bootloader
 rom:
+	@make SRCS="$(SRCS)" objs
 	@LD_FLAGS=
-	@$(AS) $(AS_FLAGS) bootloader/rom.s -o tmp/rom.o
-	@$(CC) $(CC_FLAGS) -c bootloader/bootloader.c -o tmp/bootloader.o
-	@$(LD) --Ttext 0xFFFFE000 -Tdata 0xFFFFFA00 --no-compact-branches -nostdlib --entry __rom_start tmp/rom.o tmp/bootloader.o -o tmp/rom.out
-	@mipsel-linux-gnu-strip -R .reginfo $(BUILDDIR)/rom.out
-	@mipsel-linux-gnu-strip -R .MIPS.abiflags $(BUILDDIR)/rom.out
-	@mipsel-linux-gnu-strip -R .gnu.attributes $(BUILDDIR)/rom.out
+	@$(LD) --script rom.ld --no-compact-branches -nostdlib -static $(OBJS) -o tmp/rom.out
+	@$(STRIP) -R .reginfo $(BUILDDIR)/rom.out
+	@$(STRIP) -R .MIPS.abiflags $(BUILDDIR)/rom.out
+	@$(STRIP) -R .gnu.attributes $(BUILDDIR)/rom.out
 	@$(OBJCOPY) -O binary tmp/rom.out tmp/rom.bin
 	@python3 convert.py tmp/rom.bin rom.coe
 
 %:
 	make SRCS=$@ dump --no-print-directory
 	@echo "\n[*] Compile and dump successfully\n"
+
+objs: $(OBJS)
+	@echo "done"
 
 $(BUILDDIR)/%.o : %.c
 	@echo "[CC] compile $<"
@@ -50,9 +56,9 @@ $(BUILDDIR)/%.o : %.s
 link: $(OBJS)
 	@echo "[LD] link"
 	@$(LD) $(LD_FLAGS) $(OBJS) -o $(BUILDDIR)/a.out
-	@mipsel-linux-gnu-strip -R .reginfo $(BUILDDIR)/a.out
-	@mipsel-linux-gnu-strip -R .MIPS.abiflags $(BUILDDIR)/a.out
-	@mipsel-linux-gnu-strip -R .gnu.attributes $(BUILDDIR)/a.out
+	@$(STRIP) -R .reginfo $(BUILDDIR)/a.out
+	@$(STRIP) -R .MIPS.abiflags $(BUILDDIR)/a.out
+	@$(STRIP) -R .gnu.attributes $(BUILDDIR)/a.out
 
 dump: link
 	@echo "[*]  dump coe"
@@ -74,4 +80,7 @@ readelf:
 
 clean:
 	@echo "[*] clean done"
-	@rm -f a.out *.o tmp/*.bin *.coe tmp/*.o tmp/*.out
+	@rm -f a.out *.o
+	@rm -rf tmp/*
+	@mkdir tmp/bootloader
+	@mkdir tmp/utils

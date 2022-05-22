@@ -1,17 +1,12 @@
-__TEXT_START_AT = 0x1000;
-__DATA_START_AT = 0xf000;
+__TEXT_START_AT = 0xFFFFE000;
+__DATA_START_AT = 0xFFFFFA00;
 
 SECTIONS
 {
-  . = 0x0000;
-  .pad . : {
-    LONG(0x00000000);
-  }
-
   . = __TEXT_START_AT;
   
   .text . : {
-    *(.start)
+    tmp/bootloader/rom.o(.rom)
     *(.text) 
   }
   

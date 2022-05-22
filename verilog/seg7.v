@@ -30,28 +30,5 @@ module seg7 (
         end
     end
 
-    // function [7:0] display;
-    //     input[3:0] data;
-    //     begin
-    //     case(data)
-    //             //ABCDEFG_DP
-    //             0  : display = 8'B11111100;
-    //             1  : display = 8'B01100000;
-    //             2  : display = 8'B11011010;
-    //             3  : display = 8'B11110010;
-    //             4  : display = 8'B01100110;
-    //             5  : display = 8'B10110110;
-    //             6  : display = 8'B10111110;
-    //             7  : display = 8'B11100000;
-    //             8  : display = 8'B11111110;
-    //             9  : display = 8'B11100110;
-    //             10 : display = 8'B11101110;
-    //             11 : display = 8'B00111110;
-    //             12 : display = 8'B00011010;
-    //             13 : display = 8'B01111010;
-    //             14 : display = 8'B10011110;
-    //             15 : display = 8'B10001110;
-    //         endcase
-    //      end
-    // endfunction
+
 endmodule

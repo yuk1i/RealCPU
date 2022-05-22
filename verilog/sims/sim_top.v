@@ -18,6 +18,7 @@ module sim_top();
 
     always #5 bank_sys_clk = ~bank_sys_clk;
     wire sys_clk;
+    assign sys_clk = ttop.sys_clk;
     wire uart_rx;
     wire uart_tx;
     top ttop(
@@ -26,8 +27,7 @@ module sim_top();
         .switches_pin(switches_pin),
 
         .uart_rx_pin(uart_rx),
-        .uart_tx_pin(uart_tx),
-        .sim_sys_clk(sys_clk)
+        .uart_tx_pin(uart_tx)
     );
     reg send;
     reg [7:0] dsend;

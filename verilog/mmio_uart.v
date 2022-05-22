@@ -85,12 +85,11 @@ module mmio_uart(
     uart_fifo tx_fifo(
         .rst(fifo_rst),
         // write, from host, use cpu clk
-        .wr_clk(sys_clk),
+        .clk(sys_clk),
         .din(tx_fifo_w_din),
         .wr_en(tx_fifo_w_en),
         .full(tx_fifo_full),
         // read, from UART, use uart clk
-        .rd_clk(uart_clk),
         .dout(tx_fifo_r_dout),
         .rd_en(tx_fifo_r_ren),
         .empty(tx_fifo_empty)
@@ -159,15 +158,14 @@ module mmio_uart(
     wire [7:0]  rx_fifo_r_dout_w;
     wire        rx_fifo_r_en    = mmio_work && mmio_read && acc_rx_fifo && !mmio_done && !acc_rx_fifo_d;
     wire        rx_fifo_empty;
-    uart_fifo rx_fifo(
+    rx_uart_fifo rx_fifo(
         .rst(fifo_rst),
         // write, from UART, use uart clk
-        .wr_clk(uart_clk),
+        .clk(sys_clk),
         .din(rx_fifo_w_din),
         .wr_en(rx_fifo_w_en),
         .full(rx_fifo_full),
         // read, from host, use cpu clk
-        .rd_clk(sys_clk),   
         .dout(rx_fifo_r_dout_w),
         .rd_en(rx_fifo_r_en),
         .empty(rx_fifo_empty)
