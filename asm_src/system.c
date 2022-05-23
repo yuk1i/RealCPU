@@ -47,6 +47,7 @@ void display(unsigned int d) {
         d = d >> 4;
     }
 }
+int bit[8] = {0b00000001, 0b00000010, 0b00000100, 0b00001000, 0b00010000, 0b00100000, 0b01000000, 0b10000000};
 
 extern int cmain() {
     register int c;
@@ -55,6 +56,7 @@ extern int cmain() {
     unsigned int b;
     unsigned int highbit;
     unsigned int is_palindrome = 1;
+
     const unsigned int bit0 = 0b00000001;
     const unsigned int bit1 = 0b00000010;
     const unsigned int bit2 = 0b00000100;
@@ -118,157 +120,37 @@ extern int cmain() {
             mmio_led[23] = 0;
             c = a << b;
             int temp;
-            temp = c & bit0;
-            if(temp != 0){
-                mmio_led[0] = 1;
-            }else{
-                mmio_led[0] = 0;
-            }
-            temp = c & bit1;
-            if(temp != 0){
-                mmio_led[1] = 1;
-            }else{
-                mmio_led[1] = 0;
-            }
-            temp = c & bit2;
-            if(temp != 0){
-                mmio_led[2] = 1;
-            }else{
-                mmio_led[2] = 0;
-            }
-            temp = c & bit3;
-            if(temp != 0){
-                mmio_led[3] = 1;
-            }else{
-                mmio_led[3] = 0;
-            }
-            temp = c & bit4;
-            if(temp != 0){
-                mmio_led[4] = 1;
-            }else{
-                mmio_led[4] = 0;
-            }
-            temp = c & bit5;
-            if(temp != 0){
-                mmio_led[5] = 1;
-            }else{
-                mmio_led[5] = 0;
-            }
-            temp = c & bit6;
-            if(temp != 0){
-                mmio_led[6] = 1;
-            }else{
-                mmio_led[6] = 0;
-            }
-            temp = c & bit7;
-            if(temp != 0){
-                mmio_led[7] = 1;
-            }else{
-                mmio_led[7] = 0;
+            for(int i = 0; i < 8; i++){
+                temp = bit[i] & c;
+                if(temp != 0){
+                    mmio_led[i] = 1;
+                }else{
+                    mmio_led[i] = 0;
+                }
             }
         }else if(decide == 6){
             mmio_led[23] = 0;
             c = a >> b;
             int temp;
-            temp = c & bit0;
-            if(temp != 0){
-                mmio_led[0] = 1;
-            }else{
-                mmio_led[0] = 0;
-            }
-            temp = c & bit1;
-            if(temp != 0){
-                mmio_led[1] = 1;
-            }else{
-                mmio_led[1] = 0;
-            }
-            temp = c & bit2;
-            if(temp != 0){
-                mmio_led[2] = 1;
-            }else{
-                mmio_led[2] = 0;
-            }
-            temp = c & bit3;
-            if(temp != 0){
-                mmio_led[3] = 1;
-            }else{
-                mmio_led[3] = 0;
-            }
-            temp = c & bit4;
-            if(temp != 0){
-                mmio_led[4] = 1;
-            }else{
-                mmio_led[4] = 0;
-            }
-            temp = c & bit5;
-            if(temp != 0){
-                mmio_led[5] = 1;
-            }else{
-                mmio_led[5] = 0;
-            }
-            temp = c & bit6;
-            if(temp != 0){
-                mmio_led[6] = 1;
-            }else{
-                mmio_led[6] = 0;
-            }
-            temp = c & bit7;
-            if(temp != 0){
-                mmio_led[7] = 1;
-            }else{
-                mmio_led[7] = 0;
+            for(int i = 0; i < 8; i++){
+                temp = bit[i] & c;
+                if(temp != 0){
+                    mmio_led[i] = 1;
+                }else{
+                    mmio_led[i] = 0;
+                }
             }
         }else if(decide == 7){
             mmio_led[23] = 0;
             c = ((int)a) >> b;
             int temp;
-            temp = c & bit0;
-            if(temp != 0){
-                mmio_led[0] = 1;
-            }else{
-                mmio_led[0] = 0;
-            }
-            temp = c & bit1;
-            if(temp != 0){
-                mmio_led[1] = 1;
-            }else{
-                mmio_led[1] = 0;
-            }
-            temp = c & bit2;
-            if(temp != 0){
-                mmio_led[2] = 1;
-            }else{
-                mmio_led[2] = 0;
-            }
-            temp = c & bit3;
-            if(temp != 0){
-                mmio_led[3] = 1;
-            }else{
-                mmio_led[3] = 0;
-            }
-            temp = c & bit4;
-            if(temp != 0){
-                mmio_led[4] = 1;
-            }else{
-                mmio_led[4] = 0;
-            }
-            temp = c & bit5;
-            if(temp != 0){
-                mmio_led[5] = 1;
-            }else{
-                mmio_led[5] = 0;
-            }
-            temp = c & bit6;
-            if(temp != 0){
-                mmio_led[6] = 1;
-            }else{
-                mmio_led[6] = 0;
-            }
-            temp = c & bit7;
-            if(temp != 0){
-                mmio_led[7] = 1;
-            }else{
-                mmio_led[7] = 0;
+            for(int i = 0; i < 8; i++){
+                temp = bit[i] & c;
+                if(temp != 0){
+                    mmio_led[i] = 1;
+                }else{
+                    mmio_led[i] = 0;
+                }
             }
         }
         }
