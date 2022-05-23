@@ -35,12 +35,12 @@ module l1mmu(
                 STATUS_ACC_HI   = 2'b01,
                 STATUS_DONE     = 2'b10;
 
-    wire acc_hi = status == STATUS_ACC_HI || status == STATUS_DONE;
-    reg [127:0] stage;
-    wire [31:0] _req_addr = !addr_is_mmio ? {4'b0, l1_mmu_req_addr[31:5], acc_hi} : 32'b0;
-    wire [127:0] _dout;
-    wire [127:0] _wr_data = acc_hi ? l1_mmu_write_data[255:128] : l1_mmu_write_data[127:0];
-    wire mig_write = !addr_is_mmio && l1_mmu_req_write;
+    wire            acc_hi      = status == STATUS_ACC_HI || status == STATUS_DONE;
+    reg     [127:0] stage;
+    wire    [31:0]  _req_addr   = {4'b0, l1_mmu_req_addr[31:5], acc_hi};
+    wire    [127:0] _dout;
+    wire    [127:0] _wr_data    = acc_hi ? l1_mmu_write_data[255:128] : l1_mmu_write_data[127:0];
+    wire            mig_write   = !addr_is_mmio && l1_mmu_req_write;
 
     assign mmu_l1_done = addr_is_mmio ? mmu_mmio_done : status == STATUS_DONE;
     assign mmu_l1_read_data = addr_is_mmio ? {244'b0, mmu_mmio_read_data} : {_dout, stage};
@@ -53,25 +53,21 @@ module l1mmu(
         .wea(mig_write)
     );
 
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             stage <= 128'b0;
         end else begin
-            if (addr_is_mmio) begin
-                stage <= 128'b0;
+            // read mem
+            if (status == STATUS_IDLE && l1_mmu_req_read) begin
+                stage <= _dout;
             end else begin
-                // read mem
-                if (status == STATUS_IDLE && l1_mmu_req_read) begin
-                    stage <= _dout;
-                end else begin
-                    stage <= stage;
-                end
+                stage <= stage;
             end
         end
     end
 
     // STATE MACHINE
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (~rst_n) begin
             status <= STATUS_IDLE;
         end else begin

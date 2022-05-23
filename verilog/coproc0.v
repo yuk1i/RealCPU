@@ -26,7 +26,7 @@ module coproc0 (
 
     reg [31:0] co0_regs [0:31];
     integer i;
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             for (i = 0; i<32; i=i+1) begin
                 co0_regs[i] <= 32'h0;

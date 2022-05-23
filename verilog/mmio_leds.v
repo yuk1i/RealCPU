@@ -25,7 +25,7 @@ module mmio_leds(
 
     assign leds_pin = _leds_reg[23:0];
 
-    always @(posedge sys_clk,negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             _leds_reg <= 0;
         end else begin
@@ -38,7 +38,7 @@ module mmio_leds(
     // The first clk: mmio_write==1, done==0
     // the second clk: mmio_write==1, done==1
 
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             mmio_done <= 0;
             mmio_read_data <= 0;

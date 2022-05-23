@@ -18,19 +18,32 @@ module top(
     input uart_rx_pin,
     output uart_tx_pin
 );
-
-    wire rst_n = !bank_rst && sys_clk_lock;
-
+    reg resetter;   // low to reset system
+    wire rst_n = !bank_rst && sys_clk_lock && resetter;
     wire sys_clk;
     wire sys_clk_lock;
 
     clk_wiz clk_gen(
         .clk_in1(bank_sys_clk),
-        .resetn(!bank_rst),
         .cpu_clk(sys_clk),
         .locked(sys_clk_lock)
     );
 
+    reg [4:0] cnt;
+    always @(posedge sys_clk) begin
+        if (bank_rst || !sys_clk_lock) begin
+            cnt <= 0;
+            resetter <= 0;
+        end else begin
+            if (cnt == 5'b11111) begin
+                resetter <= 1;
+                cnt <= cnt;
+            end else begin
+                resetter <= 0;
+                cnt <= cnt + 1;
+            end
+        end
+    end
 
     wire [31:0] f_ins;
     wire [31:0] f_pc;
@@ -49,8 +62,8 @@ module top(
     wire d_is_branch;
     wire d_is_regimm_op;
     wire d_is_load_store;
-    wire d_is_sync_icache;
-    wire d_is_sync_dcache;
+    wire d_is_sync;
+    wire [4:0] d_sync_type;
 
     wire [4:0] d_rs_id;
     wire [4:0] d_rt_id;
@@ -123,7 +136,8 @@ module top(
         .immu_done(immu_done),
         .immu_read_data(immu_read_data),
 
-        .sync(d_is_sync_icache)
+        .is_sync_ins(d_is_sync),
+        .sync_type(d_sync_type)
     );
 
     idecoder decoder(
@@ -148,8 +162,8 @@ module top(
         .is_branch(d_is_branch),
         .is_regimm_op(d_is_regimm_op),
         .is_load_store(d_is_load_store),
-        .is_sync_icache(d_is_sync_icache),
-        .is_sync_dcache(d_is_sync_dcache),
+        .is_sync_ins(d_is_sync),
+        .sync_type(d_sync_type),
 
         .rs_id(d_rs_id),
         .rt_id(d_rt_id),
@@ -235,7 +249,8 @@ module top(
         .mmu_l1_done(dmmu_done),
         .mmu_l1_read_data(dmmu_read_data),
 
-        .sync(d_is_sync_dcache)
+        .is_sync_ins(d_is_sync),
+        .sync_type(d_sync_type)
     );
     wire serve_ic           = immu_read;
     wire mmu_read           = serve_ic ? immu_read : dmmu_read;

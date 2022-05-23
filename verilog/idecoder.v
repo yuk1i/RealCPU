@@ -27,8 +27,8 @@ module idecoder(
     output is_branch,      // [beq, bneq, beqz, bneqz]
     output is_regimm_op,
     output is_load_store,
-    output is_sync_icache,
-    output is_sync_dcache,
+    output is_sync_ins,
+    output [4:0] sync_type,
 
     output [4:0] rs_id,
     output [4:0] rt_id,
@@ -68,8 +68,6 @@ module idecoder(
     assign is_jr = R_op && func[5:1] == 5'b00100;
     assign is_branch = opcode[5:2] == 4'b0001 || special_branch;
     assign is_load_store = mem_to_reg || mem_write;
-    assign is_sync_icache = R_op && func == 6'b001111 && ins_i[6] == 0;
-    assign is_sync_dcache = R_op && func == 6'b001111 && ins_i[6] == 1;
 
     assign rs_id = ins_i[25:21];        // 5 bits
     // override rt when jal only
@@ -77,6 +75,9 @@ module idecoder(
     assign rt_id = (opcode == 6'h3 || special_link) ? 5'b11111 : _real_rt_id; // 5 bits
     assign rd_id = ins_i[15:11];        // 5 bits
     
+    assign is_sync_ins = R_op && func == 6'b001111;
+    assign sync_type = shift_amt;
+
     // ***** END Decoder ***** //
     
     // ***** BEGIN Controller ***** //
@@ -132,7 +133,7 @@ module idecoder(
 
     integer i;
     // Register Write
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             for (i = 0; i<32; i=i+1) begin
                 register[i] <= 32'h0;
@@ -162,7 +163,7 @@ module idecoder(
     assign bypass_immd = co0_regs[rd_id];
 
     // Co0 Register Write
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             for (c0i = 0; c0i<32; c0i=c0i+1) begin
                 co0_regs[c0i] <= 32'h0;

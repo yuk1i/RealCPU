@@ -25,7 +25,7 @@ module mmio_rom(
     );
     assign mmio_read_data = mmio_done ? rom_dout : 32'b0;
 
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             mmio_done <= 0;
         end else begin

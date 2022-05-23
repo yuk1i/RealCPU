@@ -49,52 +49,31 @@ module execute(
     wire [31:0] op2 = alu_src ? immd : reg2;
     wire [31:0] inv_op2 = ~op2 + 1;
 
-    reg alu_cf; // carry flag
-    reg alu_sf; // sign flag
-    reg alu_of; // overflow flag
     reg [31:0] result_mux;
     always @* begin
         casex (def_exe)
-            3'b00x: {alu_cf,result_mux} = reg1 + op2;  // 0: of, 1:u no of
-            3'b01x: {alu_cf,result_mux} = reg1 + inv_op2;  
-            3'b100: {alu_cf,result_mux} = reg1 & op2;
-            3'b101: {alu_cf,result_mux} = reg1 | op2;
-            3'b110: {alu_cf,result_mux} = reg1 ^ op2;
-            3'b111: {alu_cf,result_mux} = is_aui ? ({immd[15:0], 16'b0} + reg1) : ~ (reg1 | op2);
+            3'b00x: result_mux = reg1 + op2;  // 0: of, 1:u no of
+            3'b01x: result_mux = reg1 + inv_op2;  
+            3'b100: result_mux = reg1 & op2;
+            3'b101: result_mux = reg1 | op2;
+            3'b110: result_mux = reg1 ^ op2;
+            3'b111: result_mux = is_aui ? ({immd[15:0], 16'b0} + reg1) : ~ (reg1 | op2);
         endcase
-        // Set condition registers
-        if (def_exe[2] == 0) begin
-            if (def_exe[0] == 1) begin
-                // unsigned
-                alu_sf = 0;
-                alu_of = alu_cf;
-            end else begin
-                // signed, 2's complement
-                if (def_exe[1] == 0) begin  // add
-                    alu_sf = result_mux[31];
-                    alu_of = (reg1[31] & op2[31] & ~result_mux[31]) | (~reg1[31] & ~op2[31] & result_mux[31]);
-                end else begin              // minus
-                    alu_sf = result_mux[31];
-                    alu_of = (reg1[31] & inv_op2[31] & ~result_mux[31]) | (~reg1[31] & ~inv_op2[31] & result_mux[31]);
-                end
-            end
-        end else begin
-            alu_sf = 0;
-            alu_of = 0;
-        end
     end
 
     // Set Checker:is_set_op, [slti,sltiu], [slt,sltu]. 
-    // Calculate reg1-op2 in ALU, judging by condition registers
-    wire slt_unsgn = opcode[0]==1 || (R_op && func[0]==1); // only defined when is_set_op
     reg slt_result;
     always @* begin
-        if (slt_unsgn) begin
-            // unsigned comparision
-            slt_result = !alu_cf;
+        if (R_op) begin
+            if (func[0] == 1) // unsigned
+                slt_result = $unsigned(reg1) < $unsigned(reg2); //sltu
+            else
+                slt_result = $signed(reg1) < $signed(reg2);     // slt
         end else begin
-            // signed comparision
-            slt_result = alu_of ^ alu_sf;
+            if (opcode[0] == 1) // unsigned
+                slt_result = $unsigned(reg1) < $unsigned(immd); // sltiu
+            else
+                slt_result = $signed(reg1) < $signed(immd);     // slti
         end
     end
 

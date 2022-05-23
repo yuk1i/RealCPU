@@ -23,15 +23,15 @@ module ifetch(
     input immu_done,
     input [255:0] immu_read_data,
 
-    input sync
+    input is_sync_ins,
+    input [4:0] sync_type
 );
     reg [31:0] pc;
     reg [31:0] next_pc;
     reg working;
     wire [31:0] il1_ins_out;
     wire il1_stall;
-    wire il1_mmio_stall;
-    wire il1_hit;
+    wire i1l_inv_stall;
 
     l1icache il1(
         .sys_clk(sys_clk),
@@ -42,9 +42,8 @@ module ifetch(
 
         .l1_data_o(il1_ins_out),
         .out_req_stall(stall),
-        .stall(il1_stall),
-        .il1_mmio_stall(il1_mmio_stall),
-        .hit(il1_hit),
+        .miss_stall(il1_stall),
+        .invalid_stall(i1l_inv_stall),
 
         .l1_mmu_req_read(immu_read),
         .l1_mmu_req_addr(immu_addr),
@@ -52,18 +51,20 @@ module ifetch(
         .mmu_l1_done(immu_done),
         .mmu_l1_read_data(immu_read_data),
 
-        .sync(sync)
+        .is_sync_ins(is_sync_ins),
+        .sync_type(sync_type)
     );
     reg il1_algn;
     always @(posedge sys_clk) il1_algn <= il1_stall;
     assign ins_out = il1_algn ? 32'b0 : il1_ins_out;
 
+    wire pos_stall = stall || i1l_inv_stall;
     reg out_stall_algn;
-    always @(posedge sys_clk) out_stall_algn <= stall;
+    always @(posedge sys_clk) out_stall_algn <= pos_stall;
 
-    assign global_stall = il1_mmio_stall || il1_algn || stall;
+    assign global_stall = il1_algn || pos_stall;
     
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             // ins_out <= 0;
             pc_out <= 0;
@@ -85,14 +86,14 @@ module ifetch(
         end
     end
 
-    always @(negedge sys_clk, negedge rst_n) begin
+    always @(negedge sys_clk) begin
         if (!rst_n) begin
             pc <= 32'hFFFFE000;
         end else begin
             if (pc == 31'h00008000) begin
                 pc <= pc;
             end else begin
-                if (il1_stall || stall) 
+                if (global_stall || il1_stall) 
                     pc <= pc;
                 else if (do_jump) 
                     pc <= jump_addr;

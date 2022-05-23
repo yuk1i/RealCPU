@@ -1,13 +1,6 @@
 #include "../utils/seg7.c"
 #include "../utils/uart.c"
 
-void flush() {
-    for (register int i = 0x80000; i<0x80000 + 0x8000;i+=4) {
-        asm("lw $zero, 0(%0)"::"r"(i));
-    }
-}
-
-
 extern int bootloader() {
     put_string("[+] Hello Yuki!\n");
     put_string("[+] Bootloader is running.\n");
@@ -29,8 +22,6 @@ extern int bootloader() {
     }
     put_string("[*] Flush Cache...\n");
     // reset main memory to all zero
-    // then flush the cache
-    flush();
     put_string("[+] Reset Main Memory Done!\n");
     seg7_addr[3] = SEG7_CHAR_U;
     seg7_addr[2] = SEG7_CHAR_A;
@@ -49,28 +40,13 @@ extern int bootloader() {
     register int * uart_tx_fifo = (int *) ADDR_UART_TX_FIFO;
     register int * uart_tx_send = (int *) ADDR_UART_TX_SEND;
     for(register int i=0;i<size;i++) {
-        led_addr[3] = *uart_rx_valid;
-        led_addr[1] = 1;
-        register unsigned char d = read_byte();
-        led_addr[1] = 0;
+        while (!*uart_rx_valid) asm volatile ("":::"memory");
+        register unsigned char d = *uart_rx_fifo & 0xFF;
         *mem_base = d;
-        *uart_tx_fifo = d;
-        *uart_tx_send = 1;
         mem_base++;
         display(i);
-        while(mmio_sw[0]) {
-            asm volatile ("":::"memory");
-            led_addr[3] = *uart_rx_valid;
-        }
     }
-    flush();
     put_string("[+] MEM write done\n");
-    mem_base = (unsigned char *) 0x1000;
-    for(register int i=0;i<size;i++) {
-        *uart_tx_fifo = mem_base[i];
-        *uart_tx_send = 1;
-        while(*uart_tx_busy) asm volatile ("":::"memory");
-    }
     seg7_addr[3] = SEG7_CHAR_A;
     seg7_addr[2] = SEG7_CHAR_B;
     seg7_addr[1] = SEG7_CHAR_C;

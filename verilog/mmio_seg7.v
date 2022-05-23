@@ -26,7 +26,7 @@ module mmio_seg7(
     reg [7:0] seg7_regs [0:7];
 
     integer i;
-    always @(posedge sys_clk,negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             for (i=0;i<8;i=i+1) begin
                 seg7_regs[i] <= 0;
@@ -42,7 +42,7 @@ module mmio_seg7(
     // The first clk: mmio_write==1, done==0
     // the second clk: mmio_write==1, done==1
 
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             mmio_done <= 0;
             mmio_read_data <= 0;
@@ -63,7 +63,7 @@ module mmio_seg7(
     // seg7 module
 
     seg7 seg7_ins(
-        .clk(bank_sys_clk),
+        .clk(sys_clk),
         .rst_n(rst_n),
         .numbers({seg7_regs[7],seg7_regs[6],seg7_regs[5],seg7_regs[4],seg7_regs[3],seg7_regs[2],seg7_regs[1],seg7_regs[0]}),
         .LED_BITS(seg7_bits_pin),

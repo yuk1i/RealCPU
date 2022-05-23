@@ -14,3 +14,7 @@ void display(unsigned int d) {
         d = d >> 4;
     }
 }
+
+void display_string(char * str) {
+
+}

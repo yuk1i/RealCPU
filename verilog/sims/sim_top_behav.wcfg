@@ -11,15 +11,18 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000000 us"></ZoomStartTime>
-      <ZoomEndTime time="2,551.000001 us"></ZoomEndTime>
-      <Cursor1Time time="120.375000 us"></Cursor1Time>
+      <ZoomStartTime time="2,205.940 ns"></ZoomStartTime>
+      <ZoomEndTime time="7,387.941 ns"></ZoomEndTime>
+      <Cursor1Time time="2,827.940 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="279"></NameColumnWidth>
-      <ValueColumnWidth column_width="89"></ValueColumnWidth>
+      <NameColumnWidth column_width="262"></NameColumnWidth>
+      <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="27" />
+   <wave_markers>
+      <marker label="" time="15295000" />
+   </wave_markers>
    <wvobject type="logic" fp_name="/sim_top/ttop/bank_sys_clk">
       <obj_property name="ElementShortName">bank_sys_clk</obj_property>
       <obj_property name="ObjectShortName">bank_sys_clk</obj_property>
@@ -61,6 +64,7 @@
    <wvobject type="group" fp_name="group4095">
       <obj_property name="label">L1 ICache</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/sim_top/ttop/fetch/pc">
          <obj_property name="ElementShortName">pc[31:0]</obj_property>
          <obj_property name="ObjectShortName">pc[31:0]</obj_property>
@@ -97,25 +101,42 @@
          <obj_property name="ElementShortName">mmu_l1_read_data[255:0]</obj_property>
          <obj_property name="ObjectShortName">mmu_l1_read_data[255:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/_mmio_done">
-         <obj_property name="ElementShortName">_mmio_done</obj_property>
-         <obj_property name="ObjectShortName">_mmio_done</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/fetch/il1/_mmio_ins_buf">
-         <obj_property name="ElementShortName">_mmio_ins_buf[31:0]</obj_property>
-         <obj_property name="ObjectShortName">_mmio_ins_buf[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/_mmio_available">
-         <obj_property name="ElementShortName">_mmio_available</obj_property>
-         <obj_property name="ObjectShortName">_mmio_available</obj_property>
+      <wvobject type="group" fp_name="group7996">
+         <obj_property name="label">MMIO</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/addr_is_mmio">
+            <obj_property name="ElementShortName">addr_is_mmio</obj_property>
+            <obj_property name="ObjectShortName">addr_is_mmio</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/_mmio_done">
+            <obj_property name="ElementShortName">_mmio_done</obj_property>
+            <obj_property name="ObjectShortName">_mmio_done</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/fetch/il1/_mmio_ins_buf">
+            <obj_property name="ElementShortName">_mmio_ins_buf[31:0]</obj_property>
+            <obj_property name="ObjectShortName">_mmio_ins_buf[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/fetch/il1/_mmio_ins_addr">
+            <obj_property name="ElementShortName">_mmio_ins_addr[31:0]</obj_property>
+            <obj_property name="ObjectShortName">_mmio_ins_addr[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/_mmio_done_neg">
+            <obj_property name="ElementShortName">_mmio_done_neg</obj_property>
+            <obj_property name="ObjectShortName">_mmio_done_neg</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/_mmio_available">
+            <obj_property name="ElementShortName">_mmio_available</obj_property>
+            <obj_property name="ObjectShortName">_mmio_available</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/mmio_read_pos">
+            <obj_property name="ElementShortName">mmio_read_pos</obj_property>
+            <obj_property name="ObjectShortName">mmio_read_pos</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/mmu_rcache_pos_sync">
          <obj_property name="ElementShortName">mmu_rcache_pos_sync</obj_property>
          <obj_property name="ObjectShortName">mmu_rcache_pos_sync</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/stall">
-         <obj_property name="ElementShortName">stall</obj_property>
-         <obj_property name="ObjectShortName">stall</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/c_hit">
          <obj_property name="ElementShortName">c_hit</obj_property>
@@ -125,9 +146,33 @@
          <obj_property name="ElementShortName">cache_w</obj_property>
          <obj_property name="ObjectShortName">cache_w</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/stall">
-         <obj_property name="ElementShortName">stall</obj_property>
-         <obj_property name="ObjectShortName">stall</obj_property>
+      <wvobject type="group" fp_name="group7995">
+         <obj_property name="label">invalid</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/invalid_cache">
+            <obj_property name="ElementShortName">invalid_cache</obj_property>
+            <obj_property name="ObjectShortName">invalid_cache</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/fetch/il1/inv_cnt">
+            <obj_property name="ElementShortName">inv_cnt[9:0]</obj_property>
+            <obj_property name="ObjectShortName">inv_cnt[9:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/invalid_stall">
+            <obj_property name="ElementShortName">invalid_stall</obj_property>
+            <obj_property name="ObjectShortName">invalid_stall</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/fetch/il1/is_sync_ins">
+            <obj_property name="ElementShortName">is_sync_ins</obj_property>
+            <obj_property name="ObjectShortName">is_sync_ins</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/fetch/il1/sync_type">
+            <obj_property name="ElementShortName">sync_type[4:0]</obj_property>
+            <obj_property name="ObjectShortName">sync_type[4:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/fetch/il1/status">
+            <obj_property name="ElementShortName">status[1:0]</obj_property>
+            <obj_property name="ObjectShortName">status[1:0]</obj_property>
+         </wvobject>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group2513">
@@ -253,6 +298,7 @@
    <wvobject type="group" fp_name="group2514">
       <obj_property name="label">Execute</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_regimm_op">
          <obj_property name="ElementShortName">is_regimm_op</obj_property>
          <obj_property name="ObjectShortName">is_regimm_op</obj_property>
@@ -280,6 +326,10 @@
       <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_regimm_op">
          <obj_property name="ElementShortName">is_regimm_op</obj_property>
          <obj_property name="ObjectShortName">is_regimm_op</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_set_op">
+         <obj_property name="ElementShortName">is_set_op</obj_property>
+         <obj_property name="ObjectShortName">is_set_op</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_jal">
          <obj_property name="ElementShortName">is_jal</obj_property>
@@ -393,6 +443,10 @@
          <obj_property name="ElementShortName">c_wd_tag[16:0]</obj_property>
          <obj_property name="ObjectShortName">c_wd_tag[16:0]</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/dcache/c_wd_st">
+         <obj_property name="ElementShortName">c_wd_st[1:0]</obj_property>
+         <obj_property name="ObjectShortName">c_wd_st[1:0]</obj_property>
+      </wvobject>
       <wvobject type="logic" fp_name="/sim_top/ttop/dcache/stall">
          <obj_property name="ElementShortName">stall</obj_property>
          <obj_property name="ObjectShortName">stall</obj_property>
@@ -477,6 +531,22 @@
          <obj_property name="ElementShortName">write_after_mmu_read_alg</obj_property>
          <obj_property name="ObjectShortName">write_after_mmu_read_alg</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/dcache/sync_type">
+         <obj_property name="ElementShortName">sync_type[4:0]</obj_property>
+         <obj_property name="ObjectShortName">sync_type[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/dcache/write_through">
+         <obj_property name="ElementShortName">write_through</obj_property>
+         <obj_property name="ObjectShortName">write_through</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/dcache/c_write_through">
+         <obj_property name="ElementShortName">c_write_through</obj_property>
+         <obj_property name="ObjectShortName">c_write_through</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/sim_top/ttop/dcache/c_write_through_d0">
+         <obj_property name="ElementShortName">c_write_through_d0</obj_property>
+         <obj_property name="ObjectShortName">c_write_through_d0</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group4097">
       <obj_property name="label">L1D - MMU</obj_property>
@@ -509,14 +579,6 @@
    <wvobject type="group" fp_name="group2049">
       <obj_property name="label">MMU</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/sim_top/ttop/l1mmu1/sys_clk">
-         <obj_property name="ElementShortName">sys_clk</obj_property>
-         <obj_property name="ObjectShortName">sys_clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/l1mmu1/rst_n">
-         <obj_property name="ElementShortName">rst_n</obj_property>
-         <obj_property name="ObjectShortName">rst_n</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/sim_top/ttop/l1mmu1/l1_mmu_req_read">
          <obj_property name="ElementShortName">l1_mmu_req_read</obj_property>
          <obj_property name="ObjectShortName">l1_mmu_req_read</obj_property>
@@ -667,7 +729,6 @@
    <wvobject type="group" fp_name="group1989">
       <obj_property name="label">UART</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/mmiodevs/mmio_uart_ins/mmio_read">
          <obj_property name="ElementShortName">mmio_read</obj_property>
          <obj_property name="ObjectShortName">mmio_read</obj_property>
@@ -793,10 +854,6 @@
             <obj_property name="ElementShortName">uart_rx_data[7:0]</obj_property>
             <obj_property name="ObjectShortName">uart_rx_data[7:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_uart_ins/rx_fifo/wr_data_count">
-            <obj_property name="ElementShortName">wr_data_count[12:0]</obj_property>
-            <obj_property name="ObjectShortName">wr_data_count[12:0]</obj_property>
-         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group481">
          <obj_property name="label">TX FIFO</obj_property>
@@ -807,10 +864,6 @@
             <obj_property name="ObjectShortName">tx_fifo_w_din[7:0]</obj_property>
             <obj_property name="Radix">ASCIIRADIX</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/sim_top/ttop/mmiodevs/mmio_uart_ins/tx_fifo/wr_clk">
-            <obj_property name="ElementShortName">wr_clk</obj_property>
-            <obj_property name="ObjectShortName">wr_clk</obj_property>
-         </wvobject>
          <wvobject type="logic" fp_name="/sim_top/ttop/mmiodevs/mmio_uart_ins/tx_fifo/wr_en">
             <obj_property name="ElementShortName">wr_en</obj_property>
             <obj_property name="ObjectShortName">wr_en</obj_property>
@@ -818,14 +871,6 @@
          <wvobject type="logic" fp_name="/sim_top/ttop/mmiodevs/mmio_uart_ins/tx_fifo/wr_ack">
             <obj_property name="ElementShortName">wr_ack</obj_property>
             <obj_property name="ObjectShortName">wr_ack</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_uart_ins/tx_fifo/rd_data_count">
-            <obj_property name="ElementShortName">rd_data_count[12:0]</obj_property>
-            <obj_property name="ObjectShortName">rd_data_count[12:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_uart_ins/tx_fifo/wr_data_count">
-            <obj_property name="ElementShortName">wr_data_count[12:0]</obj_property>
-            <obj_property name="ObjectShortName">wr_data_count[12:0]</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/sim_top/ttop/mmiodevs/mmio_uart_ins/tx_fifo_w_en">
             <obj_property name="ElementShortName">tx_fifo_w_en</obj_property>
@@ -993,7 +1038,6 @@
    <wvobject type="group" fp_name="group378">
       <obj_property name="label">SIM TX - RX</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/send">
          <obj_property name="ElementShortName">send</obj_property>
          <obj_property name="ObjectShortName">send</obj_property>
@@ -1058,7 +1102,6 @@
    <wvobject type="group" fp_name="group736">
       <obj_property name="label">SIM RX - TX</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/test_recv/uart_rxd">
          <obj_property name="ElementShortName">uart_rxd</obj_property>
          <obj_property name="ObjectShortName">uart_rxd</obj_property>

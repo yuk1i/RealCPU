@@ -14,6 +14,9 @@ module l1dcache(
     output [31:0] l1_data_o,
     output stall,
 
+    input is_sync_ins,
+    input [4:0] sync_type,
+
     // MMU Interface
     output l1_mmu_req_read,
     output l1_mmu_req_write,
@@ -21,9 +24,7 @@ module l1dcache(
     output [255:0] l1_mmu_write_data,
 
     input mmu_l1_done,
-    input [255:0] mmu_l1_read_data,
-
-    input sync
+    input [255:0] mmu_l1_read_data
 );
     wire c_work = l1_read || l1_write;
     
@@ -35,10 +36,23 @@ module l1dcache(
     wire        addr_h_bram = l1_addr[4];
     // cache addr: [tag 17b][idx 10b][3'b000][2'b00]
 
+    reg write_through;
+    always @(posedge sys_clk) begin
+        if (!rst_n) write_through <= 1;
+        else begin
+            if (is_sync_ins && sync_type == 5'b10000)        // disable write through mode
+                write_through <= 0;
+            else if (is_sync_ins && sync_type == 5'b10001)   // enable write through mode
+                write_through <= 1;
+            else
+                write_through <= write_through;
+        end
+    end
+
     // L1 Cache, 1024 * 32B = 32KB
     // [dirty 1b][valid 1b][tag 17b]
     wire [16:0] c_wd_tag        = c_flush_dirty ? 17'b0 : addr_tag;
-    wire [1:0]  c_wd_st         = c_flush_dirty ? 2'b00 : (!c_hit ? 2'b01 : 2'b11); 
+    wire [1:0]  c_wd_st         = c_flush_dirty ? 2'b00 : (!c_hit ? 2'b01 : {!write_through, 1'b1});    // when write_through, never mark dirty
     wire [18:0] cache_wd        = {c_wd_st, c_wd_tag};
     wire        cache_w;
     wire [18:0] c_o;
@@ -91,9 +105,14 @@ module l1dcache(
     wire        c_flush_dirty   = c_o_dirty && c_o_valid && c_o_tag != addr_tag;
     // need to write back cache line first, then read out new cache line
 
+    wire        c_write_through = c_work && c_hit && write_through && l1_write && !write_after_mmu_read_alg && !mmu_l1_done;
+    reg         c_write_through_d0;
+    always @(posedge sys_clk) c_write_through_d0 <= c_write_through;
+
     reg c_flush_dirty_delayed;
     always @(posedge sys_clk) c_flush_dirty_delayed <= c_flush_dirty;
     wire c_flush_dirty_set_mmu_write = c_flush_dirty_delayed && c_flush_dirty;
+    // need one clk to read out the cache line
 
     // Whether this address is MMIO address
     mmio_addr mmio_addr_1(
@@ -101,13 +120,16 @@ module l1dcache(
         .is_mmio(addr_is_mmio)
     );
 
+    wire disable_write_cache_wt = write_through && c_write_through_d0;
+    // disable write to bram from port B during flush cache line under write through mode
+
     assign bram_w_a = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty && mmu_l1_done;
     // Retrive new cache line, flush bram at negedge after mmu_done at posedge
     
-    assign bram_w_b = c_work && c_hit && l1_write;
+    assign bram_w_b = c_work && c_hit && l1_write && !disable_write_cache_wt;
     // write to cache line, 
 
-    assign cache_w = !addr_is_mmio && c_work && (c_hit && l1_write || !c_hit && mmu_l1_done);
+    assign cache_w = !addr_is_mmio && c_work && (c_hit && l1_write || !c_hit && mmu_l1_done) && !disable_write_cache_wt;
     // write to cache metadata, 1. after 
 
     parameter   STATUS_IDLE     = 1'b0,
@@ -121,13 +143,15 @@ module l1dcache(
     // stall : read not hit          :  down immd after mmu_read_done
     //       : write not hit         :  (write after mmu) down 1 clk delayed after mmu_read_done
     //       : read not hit && dirty :  down immd after mmu_read_done
-    assign stall                = c_work && ((!addr_is_mmio && !c_hit && (c_flush_dirty_delayed || !mmu_l1_done) || write_after_mmu_read_alg) || (addr_is_mmio && !mmu_l1_done));
+    assign stall                = c_work && (
+                                                (!addr_is_mmio && ((!c_hit && (c_flush_dirty_delayed || !mmu_l1_done)) || (c_write_through && !mmu_l1_done) || write_after_mmu_read_alg))
+                                             || (addr_is_mmio && !mmu_l1_done));
     assign l1_data_o            = addr_is_mmio ? mmu_l1_read_data[31:0] : bram_out;
     
     // MMU Interfaces
     assign l1_mmu_req_read      = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty || (addr_is_mmio && l1_read);
-    assign l1_mmu_req_write     = !addr_is_mmio && c_work && !c_hit &&  c_flush_dirty_set_mmu_write || (addr_is_mmio && l1_write);
-    assign l1_mmu_req_addr      = (!addr_is_mmio && c_flush_dirty) ? {c_o_tag, addr_idx, 5'b00000} : l1_addr;
+    assign l1_mmu_req_write     = !addr_is_mmio && c_work && ((!c_hit && c_flush_dirty_set_mmu_write) || (c_write_through_d0)) || (addr_is_mmio && l1_write);
+    assign l1_mmu_req_addr      = (!addr_is_mmio && (c_flush_dirty || c_write_through_d0)) ? {c_o_tag, addr_idx, 5'b00000} : l1_addr;
     assign l1_mmu_write_data    = addr_is_mmio ? {224'b0, l1_write_data}: bram_cl_out;
 
     always @* begin

@@ -40,7 +40,7 @@ module mmio_uart(
     reg acc_rx_fifo_d;
     always @(posedge sys_clk) acc_rx_fifo_d <= acc_rx_fifo;
     reg uart_tx_start;
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             mmio_done <= 0;
             mmio_read_data <= 0;
@@ -106,7 +106,7 @@ module mmio_uart(
     assign      tx_fifo_r_ren   = uart_tx_status == TX_STATUS_READ;
     assign      uart_tx_en      = uart_tx_status == TX_STATUS_START;
     assign      uart_tx_din     = tx_fifo_r_dout;
-    always @(posedge uart_clk, negedge rst_n) begin
+    always @(posedge uart_clk) begin
         if (!rst_n) begin
             uart_tx_status <= 0;
         end else begin
@@ -179,7 +179,7 @@ module mmio_uart(
     reg [7:0] uart_rx_data_algn;
     reg       uart_rx_done_algn;
     reg       uart_rx_done_wait_neg;
-    always @(posedge uart_clk, negedge rst_n) begin
+    always @(posedge uart_clk) begin
         if (!rst_n) begin
             uart_rx_data_algn <= 0;
             uart_rx_done_algn <= 0;
@@ -218,7 +218,7 @@ module mmio_uart(
     // Generate RST Signal for FIFOs, active high
     reg fifo_rst;
     reg [4:0] rst_cnt;
-    always @(posedge sys_clk, negedge rst_n) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             fifo_rst <= 1;
             rst_cnt <= 5'b1;

@@ -19,9 +19,13 @@ module mmio_switch(
     // Address: 0xFFFF0000 - 0xFFFF007F, 32 words, 128 bytes, last 7 bits, last 2 bits remain 0
     wire [4:0] _addr = mmio_addr[6:2];
     assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:7] == 9'b0;
-    wire [31:0] _ext = {8'b0, switches_pin};
+    
+    reg [23:0] sw_reg;
+    always @(posedge sys_clk) sw_reg <= switches_pin;
 
-    always @(posedge sys_clk, negedge rst_n) begin
+    wire [31:0] _ext = {8'b0, sw_reg};
+
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             mmio_done <= 0;
             mmio_read_data <= 0;

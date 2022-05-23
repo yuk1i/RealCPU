@@ -8,20 +8,14 @@ module seg7 (
     output reg[7:0] LED_BITS,
     output reg[7:0] LED
 );
-    wire refresh_clk;
+
     reg [2:0] LED_activating_counter;
     
-    clk_div refresh_clk_div(
-        .clk(clk),
-        .rst_n(rst_n),
-        .cnt(2_00000),
-        .clk_out(refresh_clk)
-    );
 
-    always @(posedge refresh_clk) begin
+    always @(posedge clk) begin
         if(!rst_n) begin
             LED_activating_counter <= 0;
-            LED_BITS <= 1;
+            LED_BITS <= 8'b0000_0001;
             LED <= 0;
         end else begin
             LED_activating_counter = LED_activating_counter + 1;

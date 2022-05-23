@@ -69,7 +69,7 @@ module multiplier(
         else start = 0;
     end
     
-    always @(negedge clk, negedge rst_n) begin
+    always @(negedge clk) begin
         if (!rst_n) begin
             counter <= 3'b0;
         end else begin

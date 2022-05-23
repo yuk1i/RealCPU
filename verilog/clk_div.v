@@ -7,18 +7,18 @@ module clk_div(
     output reg clk_out
 );
     reg[31:0] counter;
-    always @(posedge clk or negedge rst_n) begin
+    always @(posedge clk) begin
         if (!rst_n) begin
-            counter <= cnt;
+            counter <= 0;
             clk_out <= 0;
         end
         else begin
-            if(counter == 1) begin
+            if(counter == cnt) begin
                 clk_out <= 1;
-                counter <= cnt;
+                counter <= 0;
             end else begin
                 clk_out <= 0;
-                counter <= counter - 1;
+                counter <= counter + 1;
             end
         end
     end
