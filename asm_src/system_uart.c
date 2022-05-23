@@ -12,7 +12,7 @@ extern int main() {
     register int counter = 0;
     register int c2 = 0;
     put_string("Bootloader!\n");
-    put_string("Yuki is a magic girl!\n");
+    put_string("Yuki is a magic girl lol!\n");
     volatile int* mmio_seg7 = (int*) SEG7_BASE_ADDR;
     mmio_seg7[0] = SEG7_CHAR_1;
     mmio_seg7[1] = SEG7_CHAR_2;
@@ -25,7 +25,9 @@ extern int main() {
             // len = append(buf + len, " hello!", 1024 - len);
             put_string(buf);
             put_string(" hello!\n");
+            put_string(" test changes\n");
             counter++;
+            mmio_led[0] = mmio_led[0] ^ 1;
         }
         display(counter);
     }

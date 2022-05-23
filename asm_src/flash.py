@@ -15,7 +15,7 @@ f.close()
 ba = ba[4096:]
 size = len(ba)
 print(hex(size))
-uart = serial.Serial(port="/dev/ttyUSB1", baudrate=128000)
+uart = serial.Serial(port="/dev/ttyUSB2", baudrate=128000)
 
 bsize = int.to_bytes(size, 4, byteorder='big')
 uart.write(bsize)

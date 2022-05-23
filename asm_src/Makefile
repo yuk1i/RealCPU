@@ -24,8 +24,9 @@ system: SRCS=start system_uart utils/uart utils/seg7 utils/string
 system:
 	@make SRCS="$(SRCS)" dump
 
-school:
-	@make SRCS="system" dump
+demo1: SRCS=start demo1 utils/uart
+demo1:
+	@make SRCS="$(SRCS)" dump
 
 rom:SRCS:=bootloader/rom bootloader/bootloader
 rom:
@@ -39,7 +40,7 @@ rom:
 	@python3 convert.py tmp/rom.bin rom.coe
 
 %:
-	make SRCS=$@ dump --no-print-directory
+	make SRCS="start $@ utils/uart utils/seg7" dump --no-print-directory
 	@echo "\n[*] Compile and dump successfully\n"
 
 objs: $(OBJS)

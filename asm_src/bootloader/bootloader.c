@@ -17,8 +17,8 @@ extern int bootloader() {
     seg7_addr[1] = SEG7_CHAR_NONE;
     seg7_addr[0] = SEG7_CHAR_NONE;
     // Main Memory: 512K: 0x00000 - 0x7FC00, 0x7FC00 ~ 0x80000 1K: ROM Stack
-    for(register int i = 0; i<0x7FC00;i+=4) {
-        *((int*) i) = 0;
+    for(register int i = 0; i<0x7FC00;i++) {
+        *((unsigned char*) i) = 0;
     }
     put_string("[*] Flush Cache...\n");
     // reset main memory to all zero

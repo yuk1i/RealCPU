@@ -19,7 +19,7 @@ void put_string(char* str) {
         *uart_tx_fifo = *str;
         str++;
     }
-    if (!*uart_tx_send) *uart_tx_send = 1;
+    *uart_tx_send = 1;
 }
 
 void put_hex_int32(unsigned int d) {
