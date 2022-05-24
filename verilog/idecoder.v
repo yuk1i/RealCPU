@@ -44,8 +44,6 @@ module idecoder(
     output alu_src,     // 1:immd, 0: reg2
     output reg_write,   // 1:write reg, 0:not
     output reg_dst,     // 1:rd, 0:rt
-    output alu_bypass,  // bypass bypass_immd to result
-    output [31:0] bypass_immd
 );
     // ***** BEGIN Decoder ***** //
     assign opcode = ins_i[31:26];       // 6 bits
@@ -149,34 +147,5 @@ module idecoder(
         end
     end
     // ***** END Registers ***** //
-
-
-    // ***** BEGIN Coprocessor 0 ***** //
-
-    reg [31:0] co0_regs [0:31];
-    integer c0i;
-
-    wire C0_op = opcode == 6'b010000;
-    wire move_to_co = rs_id == 5'b00100;
-    wire move_from_co = rs_id == 5'b00000;
-    assign alu_bypass = C0_op && move_from_co;
-    assign bypass_immd = co0_regs[rd_id];
-
-    // Co0 Register Write
-    always @(posedge sys_clk) begin
-        if (!rst_n) begin
-            for (c0i = 0; c0i<32; c0i=c0i+1) begin
-                co0_regs[c0i] <= 32'h0;
-            end 
-        end else begin
-            for (c0i = 0; c0i<32; c0i=c0i+1) begin
-                if (C0_op && move_to_co && c0i == rd_id)
-                    co0_regs[c0i] <= register[rt_id];
-                else
-                    co0_regs[c0i] <= co0_regs[c0i];
-            end 
-        end
-    end
-    // ***** END Coprocessor 0 ***** //
 
 endmodule

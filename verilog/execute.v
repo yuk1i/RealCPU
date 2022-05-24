@@ -24,8 +24,6 @@ module execute(
     input is_jal,
     input is_jr,
     input is_load_store,
-    input alu_bypass,
-    input [31:0] bypass_immd,
 
     output reg [31:0] result,
     output reg do_jump,
@@ -133,9 +131,7 @@ module execute(
 
     // Mux Output
     always @* begin
-        if (alu_bypass)
-            result = bypass_immd;
-        else if (is_set_op)
+        if (is_set_op)
             result = {31'b0, slt_result};
         else if (is_mul)
             result = mul_mux;

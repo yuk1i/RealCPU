@@ -77,8 +77,6 @@ module top(
     wire d_alu_src;
     wire d_reg_write;
     wire d_reg_dst;
-    wire d_alu_bypass;
-    wire [31:0] d_bypass_immd;
 
     wire [31:0] e_result;
     wire e_do_jump;
@@ -176,9 +174,7 @@ module top(
         .mem_write(d_mem_write),
         .alu_src(d_alu_src),
         .reg_write(d_reg_write),
-        .reg_dst(d_reg_dst),
-        .alu_bypass(d_alu_bypass),
-        .bypass_immd(d_bypass_immd)
+        .reg_dst(d_reg_dst)
 
     );
 
@@ -191,8 +187,6 @@ module top(
         .immd(d_ext_immd),
         .next_pc(f_next_pc),
         .alu_src(d_alu_src),
-        .alu_bypass(d_alu_bypass),
-        .bypass_immd(d_bypass_immd),
         .allow_exp(1'b0),      // TODO: Exception support
 
         .opcode(d_opcode),
