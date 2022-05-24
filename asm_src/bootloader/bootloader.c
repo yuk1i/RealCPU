@@ -20,25 +20,24 @@ extern int bootloader() {
     for(register int i = 0; i<0x7FC00;i++) {
         *((unsigned char*) i) = 0;
     }
-    put_string("[*] Flush Cache...\n");
     // reset main memory to all zero
     put_string("[+] Reset Main Memory Done!\n");
+
     seg7_addr[3] = SEG7_CHAR_U;
     seg7_addr[2] = SEG7_CHAR_A;
     seg7_addr[1] = SEG7_CHAR_R;
     seg7_addr[0] = SEG7_CHAR_T;
+
     put_string("[+] Enter UART Loader\n");
     unsigned int size = read_hex_int32();
     put_string("[*] MEM Size: 0x");
     put_hex_int32(size);
     display(size);
     put_string("\n");
+
     register unsigned char* mem_base = (unsigned char *) 0x1000;
-    register volatile int* mmio_sw = (int*) 0xFFFF0000;
     register int * uart_rx_valid = (int *) ADDR_UART_RX_VALID;
     register int * uart_rx_fifo = (int *) ADDR_UART_RX_FIFO;
-    register int * uart_tx_fifo = (int *) ADDR_UART_TX_FIFO;
-    register int * uart_tx_send = (int *) ADDR_UART_TX_SEND;
     for(register int i=0;i<size;i++) {
         while (!*uart_rx_valid) asm volatile ("":::"memory");
         register unsigned char d = *uart_rx_fifo & 0xFF;

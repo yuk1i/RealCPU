@@ -26,7 +26,7 @@ extern int main() {
             put_string(buf);
             put_string(" hello!\n");
             put_string(" test changes\n");
-            counter++;
+            counter+=2;
             mmio_led[0] = mmio_led[0] ^ 1;
         }
         display(counter);

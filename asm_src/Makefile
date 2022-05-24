@@ -17,15 +17,13 @@ BUILDDIR=tmp
 SRCS=
 OBJS=$(SRCS:%=$(BUILDDIR)/%.o)
 
-
 .DEFAULT_GOAL := cputest
+
+flush:
+	@sudo python3 flush.py
 
 system: SRCS=start system_uart utils/uart utils/seg7 utils/string
 system:
-	@make SRCS="$(SRCS)" dump
-
-demo1: SRCS=start demo1 utils/uart
-demo1:
 	@make SRCS="$(SRCS)" dump
 
 rom:SRCS:=bootloader/rom bootloader/bootloader
