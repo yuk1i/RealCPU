@@ -43,7 +43,7 @@ module idecoder(
     output mem_write,   // store instructions
     output alu_src,     // 1:immd, 0: reg2
     output reg_write,   // 1:write reg, 0:not
-    output reg_dst,     // 1:rd, 0:rt
+    output reg_dst     // 1:rd, 0:rt
 );
     // ***** BEGIN Decoder ***** //
     assign opcode = ins_i[31:26];       // 6 bits
