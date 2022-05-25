@@ -6,20 +6,8 @@ __rom_start:
     nop
 .endr
 
-    .set noat
-    li $at, 0x00001000
-    jalr $at
-    j __rom_start
-
-    
     sync 17
     # enable write through
-
-    li $v0, 0
-# loop0:
-#     addiu $v0, $v0, 1
-#     sltiu $v1, $v0, 10
-#     bnez $v1, loop0
 
     li $v0, 0xFFFF0080
     li $v1, 1
@@ -27,8 +15,6 @@ __rom_start:
     
     li $v0, 0
     li $v1, 0
-
-    li $sp, 0x80000
 
     # # test ROM with dcache write through
     # li $v1, 0x7A8B
@@ -54,10 +40,15 @@ __rom_start:
     # sync 01
     # # invalid all i cache
 
+
+    li $sp, 0x80000
     # ROM Stack: 0x80000 - 0x7FC00
+
     jal bootloader
 
+    # disable write through
     sync 16
+    # dismiss all instruction cache
     sync 01
 
     li $v0, 0xFFFF0080
@@ -70,7 +61,6 @@ __rom_start:
     li $at, 0x00001000
     jalr $at
     j __rom_start
-
 
     # text: 0xE000 0b1110000000000000
     # data: 0xFA00 0b1111101000000000
