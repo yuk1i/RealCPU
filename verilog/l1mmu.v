@@ -46,7 +46,7 @@ module l1mmu(
     assign mmu_l1_read_data = addr_is_mmio ? {244'b0, mmu_mmio_read_data} : {_dout, stage};
 
     mem_fake_mig fake_mig(
-        .clka(~sys_clk),
+        .clka(sys_clk),
         .addra(_req_addr),
         .douta(_dout),
         .dina(_wr_data),
@@ -58,8 +58,9 @@ module l1mmu(
             stage <= 128'b0;
         end else begin
             // read mem
-            if (status == STATUS_IDLE && l1_mmu_req_read) begin
+            if (status == STATUS_ACC_HI && l1_mmu_req_read) begin
                 stage <= _dout;
+                // stage is sampled at ACC_HI -> DONE edge, storing the lower 128 bit
             end else begin
                 stage <= stage;
             end
@@ -77,12 +78,13 @@ module l1mmu(
             end else begin
                 if (l1_mmu_req_read || l1_mmu_req_write) begin
                     if (status == STATUS_IDLE) begin
-                        // and first stage r/w doen
+                        // and first stage r/w works at this edge
                         status <= STATUS_ACC_HI;
                     end else if (status == STATUS_ACC_HI) begin
-                        // and second stage r/w done
+                        // and second stage r/w works at this edge
                         status <= STATUS_DONE;
                     end else if (status == STATUS_DONE) begin
+                        // read done at this edge
                         status <= STATUS_IDLE;
                     end else begin
                         status <= status;
