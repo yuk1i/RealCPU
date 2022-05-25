@@ -80,6 +80,7 @@ module top(
     ifetch fetch(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
+        .fetch_bubble(insert_bubble),
 
         .do_jump(e_do_jump),
         .jump_addr(e_j_addr),
@@ -102,6 +103,10 @@ module top(
     wire          wb_reg_write;
     wire [4:0]    wb_reg_dst_id;
     wire [31:0]   wb_reg_wdata;
+    // Bubble Controller, ID/EX to Decoder
+    wire          id_ex_mem_read;
+    wire [4:0]    id_ex_reg_dst_id;
+    wire          insert_bubble;
     idecoder decoder(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
@@ -126,7 +131,11 @@ module top(
         .mem_write(d_mem_write),
         .alu_src(d_alu_src),
         .reg_write(d_reg_write),
-        .reg_dst_id(d_reg_dst_id)
+        .reg_dst_id(d_reg_dst_id),
+
+        .insert_bubble(insert_bubble),
+        .id_ex_mem_read(id_ex_mem_read),
+        .id_ex_reg_dst_id(id_ex_reg_dst_id)
     );
 //#endregion
 
@@ -158,12 +167,14 @@ module top(
     wire          fwd_mem_reg_write;
     wire [4:0]    fwd_mem_reg_dst_id;
     wire [31:0]   fwd_mem_result;
-
+    // Bubble Controller, ID/EX to Decoder
+    assign        id_ex_mem_read    = eo_mem_to_reg;
+    assign        id_ex_reg_dst_id  = eo_reg_dst_id;
     id_ex id_exi(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
-
         .id_ex_stall(global_stall),
+        .id_ex_bubble(insert_bubble),
 
         .di_pc(f_pc),
         .di_next_pc(f_next_pc),

@@ -5,6 +5,8 @@ module id_ex(
     input rst_n,
     // from stall controller
     input id_ex_stall,
+    // from bubble controller
+    input id_ex_bubble,
 
     // from idecoder
     input [31:0]    di_pc,
@@ -74,7 +76,7 @@ module id_ex(
 
 
     always @(posedge sys_clk) begin
-        if (!rst_n) begin
+        if (!rst_n || id_ex_bubble) begin
             reg_pc <= 0;
             reg_next_pc <= 0;
             reg_ins <= 0;

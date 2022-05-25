@@ -29,8 +29,12 @@ module idecoder(
     output mem_write,   // store instructions
     output alu_src,     // 1:immd, 0: reg2
     output reg_write,   // 1:write reg, 0:not
-    output [4:0] reg_dst_id
-    
+    output [4:0] reg_dst_id,
+
+    // Bubble Control, ID/EX should generate zero output and IF should hold pc
+    output insert_bubble,
+    input id_ex_mem_read,
+    input [4:0] id_ex_reg_dst_id
 );
     // ***** BEGIN Decoder ***** //
 
@@ -133,4 +137,17 @@ module idecoder(
     end
     // ***** END Registers ***** //
 
+    // ***** BEGIN Bubble Controller ***** //
+
+    // Insert a bubble when:
+    // use a register after lw
+    // make ID/EX generate a nop, and make IF/ID hold PC
+
+    // I_op; check rs
+    // R_op: check rs + rt
+    assign insert_bubble = id_ex_mem_read && id_ex_reg_dst_id != 5'b0 
+            && (id_ex_reg_dst_id == rs_id || (R_op && id_ex_reg_dst_id == rt_id));
+
+
+    // ***** END  8 Bubble Controller ***** //
 endmodule

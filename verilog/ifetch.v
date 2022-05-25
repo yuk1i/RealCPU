@@ -11,6 +11,8 @@ module ifetch(
     // From mem and execute: stall if read mem, stall should go down at negedge
     input stall,
     output global_stall,
+    // From Bubble Controller
+    input fetch_bubble,
 
     output [31:0] ins_out,
     output reg [31:0] pc_out,
@@ -94,7 +96,7 @@ module ifetch(
             if (pc == 31'h00008000) begin
                 pc <= pc;
             end else begin
-                if (global_stall || il1_stall) 
+                if (global_stall || il1_stall || fetch_bubble) 
                     pc <= pc;
                 else if (do_jump) 
                     pc <= jump_addr;
