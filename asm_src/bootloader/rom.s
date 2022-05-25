@@ -5,6 +5,11 @@ __rom_start:
 .rept 10
     nop
 .endr
+
+    .set noat
+    li $at, 0x00001000
+    jalr $at
+
     sync 17
     # enable write through
 

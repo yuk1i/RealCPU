@@ -33,7 +33,7 @@ module l1dcache(
     wire [9:0]  addr_idx    = l1_addr[14:5];
     wire [2:0]  addr_w_off  = l1_addr[4:2];  // word offset
     wire [1:0]  addr_b_off  = l1_addr[1:0];  // byte offset
-    wire        addr_h_bram = l1_addr[4];
+    wire        addr_h_word = l1_addr[2];    // access high word
     // cache addr: [tag 17b][idx 10b][3'b000][2'b00]
 
     reg write_through;
@@ -57,47 +57,35 @@ module l1dcache(
     wire        cache_w;
     wire [18:0] c_o;
     l1c_dismem dismem(
-        .clk(~sys_clk),
+        .clk(sys_clk),
         .a(addr_idx),
         .d(cache_wd),
         .we(cache_w),
         .spo(c_o));
-    reg [3:0]   _bram_wt;
-    reg [31:0]  _bram_wd;
-    wire        bram_w_a;
-    wire        bram_w_b;
-    wire [15:0] _bram_w_a_ext   = {16{bram_w_a}};
-    wire [3:0]  _bram_w_bh_ext  = bram_w_b &&  addr_h_bram ? _bram_wt : 4'b0;
-    wire [3:0]  _bram_w_bl_ext  = bram_w_b && !addr_h_bram ? _bram_wt : 4'b0;
-    wire [31:0] bram_h_out;
-    wire [31:0] bram_l_out;
+    reg [3:0]   bram_w_type;
+    reg [31:0]  bram_w_word;
+    wire [63:0] bram_w_dword = {bram_w_word, bram_w_word};    // simply duplicate it, control write through wea
+    wire        bram_w_port_a;
+    wire        bram_w_port_b;
+    wire [31:0] bram_w_port_a_ext   = {32{bram_w_port_a}};
+    wire [7:0]  bram_w_port_b_ext  = bram_w_port_b ? (addr_h_word ? {bram_w_type, 4'b0} : {4'b0, bram_w_type}) : 8'b0;
+    wire [63:0] bram_dout;
     wire [255:0] bram_cl_out;
-    dcache_bram cb_high(
-        .clka(~sys_clk),
+    dcache_bram cb(
+        .clka(sys_clk),
         .addra(addr_idx),
-        .dina(mmu_l1_read_data[255:128]),
-        .douta(bram_cl_out[255:128]),
-        .wea(_bram_w_a_ext),
+        .dina(mmu_l1_read_data),
+        .douta(bram_cl_out),
+        .wea(bram_w_port_a_ext),
 
-        .clkb(~sys_clk),
-        .addrb({addr_idx, addr_w_off[1:0]}),
-        .dinb(_bram_wd),
-        .doutb(bram_h_out),
-        .web(_bram_w_bh_ext));
-    dcache_bram cb_low(
-        .clka(~sys_clk),
-        .addra(addr_idx),
-        .dina(mmu_l1_read_data[127:0]),
-        .douta(bram_cl_out[127:0]),
-        .wea(_bram_w_a_ext),
+        .clkb(sys_clk),
+        .addrb({addr_idx, addr_w_off[2:1]}),
+        .dinb(bram_w_dword),
+        .doutb(bram_dout),
+        .web(bram_w_port_b_ext)
+    );
 
-        .clkb(~sys_clk),
-        .addrb({addr_idx, addr_w_off[1:0]}),
-        .dinb(_bram_wd),
-        .doutb(bram_l_out),
-        .web(_bram_w_bl_ext));
-
-    wire [31:0] bram_out        = addr_h_bram ? bram_h_out : bram_l_out;
+    wire [31:0] bram_out        = addr_h_word ? bram_dout[63:32] : bram_dout[31:0];
     wire        c_o_dirty       = c_o[18];
     wire        c_o_valid       = c_o[17];
     wire [16:0] c_o_tag         = c_o[16:0];
@@ -105,7 +93,7 @@ module l1dcache(
     wire        c_flush_dirty   = c_o_dirty && c_o_valid && c_o_tag != addr_tag;
     // need to write back cache line first, then read out new cache line
 
-    wire        c_write_through = c_work && c_hit && write_through && l1_write && !write_after_mmu_read_alg && !mmu_l1_done;
+    wire        c_write_through = c_work && c_hit && write_through && l1_write && !mmu_l1_done;
     reg         c_write_through_d0;
     always @(posedge sys_clk) c_write_through_d0 <= c_write_through;
 
@@ -120,13 +108,19 @@ module l1dcache(
         .is_mmio(addr_is_mmio)
     );
 
+    wire can_read = !addr_is_mmio && c_work && c_hit && l1_read;
+    reg can_read_d0;
+    always @(posedge sys_clk) can_read_d0 <= can_read;
+
+    wire read_stall = can_read && !can_read_d0;
+
     wire disable_write_cache_wt = write_through && c_write_through_d0;
     // disable write to bram from port B during flush cache line under write through mode
 
-    assign bram_w_a = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty && mmu_l1_done;
+    assign bram_w_port_a = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty && mmu_l1_done;
     // Retrive new cache line, flush bram at negedge after mmu_done at posedge
     
-    assign bram_w_b = c_work && c_hit && l1_write && !disable_write_cache_wt;
+    assign bram_w_port_b = c_work && c_hit && l1_write && !disable_write_cache_wt;
     // write to cache line, 
 
     assign cache_w = !addr_is_mmio && c_work && (c_hit && l1_write || !c_hit && mmu_l1_done) && !disable_write_cache_wt;
@@ -136,15 +130,20 @@ module l1dcache(
                 STATUS_WAITING  = 1'b1; 
     
     // wire   read_target_done       = !c_flush_dirty && mmu_l1_done;
-    wire   write_after_mmu_read   = c_work && !addr_is_mmio && l1_write && !c_hit;
-    reg    write_after_mmu_read_alg;
-    always @(posedge sys_clk)  write_after_mmu_read_alg <= write_after_mmu_read;
+    wire   write_after_mmu_read = c_work && !addr_is_mmio && l1_write && !c_hit;
+
+
     // L1 Interfaces
-    // stall : read not hit          :  down immd after mmu_read_done
-    //       : write not hit         :  (write after mmu) down 1 clk delayed after mmu_read_done
-    //       : read not hit && dirty :  down immd after mmu_read_done
+    // stall : read not hit          :  down immd after mmu_read_done, but contains read_stall
+    //       : write not hit         :  down immd after mmu_read_done
+    //       : read not hit && dirty :  down immd after mmu_read_done, but contains read_stall
     assign stall                = c_work && (
-                                                (!addr_is_mmio && ((!c_hit && (c_flush_dirty_delayed || !mmu_l1_done)) || (c_write_through && !mmu_l1_done) || write_after_mmu_read_alg))
+                                                (!addr_is_mmio && (
+                                                    (!c_hit && (c_flush_dirty_delayed || !mmu_l1_done)) 
+                                                    || (c_write_through && !mmu_l1_done) 
+                                                    || write_after_mmu_read
+                                                    || read_stall
+                                                ))
                                              || (addr_is_mmio && !mmu_l1_done));
     assign l1_data_o            = addr_is_mmio ? mmu_l1_read_data[31:0] : bram_out;
     
@@ -157,26 +156,26 @@ module l1dcache(
     always @* begin
         // 00: sb, 01: sh, 10: undefined, 11: sw
         casex ({l1_write_type, l1_addr[1:0]})
-            4'b0000 : _bram_wt = 4'b0001;
-            4'b0001 : _bram_wt = 4'b0010;
-            4'b0010 : _bram_wt = 4'b0100;
-            4'b0011 : _bram_wt = 4'b1000;
-            4'b010x : _bram_wt = 4'b0011;
-            4'b011x : _bram_wt = 4'b1100;
-            4'b10xx : _bram_wt = 4'b0000;
-            4'b11xx : _bram_wt = 4'b1111;
-            default : _bram_wt = 4'b0000;
+            4'b0000 : bram_w_type = 4'b0001;
+            4'b0001 : bram_w_type = 4'b0010;
+            4'b0010 : bram_w_type = 4'b0100;
+            4'b0011 : bram_w_type = 4'b1000;
+            4'b010x : bram_w_type = 4'b0011;
+            4'b011x : bram_w_type = 4'b1100;
+            4'b10xx : bram_w_type = 4'b0000;
+            4'b11xx : bram_w_type = 4'b1111;
+            default : bram_w_type = 4'b0000;
         endcase
         casex ({l1_write_type, l1_addr[1:0]})
-            4'b0000 : _bram_wd = {24'b0, l1_write_data[7:0]};
-            4'b0001 : _bram_wd = {16'b0, l1_write_data[7:0], 8'b0};
-            4'b0010 : _bram_wd = {8'b0, l1_write_data[7:0], 16'b0};
-            4'b0011 : _bram_wd = {l1_write_data[7:0], 24'b0};
-            4'b010x : _bram_wd = {16'b0, l1_write_data[15:0]};
-            4'b011x : _bram_wd = {l1_write_data[15:0], 16'b0};
-            4'b10xx : _bram_wd = 32'b0;
-            4'b11xx : _bram_wd = l1_write_data;
-            default : _bram_wd = 32'b0;
+            4'b0000 : bram_w_word = {24'b0, l1_write_data[7:0]};
+            4'b0001 : bram_w_word = {16'b0, l1_write_data[7:0], 8'b0};
+            4'b0010 : bram_w_word = {8'b0, l1_write_data[7:0], 16'b0};
+            4'b0011 : bram_w_word = {l1_write_data[7:0], 24'b0};
+            4'b010x : bram_w_word = {16'b0, l1_write_data[15:0]};
+            4'b011x : bram_w_word = {l1_write_data[15:0], 16'b0};
+            4'b10xx : bram_w_word = 32'b0;
+            4'b11xx : bram_w_word = l1_write_data;
+            default : bram_w_word = 32'b0;
         endcase
     end
 
