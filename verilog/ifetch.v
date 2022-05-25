@@ -23,8 +23,7 @@ module ifetch(
     input immu_done,
     input [255:0] immu_read_data,
 
-    input is_sync_ins,
-    input [4:0] sync_type
+    input is_sync_ins
 );
     reg [31:0] pc;
     reg [31:0] next_pc;
@@ -32,6 +31,8 @@ module ifetch(
     wire [31:0] il1_ins_out;
     wire il1_stall;
     wire i1l_inv_stall;
+
+    wire [4:0] sync_type = ins_out[10:6];
 
     l1icache il1(
         .sys_clk(sys_clk),

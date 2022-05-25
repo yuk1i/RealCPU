@@ -11,28 +11,14 @@ module idecoder(
     input [4:0] reg_write_id_i,
     input [31:0] reg_write_data_i,
 
-    // Decoder output
-    output [5:0] opcode,
-    output [4:0] shift_amt,
-    output [5:0] func,
-    output I_op,
-    output R_op,
-    output J_op,
-
+    // Decoder output, to ALU
     output [31:0] ext_immd,
-    output [25:0] j_addr,
+    output is_link,
     output is_jump,        // jump {PC+4[31:28],
-    output is_jal,
-    output is_jr,
     output is_branch,      // [beq, bneq, beqz, bneqz]
-    output is_regimm_op,
-    output is_load_store,
-    output is_sync_ins,
-    output [4:0] sync_type,
 
-    output [4:0] rs_id,
-    output [4:0] rt_id,
-    output [4:0] rd_id,
+    // Decoder output, to MEM and ifetch
+    output is_sync_ins,
 
     // Decoder register values
     output [31:0] reg_read1,
@@ -43,46 +29,45 @@ module idecoder(
     output mem_write,   // store instructions
     output alu_src,     // 1:immd, 0: reg2
     output reg_write,   // 1:write reg, 0:not
-    output reg_dst,     // 1:rd, 0:rt
+    output [4:0] reg_dst_id
+    
 );
     // ***** BEGIN Decoder ***** //
-    assign opcode = ins_i[31:26];       // 6 bits
-    assign shift_amt = ins_i[10:6];     // 5 bits
-    assign func = ins_i[5:0];           // 6 bits
-    assign R_op = opcode == 6'b0;
-    assign J_op = opcode == 6'h2 || opcode == 6'h3;
-    assign I_op = !(R_op || J_op);
+
+    wire [5:0] opcode = ins_i[31:26];       // 6 bits
+    wire [4:0] shift_amt = ins_i[10:6];     // 5 bits
+    wire [5:0] func = ins_i[5:0];           // 6 bits
+    wire R_op = opcode == 6'b0;
+    wire J_op = opcode == 6'h2 || opcode == 6'h3;
+    wire I_op = !(R_op || J_op);
+    wire [4:0] _real_rt_id = ins_i[20:16];
     
-    assign j_addr = J_op ? ins_i[25:0] : 26'b0;
     assign is_jump = opcode[5:1] == 5'b00001 || (R_op && func[5:1]==5'b00100);
 
     // [NAL: 10000], [BAL: 10001], [BGEZ: 00001]
-    assign is_regimm_op = opcode == 6'b000001;
-    assign special_link = is_regimm_op && (_real_rt_id[4:1] == 4'b1000);                      // REGIMM: [NAL, BAL]
-    assign special_branch = is_regimm_op && (_real_rt_id == 5'b10001 || _real_rt_id == 5'b00001);   // REGIMM: [BAL, BGEZ]
+    wire is_regimm_op = opcode == 6'b000001;
+    wire special_link = is_regimm_op && (_real_rt_id[4:1] == 4'b1000);                      // REGIMM: [NAL, BAL]
+    wire special_branch = is_regimm_op && (_real_rt_id == 5'b10001 || _real_rt_id == 5'b00001);   // REGIMM: [BAL, BGEZ]
 
-    // is_jal: jal or jalr or [BAL, NAL]
-    assign is_jal = opcode == 6'h3 || (R_op && func==6'b001001) || special_link;        
-    assign is_jr = R_op && func[5:1] == 5'b00100;
+    // is_link: jal or jalr or [BAL, NAL]
+    assign is_link = opcode == 6'h3 || (R_op && func==6'b001001) || special_link;        
     assign is_branch = opcode[5:2] == 4'b0001 || special_branch;
-    assign is_load_store = mem_to_reg || mem_write;
 
-    assign rs_id = ins_i[25:21];        // 5 bits
+    wire [4:0] rs_id = ins_i[25:21];        // 5 bits
     // override rt when jal only
-    wire [4:0] _real_rt_id = ins_i[20:16];
-    assign rt_id = (opcode == 6'h3 || special_link) ? 5'b11111 : _real_rt_id; // 5 bits
-    assign rd_id = ins_i[15:11];        // 5 bits
+    wire [4:0] rt_id = (opcode == 6'h3 || special_link) ? 5'b11111 : _real_rt_id; // 5 bits
+    wire [4:0] rd_id = ins_i[15:11];        // 5 bits
     
     assign is_sync_ins = R_op && func == 6'b001111;
-    assign sync_type = shift_amt;
-
     // ***** END Decoder ***** //
     
+
     // ***** BEGIN Controller ***** //
 
     // reg_dst: write rd when R-type, write to rt when I-type and jal/jalr
     // 1:rd, 0:rt
-    assign reg_dst = R_op;
+    wire reg_dst = R_op;
+    assign reg_dst_id = reg_dst ? rd_id : rt_id;
     // alu_src: I-type, exclude [beq 04, bne 05, blez 06, bgtz 07]
     assign alu_src = I_op & opcode[5:2] != 4'b0001;
     // use zero extension: [andi c,ori d,xori e,lui f], otherwise signed ext
@@ -131,7 +116,7 @@ module idecoder(
 
     integer i;
     // Register Write
-    always @(posedge sys_clk) begin
+    always @(negedge sys_clk) begin
         if (!rst_n) begin
             for (i = 0; i<32; i=i+1) begin
                 register[i] <= 32'h0;

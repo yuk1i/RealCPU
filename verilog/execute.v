@@ -4,25 +4,17 @@ module execute(
     input sys_clk,
     input rst_n,
 
+    input [31:0] ins,   // instruction
     input [31:0] reg1,  // rs
     input [31:0] reg2,  // rt
     input [31:0] immd,
     input [31:0] next_pc,
     input alu_src, // 0: reg2, 1: immd
-    input allow_exp, // ignored
 
     // From Decoder
-    input [5:0] opcode,
-    input [5:0] func,
-    input [4:0] ins_shamt,
-    input R_op,
-    input [25:0] ins_j_addr,
+    input is_link,
     input is_jump,
     input is_branch,
-    input is_regimm_op,
-    input [4:0] rt_id,
-    input is_jal,
-    input is_jr,
     input is_load_store,
 
     output reg [31:0] result,
@@ -30,21 +22,29 @@ module execute(
     output reg [31:0] j_addr,
     output stall            // stall request from multiplier
 );
+
+    wire [5:0]  opcode   = ins[31:26];       // 6 bits
+    wire [4:0]  rt_id    = ins[20:16];
+    wire R_op            = opcode == 6'b0;
+    wire [4:0] ins_shamt = ins[10:6];     // 5 bits
+    wire [5:0] func      = ins[5:0];           // 6 bits
+    wire is_regimm_op    = opcode == 6'b000001;
+
     // [slti, sltiu], R:[slt, sltu]
-    wire is_set_op = opcode[5:1] == 5'b00101 || (R_op && (func[5:1] == 5'b10101));
-    wire is_shift = opcode == 0 && func[5:3] == 3'b000;
+    wire is_set_op       = opcode[5:1] == 5'b00101 || (R_op && (func[5:1] == 5'b10101));
+    wire is_shift        = opcode == 0 && func[5:3] == 3'b000;
     
     // calc address: [load, store]
-    wire calc_addr = is_load_store;
+    wire calc_addr       = is_load_store;
 
     // [addi,addiu,slti,sltiu,andi,ori,xori,*lui*], R:[add,addu,sub,subu,and,or,xor,nor] [load,store]
-    wire is_def = opcode[5:3] == 3'b001 || (R_op && (func[5:3] == 3'b100 || func[5:1] == 5'b10101)) || calc_addr;
-    wire is_aui = opcode == 6'b001111;
+    wire is_def          = opcode[5:3] == 3'b001 || (R_op && (func[5:3] == 3'b100 || func[5:1] == 5'b10101)) || calc_addr;
+    wire is_aui          = opcode == 6'b001111;
     // MIPS32r6 changes: aui
 
     // Default ALU, use addiu to calc addr
-    wire [2:0] def_exe = calc_addr ? 3'b001 : (R_op ? func[2:0] : opcode[2:0]);
-    wire [31:0] op2 = alu_src ? immd : reg2;
+    wire [2:0]  def_exe = calc_addr ? 3'b001 : (R_op ? func[2:0] : opcode[2:0]);
+    wire [31:0] op2     = alu_src ? immd : reg2;
     wire [31:0] inv_op2 = ~op2 + 1;
 
     reg [31:0] result_mux;
@@ -88,8 +88,8 @@ module execute(
             case (opcode[1:0])
                 2'b00: do_branch = reg1 == reg2;
                 2'b01: do_branch = ~(reg1 == reg2);
-                2'b10: do_branch = $signed(reg1) <= 0;  // Signed comparison, less or equal to zero
-                2'b11: do_branch = $signed(reg1) > 0;               // Signed comparison, greater than zero
+                2'b10: do_branch = $signed(reg1) <= 0;          // Signed comparison, less or equal to zero
+                2'b11: do_branch = $signed(reg1) > 0;           // Signed comparison, greater than zero
             endcase
         end
     end
@@ -112,7 +112,6 @@ module execute(
     wire mul_unsign = func[0];
     wire mul_done;
 
-    // module here
     wire [63:0] mul_out;
     wire mul_low = ins_shamt == 5'b00010;
     wire [31:0] mul_mux = mul_low ? mul_out[31:0] : mul_out[63:32];
@@ -139,7 +138,7 @@ module execute(
             result = result_mux;
         else if (is_shift)
             result = shift_out;
-        else if (is_jal)
+        else if (is_link)
             result = next_pc + 4;
         else if (is_branch)
             result = 0;
@@ -150,18 +149,20 @@ module execute(
     // Jump & Branch
     // I:[j,jal], R:[jr, jalr]
     // {4'b next_pc | 26'b ins_j_addr | 2'b00 }
-    wire [31:0] _jump_addr_ext = {next_pc[31:28], ins_j_addr[25:0] , 2'b0};
-    wire [31:0] _branch_addr_ext = next_pc + {immd[29:0] , 2'b0};
+    wire is_jr = R_op && func[5:1] == 5'b00100;
+    wire [25:0] ins_j_addr = ins[25:0];
+    wire [31:0] jump_addr_ext = {next_pc[31:28], ins_j_addr[25:0] , 2'b0};
+    wire [31:0] branch_addr_ext = next_pc + {immd[29:0] , 2'b0};
     always @* begin
         if (is_jump) begin
             do_jump = 1;
             if (is_jr)
                 j_addr = reg1;
             else
-                j_addr = _jump_addr_ext;
+                j_addr = jump_addr_ext;
         end else if (is_branch && do_branch) begin
             do_jump = 1;
-            j_addr = _branch_addr_ext;
+            j_addr = branch_addr_ext;
         end else begin
             do_jump = 0;
             j_addr = 0;

@@ -5,6 +5,13 @@ __rom_start:
 .rept 10
     nop
 .endr
+
+    .set noat
+    li $at, 0x00001000
+    jalr $at
+    j __rom_start
+
+    
     sync 17
     # enable write through
 
@@ -22,16 +29,7 @@ __rom_start:
     li $v1, 0
 
     li $sp, 0x80000
-    
-    li $v0, 0xFFFFFF00
-    li $v1, 0x7FFFFF00
 
-    sltu $a0, $v0, $v1
-    sltu $a0, $v1, $v0
-
-    slt $a0, $v0, $v1
-    slt $a0, $v1, $v0
-    
     # # test ROM with dcache write through
     # li $v1, 0x7A8B
     # sw $v1, -4($sp)
