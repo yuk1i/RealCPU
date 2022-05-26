@@ -5,14 +5,15 @@ Make a MIPS CPU and write an operating system.
 ## Goals
 
 - [x] Single Cycle
-- [ ] Memory Access not only for lw/sw
+- [x] Pipeline
+- [x] Byte & half-word Memory Access support
+- [x] L1 Data/Instruction Cache & Unified Main Memory
+- [x] Bootloader, UART loader
+- [x] C/C++ cross compile support (limited)
 - [ ] Interrupt & Syscalls support
-- [ ] L1 Data/Instruction Cache & Unified Memory
 - [ ] Initialize $sp and $gp, support $gp addressing
-- [ ] Pipeline
 - [ ] DDR3 Support
 - [ ] SD Card Support
-- [ ] Bootloader
 
 ## Developing Guide
 
@@ -27,8 +28,7 @@ Make a MIPS CPU and write an operating system.
 ### Assembly 
 
 1. Learn Makefile
-2. modify objs in Makefile or add a new target
-3. use `make` to generate coe files
-4. Regenerate ROM/RAM ipcores
+2. use `make $(targets)` to generate ROM and other files
+3. Reconfigure coe files generate ROM/RAM ipcores
 
 
