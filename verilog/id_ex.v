@@ -76,7 +76,7 @@ module id_ex(
 
 
     always @(posedge sys_clk) begin
-        if (!rst_n || id_ex_bubble) begin
+        if (!rst_n || (id_ex_bubble && !id_ex_stall)) begin
             reg_pc <= 0;
             reg_next_pc <= 0;
             reg_ins <= 0;
