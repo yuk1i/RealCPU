@@ -74,7 +74,7 @@ module top(
     // L1I to MMU 
     wire immu_read;
     wire [31:0] immu_addr;
-    wire immu_read_done;
+    wire immu_done;
     wire [255:0] immu_read_data;
 
     ifetch fetch(
@@ -347,7 +347,21 @@ module top(
     );
 
     // MMU Control Signals
-    wire serve_ic           = immu_read;
+    reg  dmmu_pending;
+    always @(posedge sys_clk) begin
+        if (rst_n) dmmu_pending <= 0;
+        else begin
+            if (!dmmu_pending && (dmmu_read || dmmu_write) && !immu_read) begin
+                dmmu_pending <= 1;
+            end else if (dmmu_pending) begin
+                dmmu_pending <= mmu_done;
+            end else begin
+                dmmu_pending <= 0;
+            end
+        end
+    end
+    // Don't transfer control to L1I when L1D is pending, works at immu_read is one clk delayed to dmmu requests
+    wire serve_ic           = immu_read && !dmmu_pending;
     wire mmu_read           = serve_ic ? immu_read : dmmu_read;
     wire mmu_write          = serve_ic ? 0         : dmmu_write;
     wire [31:0] mmu_addr    = serve_ic ? immu_addr : dmmu_addr;
