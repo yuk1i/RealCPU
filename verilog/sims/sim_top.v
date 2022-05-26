@@ -43,17 +43,27 @@ module sim_top();
     );
 
     initial begin
-        dsend = 8'hab;
+        cnt = 0;
+    end
+
+    initial begin
+        #1000000 
+        dsend = 8'h00;
         send = 0;
-        #20
+        #200
         send = 1;
         #20
         send = 0;
         
     end
-    always wait(!uart_tx_busy && !bank_rst) begin
+    reg [2:0] cnt;
+    always @(negedge uart_tx_busy) begin
+        if (cnt <= 6) begin
+            dsend = (cnt < 4 ) ? 8'H00 : 8'H02;
             #200 send = 1; 
             #20 send = 0;
+            cnt = cnt + 1;
+        end
     end
 
     wire sim_uart_rx_done;
