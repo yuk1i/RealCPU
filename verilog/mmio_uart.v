@@ -30,12 +30,12 @@ module mmio_uart(
     wire [2:0] _addr = mmio_addr[4:2];
     assign mmio_work = (mmio_read || mmio_write) && mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:5] == 11'b00000001_001;
 
-    wire acc_rx_valid   = _addr == 3'b000;  // ro
-    wire acc_rx_fifo    = _addr == 3'b001;  // ro
-    wire acc_tx_busy    = _addr == 3'b010;  
-    wire acc_tx_full    = _addr == 3'b011;
-    wire acc_tx_send    = _addr == 3'b100;  // wr
-    wire acc_tx_fifo    = _addr == 3'b101;  // wo
+    wire acc_rx_valid   = mmio_work && _addr == 3'b000;  // ro
+    wire acc_rx_fifo    = mmio_work && _addr == 3'b001;  // ro
+    wire acc_tx_busy    = mmio_work && _addr == 3'b010;  
+    wire acc_tx_full    = mmio_work && _addr == 3'b011;
+    wire acc_tx_send    = mmio_work && _addr == 3'b100;  // wr
+    wire acc_tx_fifo    = mmio_work && _addr == 3'b101;  // wo
 
     reg acc_rx_fifo_d;
     always @(posedge sys_clk) acc_rx_fifo_d <= acc_rx_fifo;
