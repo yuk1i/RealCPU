@@ -13,6 +13,7 @@ module l1icache(
 
     input out_req_stall,          
     // li1cache should hold instruction from MMIO if out_req_stall
+    input out_bubble,
 
     // MMU Interface
     output l1_mmu_req_read,
@@ -119,7 +120,7 @@ module l1icache(
             _mmio_ins_addr <= 32'b0;
             _mmio_done <= 1'b0;
         end else begin
-            if ((out_req_stall || invalid_stall) && addr_is_mmio) begin
+            if ((out_req_stall || invalid_stall || out_bubble) && addr_is_mmio && _mmio_done && _mmio_ins_addr == l1_addr) begin
                 // MMIO ins should be held when outside requests stall or l1i is invaliding 
                 _mmio_ins_buf <= _mmio_ins_buf;
                 _mmio_done <= _mmio_done;

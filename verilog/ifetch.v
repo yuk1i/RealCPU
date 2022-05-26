@@ -8,7 +8,7 @@ module ifetch(
     input do_jump,
     input [31:0] jump_addr,
 
-    // From mem and execute: stall if read mem, stall should go down at negedge
+    // From mem and execute: stall if read mem, stall should go down at posedge
     input stall,
     output global_stall,
     // From Bubble Controller
@@ -47,6 +47,7 @@ module ifetch(
         .out_req_stall(stall),
         .miss_stall(il1_stall),
         .invalid_stall(i1l_inv_stall),
+        .out_bubble(fetch_bubble),
 
         .l1_mmu_req_read(immu_read),
         .l1_mmu_req_addr(immu_addr),
