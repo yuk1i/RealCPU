@@ -10,7 +10,8 @@ module top(
     output [7:0] seg7_bits_pin, 
     output [7:0] seg7_led_pin,
     input uart_rx_pin,
-    output uart_tx_pin
+    output uart_tx_pin,
+    input [4:0] button_pins
 );
 
 //#region SYS_CLK & RST Generator
@@ -420,7 +421,8 @@ module top(
         .seg7_led_pin(seg7_led_pin),
         .bank_sys_clk(bank_sys_clk),
         .uart_rx_pin(uart_rx_pin),
-        .uart_tx_pin(uart_tx_pin)
+        .uart_tx_pin(uart_tx_pin),
+        .button_pins(button_pins)
     );
     
 

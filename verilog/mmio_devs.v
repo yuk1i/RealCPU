@@ -22,7 +22,9 @@ module mmio_devs(
     input bank_sys_clk,
     // 4. UART
     input uart_rx_pin,
-    output uart_tx_pin
+    output uart_tx_pin,
+    // 5. Button
+    input [4:0] button_pins 
 
 );
     wire addr_is_mmio;
@@ -129,6 +131,25 @@ module mmio_devs(
         .bank_sys_clk(bank_sys_clk)
     );
 
+    wire        btn_work;
+    wire        btn_done;
+    wire [31:0] btn_rdata;
+    mmio_btn mmio_btn_ins(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+        
+        .mmio_read(mmio_read),
+        .mmio_write(mmio_write),
+        .mmio_addr(mmio_addr),
+        .mmio_write_data(mmio_write_data),
+
+        .mmio_work(btn_work),
+        .mmio_done(btn_done),
+        .mmio_read_data(btn_rdata),
+
+        .button_pins(button_pins)
+    );
+
     always @* begin
         if (addr_is_mmio) begin
             if (sw_work) begin
@@ -146,6 +167,9 @@ module mmio_devs(
             end else if (uart_work) begin
                 mmio_done = uart_done;
                 mmio_read_data = uart_rdata;
+            end else if (btn_work) begin
+                mmio_done = btn_done;
+                mmio_read_data = btn_rdata;
             end else begin
                 mmio_done = 0;
                 mmio_read_data = 0;
@@ -157,7 +181,10 @@ module mmio_devs(
     end
 
     // Switches: 0xFFFF0000 - 0xFFFF007F, 32 words, 128 bytes, last 7 bits, last 2 bits remain 0
-    // LEDs:     0xFFFF0080 - 0xFFFF00FF, 32 words, 128 bytes, last 7 bits, last 2 bits ignored
-    // SEG7      0xFFFF0100 - 0xFFFF0120, 8  words, 32 bytes
-    // ROM:      
+    // LEDs    : 0xFFFF0080 - 0xFFFF00FF, 32 words, 128 bytes, last 7 bits, last 2 bits ignored
+    // SEG7    : 0xFFFF0100 - 0xFFFF011F, 8  words, 32 bytes
+    // UARAT   : 0xFFFF0120 - 0xFFFF013F
+    // Button  : 0xFFFF0140 - 0xFFFF014F 16 words
+    // ROM     : 0xFFFFE000 - 0xFFFFFFFF
+
 endmodule

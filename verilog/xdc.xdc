@@ -81,3 +81,9 @@ set_property -dict {PACKAGE_PIN L13 IOSTANDARD LVCMOS33} [get_ports {leds_pin[22
 set_property -dict {PACKAGE_PIN K17 IOSTANDARD LVCMOS33} [get_ports {leds_pin[23]}]
 
 
+
+set_property -dict {PACKAGE_PIN P4 IOSTANDARD LVCMOS33} [get_ports {button_pins[0]}]
+set_property -dict {PACKAGE_PIN P5 IOSTANDARD LVCMOS33} [get_ports {button_pins[1]}]
+set_property -dict {PACKAGE_PIN P1 IOSTANDARD LVCMOS33} [get_ports {button_pins[2]}]
+set_property -dict {PACKAGE_PIN P2 IOSTANDARD LVCMOS33} [get_ports {button_pins[3]}]
+set_property -dict {PACKAGE_PIN R1 IOSTANDARD LVCMOS33} [get_ports {button_pins[4]}]
