@@ -117,12 +117,14 @@ module idecoder(
     reg [31:0] register [0:31];
 
     // Decoder Register output
-    assign reg_read1 = register[rs_id];
-    assign reg_read2 = register[rt_id];
+    wire fwd_rs      = reg_write_i && reg_write_id_i != 5'b0 && reg_write_id_i == rs_id; 
+    wire fwd_rt      = reg_write_i && reg_write_id_i != 5'b0 && reg_write_id_i == rt_id; 
+    assign reg_read1 = fwd_rs ? reg_write_data_i : register[rs_id];
+    assign reg_read2 = fwd_rt ? reg_write_data_i : register[rt_id];
 
     integer i;
     // Register Write
-    always @(negedge sys_clk) begin
+    always @(posedge sys_clk) begin
         if (!rst_n) begin
             for (i = 0; i<32; i=i+1) begin
                 register[i] <= 32'h0;
