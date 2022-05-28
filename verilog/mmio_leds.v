@@ -19,7 +19,7 @@ module mmio_leds(
     // Address: 0xFFFF0080 - 0xFFFF00FF, 32 words, 128 bytes, last 7 bits, last 2 bits ignored
     //          0b1_0000000
     wire [4:0] _addr = mmio_addr[6:2];
-    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:7] == 9'b00000000_1;
+    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:7] == 9'b00000000_1 && (mmio_read || mmio_write);
     
     reg [31:0] _leds_reg;
 

@@ -21,7 +21,7 @@ module mmio_seg7(
     // Address: 0xFFFF0100 - 0xFFFF0120, 8 words, 32 bytes
     //          0b1000_00000, 0b1001_00000
     wire [2:0] _addr = mmio_addr[4:2];
-    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:5] == 11'b00000001_000;
+    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:5] == 11'b00000001_000 && (mmio_read || mmio_write);
     
     reg [7:0] seg7_regs [0:7];
 
