@@ -1,5 +1,5 @@
 #include "../utils/seg7.c"
-#include "../utils/uart.c"
+#include "../utils/uart.h"
 
 extern int bootloader() {
     put_string("[+] Hello Yuki!\n");

@@ -10,7 +10,7 @@ TEXT_START_AT=0x0100
 DATA_START_AT=0x1000
 
 CC_OPT=-frename-registers -fcombine-stack-adjustments -fcprop-registers
-CC_FLAGS=-mabi=32 -mlong32 -mips32r6 -Werror -nostdlib -ffreestanding -O0 $(CC_OPT) -fno-delayed-branch -fomit-frame-pointer -fno-pic -mcompact-branches=never -mno-llsc -msoft-float -mno-abicalls -static -fno-stack-protector
+CC_FLAGS=-mabi=32 -mlong32 -mips32r6 -Werror -nostdlib -ffreestanding -O1 -fno-delayed-branch -fomit-frame-pointer -fno-pic -mcompact-branches=never -mno-llsc -msoft-float -mno-abicalls -static -fno-stack-protector
 AS_FLAGS=-mips32r6 --alternate -mgp32 -call_nonpic -non_shared -mno-ginv -msoft-float --fatal-warnings -O0
 LD_FLAGS=--script linker.ld --no-compact-branches -nostdlib -static
 
@@ -23,11 +23,11 @@ OBJS=$(SRCS:%=$(BUILDDIR)/%.o)
 flash:
 	@sudo python3 flash.py
 
-system: SRCS=start system_uart
+system: SRCS=start system_uart utils/uart utils/seg7 io
 system:
 	@make SRCS="$(SRCS)" dump
 
-rom:SRCS:=bootloader/rom bootloader/bootloader
+rom:SRCS:=bootloader/rom bootloader/bootloader utils/uart io
 rom:
 	@make SRCS="$(SRCS)" objs
 	@LD_FLAGS=
@@ -39,7 +39,7 @@ rom:
 	@python3 convert.py tmp/rom.bin rom.coe
 
 %:
-	make SRCS="start $@ utils/uart utils/seg7" dump --no-print-directory
+	make SRCS="start $@ utils/uart utils/seg7 io" dump --no-print-directory
 	@echo "\n[*] Compile and dump successfully\n"
 
 objs: $(OBJS)
