@@ -2,10 +2,6 @@
 
 module keypad(
     input sys_clk,
-    /** 
-     * Request a time clock with 200Hz. 
-     */ 
-    input sys_clk_for_keypad, 
     input rst_n,
 
     /** 
@@ -29,14 +25,14 @@ module keypad(
     
     reg [1: 0] state; 
 
-    always @(posedge sys_clk_for_keypad or negedge rst_n) begin 
+    always @(posedge sys_clk or negedge rst_n) begin 
         if (!rst_n) 
             state = 2'b0; 
         else 
             state = state + 1;
     end 
 
-    always @(posedge sys_clk_for_keypad or negedge rst_n) begin
+    always @(posedge sys_clk or negedge rst_n) begin
         if (!rst_n) 
             row = 4'b1111; 
         else if (state == 0)
@@ -49,7 +45,7 @@ module keypad(
             row = 4'b0111; 
     end
 
-    always @(posedge sys_clk_for_keypad or negedge rst_n) begin 
+    always @(posedge sys_clk or negedge rst_n) begin 
         if (!rst_n) begin 
             key_out <= 16'b0; 
         end else begin 
@@ -85,7 +81,7 @@ module keypad(
 
     reg [15: 0] key_out_cache; 
 
-    always @(posedge sys_clk_for_keypad or negedge rst_n) begin 
+    always @(posedge sys_clk or negedge rst_n) begin 
         if (!rst_n) key_out_cache <= 16'hFFFF; 
         else key_out_cache <= key_actual;
     end
@@ -108,18 +104,18 @@ module keypad(
 
     reg [5: 0] out_code_cache; 
 
-    always @(posedge sys_clk_for_keypad or negedge rst_n) begin 
+    always @(posedge sys_clk or negedge rst_n) begin 
         if (!rst_n) 
             out_code_cache <= 5'h1F; 
         else 
             out_code_cache <= out_code; 
     end
 
-    always @(posedge sys_clk_for_keypad or negedge rst_n) begin
+    always @(posedge sys_clk or negedge rst_n) begin
         pulse_sign = (out_code_cache != out_code) && (out_code != 5'h1F); 
     end
 
-    always @(posedge sys_clk_for_keypad or negedge rst_n) begin 
+    always @(posedge sys_clk or negedge rst_n) begin 
         if (!rst_n) 
             out_code <= 5'h1F; 
         else begin 
