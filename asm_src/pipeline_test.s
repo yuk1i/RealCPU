@@ -2,6 +2,11 @@
 .text
 main:
 
+    # test load
+    la $a0, test
+    lw $v0, ($a0)
+    sw $a0, 4($v0) 
+
     # test special3
 
     li $a0, 0xF9        #         0b11111001

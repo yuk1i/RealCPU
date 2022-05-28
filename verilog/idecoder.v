@@ -149,7 +149,8 @@ module idecoder(
     // R_op: check rs + rt
     assign insert_bubble = id_ex_mem_read && id_ex_reg_dst_id != 5'b0 
             && (id_ex_reg_dst_id == rs_id || ((R_op || opcode == 6'b011111) && id_ex_reg_dst_id == rt_id))
-            && !mem_write;
+            && !(mem_write && rt_id == id_ex_reg_dst_id);
+            // only exclude lw $rt, addr then sw $st, addr
 
 
     // ***** END  8 Bubble Controller ***** //
