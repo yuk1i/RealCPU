@@ -18,7 +18,7 @@ module mmio_switch(
     // 24 switches
     // Address: 0xFFFF0000 - 0xFFFF007F, 32 words, 128 bytes, last 7 bits, last 2 bits remain 0
     wire [4:0] _addr = mmio_addr[6:2];
-    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:7] == 9'b0;
+    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:7] == 9'b0 && (mmio_write || mmio_read);
     
     reg [23:0] sw_reg;
     always @(posedge sys_clk) sw_reg <= switches_pin;
