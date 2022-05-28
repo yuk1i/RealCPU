@@ -15,7 +15,7 @@ f.close()
 ba = ba[4096:]
 size = len(ba)
 print(hex(size))
-uart = serial.Serial(port="/dev/ttyUSB1", baudrate=128000)
+uart = serial.Serial(port="/dev/ttyUSB1", baudrate=384000)
 
 bsize = int.to_bytes(size, 4, byteorder='big')
 uart.write(bsize)
@@ -23,7 +23,7 @@ i = 0
 while i < len(ba):
     if i % 2048 == 0:
         print("Writing " + hex(i) + " bytes...")
-        time.sleep(1)
+        time.sleep(0.3)
     uart.write(ba[i:i+1])
     i += 1
 uart.close()

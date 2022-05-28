@@ -46,11 +46,8 @@ qqq:
 
 out:
 	# test mtc0
-	mfc0 $t0, $0
 	addiu $t0, 0xFF
-	mtc0 $t0, $0
 	li $t0, 0
-	mfc0 $t0, $0
 	andi $t0, $t0, 0x0F
 .set noat
 	li $at, 0xFF000000

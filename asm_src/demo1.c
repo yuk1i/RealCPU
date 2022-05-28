@@ -1,4 +1,5 @@
 #include "utils/uart.h"
+#include "utils/seg7.h"
 
 volatile int* mmio_sw = (int*) 0xFFFF0000;
 volatile int* mmio_led = (int*) 0xFFFF0080;
@@ -67,94 +68,101 @@ unsigned int get_seg7_char(char a) {
 // }
 int bit[8] = {0b00000001, 0b00000010, 0b00000100, 0b00001000, 0b00010000, 0b00100000, 0b01000000, 0b10000000};
 
-extern int main() {
+__attribute__((section(".text"))) extern int main() {
     put_string("run demo1\n");
-    register int c;
+    register int c = 0;
     unsigned int decide = 0;
-    unsigned int a;
-    unsigned int b;
+    unsigned int a = 0;
+    unsigned int b = 0;
     unsigned int highbit;
-    unsigned int is_palindrome = 1;
+    unsigned int is_palindrome = 0;
 
     unsigned int last_decide = 0;
     while (1)
     {
         
-        mmio_led[22] = mmio_sw[23];
-        mmio_led[21] = mmio_sw[22];
-        mmio_led[20] = mmio_sw[21];
+        mmio_led[23] = mmio_sw[23];
+        mmio_led[22] = mmio_sw[22];
+        mmio_led[21] = mmio_sw[21];
         if (last_decide!=decide) {
             put_string("change mode to ");
             put_char(decide + '0');
             put_char('\n');
+            last_decide = decide;
         }
-        last_decide = decide;
 
         decide = (mmio_sw[23] << 2) | (mmio_sw[22] << 1) | mmio_sw[21];
-        a = (mmio_sw[15] << 7) | (mmio_sw[14] << 6) | (mmio_sw[13] << 5) | (mmio_sw[12] << 4) | (mmio_sw[11] << 3) | (mmio_sw[10] << 2) | (mmio_sw[9] << 1) | mmio_sw[8];
-        b = (mmio_sw[7] << 7) | (mmio_sw[6] << 6) | (mmio_sw[5] << 5) | (mmio_sw[4] << 4) | (mmio_sw[3] << 3) | (mmio_sw[2] << 2) | (mmio_sw[1] << 1) | mmio_sw[0];
-        is_palindrome = 1;
-
-        if (decide != 0){
-            mmio_led[23] = 0;
+        a = 0;
+        for(int i=8;i<16;i++) {
+            a = a | ((mmio_sw[i] & 0x1) << (i-8));
         }
-        if(decide == 0){
+        b = 0;
+        for(int i=0;i<8;i++) {
+            b = b | ((mmio_sw[i] & 0x1) << (i));
+        }
+        is_palindrome = 0;
+
+        if(decide == 0) {
+            // use least 8 bit
             for(int i = 0; i < 8; i++){
-                mmio_led[i] = mmio_sw[i + 8];
+                mmio_led[i] = mmio_sw[i];
             }
-            highbit = 15;
-            for(int i = 15; i >= 8; i--){
+            highbit = 7;
+            for(int i = 7; i >= 0; i--){
                 if(mmio_sw[i] == 1){
                     highbit = i;
                     break;
                 }
             }
             is_palindrome = 1;
-            for(int i = 8; i <= 8 + ((highbit - 8) >> 1); i++){
-                if(mmio_sw[i] != mmio_sw[highbit - (i - 8)]){
+            is_palindrome = 1;
+            is_palindrome = 1;
+            register unsigned int left = 0;
+            while(highbit>left) {
+                if ((mmio_sw[highbit] == 1 && mmio_sw[left] == 0) || (mmio_sw[highbit] == 0 && mmio_sw[left] == 1)) {
                     is_palindrome = 0;
                     break;
                 }
+                highbit--;
+                left++;
             }
-            mmio_led[23] = is_palindrome;
+            display(highbit | (is_palindrome << 4) | (left << 8) | (1<<12));
+            mmio_led[20] = is_palindrome;
         }else if(decide == 1){
-            mmio_led[23] = 0;
-            for(int i = 0; i < 16; i++) {
+            for(int i = 0; i < 24; i++) {
                 mmio_led[i] = mmio_sw[i];
             }
         }else if(decide == 2){
-            mmio_led[23] = 0;
             for(int i = 0; i < 8; i++) {
                 mmio_led[i] = mmio_sw[i + 8] & mmio_sw[i];
             }
         }else if(decide == 3){
-            mmio_led[23] = 0;
             for(int i = 0; i < 8; i++) {
                 mmio_led[i] = mmio_sw[i + 8] | mmio_sw[i];
             }
         }else if(decide == 4){
-            mmio_led[23] = 0;
             for(int i = 0; i < 8; i++){
                 mmio_led[i] = mmio_sw[i + 8] ^ mmio_sw[i];
             }
         }else if(decide == 5){
-            mmio_led[23] = 0;
             c = a << b;
             for(int i = 0; i < 8; i++){
                 mmio_led[i] = (bit[i] & c) != 0;
             }
         }else if(decide == 6){
-            mmio_led[23] = 0;
             c = a >> b;
             for(int i = 0; i < 8; i++){
                 mmio_led[i] = (bit[i] & c) != 0;
             }
-        }else if(decide == 7){
-            mmio_led[23] = 0;
+        }else if(decide == 7) {
+            for(int i=8;i<16;++i) {
+                mmio_led[i] = (a & (1 << (i-8))) != 0;
+            }
             signed char sa = a & 0xFF;
             signed char sc = sa >> b;
-            for(int i = 0; i < 8; i++){
-                mmio_led[i] = ((1 << i) & sc) != 0;
+            display((sa << 16) | (b & 0xFF));
+            for(int i = 0; i < 8; i++) {
+                mmio_led[i] = ((1 << i) & ((unsigned char) sc)) != 0;
             }
         }
     }

@@ -9,7 +9,7 @@ STRIP=mipsel-linux-gnu-strip
 TEXT_START_AT=0x0100
 DATA_START_AT=0x1000
 
-CC_FLAGS=-g -mabi=32 -mlong32 -frename-registers -mips32r6 -Werror -O0 -fomit-frame-pointer -fno-pic -mcompact-branches=never -mno-llsc -msoft-float -mno-abicalls -static
+CC_FLAGS=-g -mabi=32 -mlong32 -frename-registers -mips32r6 -Werror -O2 -nostdlib -ffreestanding -fno-delayed-branch -fomit-frame-pointer -fno-pic -mcompact-branches=never -mno-llsc -msoft-float -mno-abicalls -static -fno-stack-protector
 AS_FLAGS=-mips32r6 --alternate -mgp32 -g -call_nonpic -non_shared -mno-ginv -msoft-float --fatal-warnings -O0
 LD_FLAGS=--script linker.ld --no-compact-branches -nostdlib -static
 
@@ -19,8 +19,8 @@ OBJS=$(SRCS:%=$(BUILDDIR)/%.o)
 
 .DEFAULT_GOAL := cputest
 
-flush:
-	@sudo python3 flush.py
+flash:
+	@sudo python3 flash.py
 
 system: SRCS=start system_uart utils/uart utils/seg7 utils/string
 system:
