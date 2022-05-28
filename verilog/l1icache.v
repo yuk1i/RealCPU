@@ -88,7 +88,7 @@ module l1icache(
     assign invalid_stall = invalid_ins && status != STATUS_DONE;
 
     l1c_dismem dismem(
-        .clk(~sys_clk),
+        .clk(sys_clk),
         .a(addr_idx),
         .d(cache_wd),
         .we(cache_w),
@@ -96,7 +96,7 @@ module l1icache(
         .spo(c_o)
     );
     cache_bram cb(
-        .clka(~sys_clk),
+        .clka(sys_clk),
         .addra(addr_idx),
         .dina(mmu_l1_read_data),
         .wea(cache_w),
@@ -154,7 +154,7 @@ module l1icache(
     // assign l1_mmu_write_data    = addr_is_mmio ? {224'b0, l1_write_data}: c_o_data;
 
     reg mmu_rcache_pos_sync;
-    always @(posedge sys_clk) mmu_rcache_pos_sync <= mmu_req_read_cache;
+    always @(posedge sys_clk) mmu_rcache_pos_sync <= mmu_req_read_cache && !mmu_l1_done;
     // mmu_req_read_cache is changed at posedge, so sync it to next posedge
 
     assign l1_mmu_req_read = (mmu_rcache_pos_sync && !addr_is_mmio) || (addr_is_mmio && mmio_read_pos);

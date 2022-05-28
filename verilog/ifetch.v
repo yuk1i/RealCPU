@@ -103,17 +103,9 @@ module ifetch(
                     pc <= jump_addr;
                 else
                     pc <= next_pc;
-                // ins_out = ins_dout;
             end
         end
     end
-    // always @(ins_dout or rst_n) begin 
-    //     if (!rst_n) begin
-    //         ins_out = 32'b0;
-    //     end else begin
-    //         // ins_out <= {ins_mem[pc+3],ins_mem[pc+2],ins_mem[pc+1],ins_mem[pc]};
-    //         ins_out = ins_dout;
-    //     end
-    // end
+
 
 endmodule
