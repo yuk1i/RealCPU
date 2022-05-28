@@ -63,6 +63,7 @@ module idecoder(
     wire [4:0] rd_id = ins_i[15:11];        // 5 bits
     
     assign is_sync_ins = R_op && func == 6'b001111;
+    wire is_special3    = opcode == 6'b011111;
     // ***** END Decoder ***** //
     
 
@@ -70,7 +71,7 @@ module idecoder(
 
     // reg_dst: write rd when R-type, write to rt when I-type and jal/jalr
     // 1:rd, 0:rt
-    wire reg_dst = R_op;
+    wire reg_dst = R_op || is_special3;
     assign reg_dst_id = reg_dst ? rd_id : rt_id;
     // alu_src: I-type, exclude [beq 04, bne 05, blez 06, bgtz 07]
     assign alu_src = I_op & opcode[5:2] != 4'b0001;
@@ -105,6 +106,7 @@ module idecoder(
             6'b000011 : _reg_write_i = 1;   // jal
             6'b001zzz : _reg_write_i = 1;   // [add,addu,sub,subu, and,or,xor,nor]
             6'b100zzz : _reg_write_i = 1;   // [lb,lh,lw, lbu, lhu]
+            6'b011111 : _reg_write_i = 1;   // special3 cases
             default   : _reg_write_i = 0;
         endcase
     end
@@ -140,13 +142,14 @@ module idecoder(
     // ***** BEGIN Bubble Controller ***** //
 
     // Insert a bubble when:
-    // use a register after lw
+    // use a register after load
     // make ID/EX generate a nop, and make IF/ID hold PC
 
     // I_op; check rs
     // R_op: check rs + rt
     assign insert_bubble = id_ex_mem_read && id_ex_reg_dst_id != 5'b0 
-            && (id_ex_reg_dst_id == rs_id || (R_op && id_ex_reg_dst_id == rt_id));
+            && (id_ex_reg_dst_id == rs_id || ((R_op || opcode == 6'b011111) && id_ex_reg_dst_id == rt_id))
+            && !mem_write;
 
 
     // ***** END  8 Bubble Controller ***** //

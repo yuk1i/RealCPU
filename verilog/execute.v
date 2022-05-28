@@ -29,6 +29,7 @@ module execute(
     wire [4:0] ins_shamt = ins[10:6];     // 5 bits
     wire [5:0] func      = ins[5:0];           // 6 bits
     wire is_regimm_op    = opcode == 6'b000001;
+    wire is_special3     = opcode == 6'b011111;
 
     // [slti, sltiu], R:[slt, sltu]
     wire is_set_op       = opcode[5:1] == 5'b00101 || (R_op && (func[5:1] == 5'b10101));
@@ -38,7 +39,7 @@ module execute(
     wire calc_addr       = is_load_store;
 
     // [addi,addiu,slti,sltiu,andi,ori,xori,*lui*], R:[add,addu,sub,subu,and,or,xor,nor] [load,store]
-    wire is_def          = opcode[5:3] == 3'b001 || (R_op && (func[5:3] == 3'b100 || func[5:1] == 5'b10101)) || calc_addr;
+    wire is_def          = opcode[5:3] == 3'b001 || (R_op && (func[5:3] == 3'b100)) || calc_addr;
     wire is_aui          = opcode == 6'b001111;
     // MIPS32r6 changes: aui
 
@@ -101,10 +102,43 @@ module execute(
     always @* begin
         case (func[1:0])
             2'b00: shift_out = reg2 << real_shamt;  // sll
-            2'b01: shift_out = 0;                   // undefined
+            2'b01: shift_out = func[5:2] == 4'b0001 ? (reg1 << (ins_shamt[1:0] + 1)) + reg2 : 32'b0; // lsa
             2'b10: shift_out = $unsigned(reg2) >> real_shamt;  // srl
             2'b11: shift_out = $signed(reg2) >>> real_shamt; // sra
         endcase
+    end
+
+    // SPECIAL3 Operations
+    reg [31:0] special3_out;
+    wire [4:0] ins_lsb = ins[10:6];
+    wire [4:0] ins_msb = ins[15:11];
+    integer i;
+    always @* begin
+        if (func == 6'b000100) begin
+            // INS, Insert Bit Field
+            // special3_out = {reg2[31:ins_msb+1], reg1[ins_msb - ins_lsb : 0], reg2[ins_lsb-1:0]};
+            for(i=0;i<32;i=i+1) begin
+                if (i < ins_lsb) special3_out[i] = reg2[i];
+                else if (i <= ins_msb && i >= ins_lsb) special3_out[i] = reg1[i-ins_lsb];
+                else special3_out[i] = reg2[i];
+            end
+        end else if (func == 6'b000000) begin
+            // EXT
+            // special3_out = {32'b0 ,reg1[ins_lsb+ins_msb:ins_lsb]};
+            for(i=0;i<32;i=i+1) begin
+                if (i <= ins_msb) special3_out[i] = reg1[i + ins_lsb];
+                else special3_out[i] = 1'b0;
+            end
+        end else if (func == 6'b100000) begin
+            // BSHFL
+            case (ins_shamt)
+                // 5'b00000 : special3_out = {reg2[0], reg2[1], reg2[2], reg2[3], reg2[4], }  // BITSWAP
+                5'b10000 : special3_out = {{24{reg2[7]}}, reg2[7:0]};      // seb
+                5'b11000 : special3_out = {{16{reg2[15]}}, reg2[15:0]};    // seh
+                default  : special3_out = 32'b0;
+            endcase
+        end else 
+            special3_out = 32'b0;
     end
 
     // Multiplier
@@ -142,6 +176,8 @@ module execute(
             result = next_pc + 4;
         else if (is_branch)
             result = 0;
+        else if (is_special3)
+            result = special3_out;
         else
             result = 0;
     end
