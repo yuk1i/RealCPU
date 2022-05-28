@@ -8,15 +8,15 @@ volatile int * uart_tx_send     = (int *) ADDR_UART_TX_SEND;
 volatile int * uart_tx_fifo     = (int *) ADDR_UART_TX_FIFO;
 
 void put_char(char a) {
-    while (*uart_tx_full) asm volatile ("":::"memory");
+    // while (*uart_tx_full) asm volatile ("":::"memory");
     *uart_tx_fifo = (unsigned int) a;
-    if (!*uart_tx_send) *uart_tx_send = 1;
+    *uart_tx_send = 1;
 }
 
 void put_string(char* str) {
     while(*str) {
-        while (*uart_tx_full) asm volatile ("":::"memory");
-        *uart_tx_fifo = *str;
+        // while (*uart_tx_full) asm volatile ("":::"memory");
+        *uart_tx_fifo = (unsigned int) *str;
         str++;
     }
     *uart_tx_send = 1;

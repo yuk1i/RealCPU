@@ -15,7 +15,7 @@ module sim_top();
         #100 switches_pin = 24'b00000000_00000000_00000011;
         #100 switches_pin = 24'b00000000_00000000_00000111;
         #1000 switches_pin = 24'b00100000_00000000_00000111;
-        #1000 switches_pin = 24'b00100000_11000011_00000111;
+        #1000 switches_pin = 24'b10100000_11000011_00000111;
     end
 
     always #5 bank_sys_clk = ~bank_sys_clk;

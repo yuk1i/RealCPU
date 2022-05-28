@@ -118,7 +118,7 @@ module l1dcache(
     // disable write to bram from port B during flush cache line under write through mode
 
     assign bram_w_port_a = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty && mmu_l1_done;
-    // Retrive new cache line, flush bram at negedge after mmu_done at posedge
+    // Retrive new cache line, flush bram at posedge after mmu_done at posedge
     
     assign bram_w_port_b = c_work && c_hit && l1_write && !disable_write_cache_wt;
     // write to cache line, 

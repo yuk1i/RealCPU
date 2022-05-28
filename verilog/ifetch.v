@@ -94,8 +94,8 @@ module ifetch(
         if (!rst_n) begin
             pc <= 32'hFFFFE000;
         end else begin
-            if (pc == 31'h00008000) begin
-                pc <= pc;
+            if (pc == 32'h00008000) begin
+                pc <= 32'HFFFFE000;
             end else begin
                 if (global_stall || il1_stall || fetch_bubble) 
                     pc <= pc;

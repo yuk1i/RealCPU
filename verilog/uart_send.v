@@ -15,7 +15,7 @@ module uart_send(
     );
     
 //parameter define
-parameter  CLK_FREQ = 10_000_000;            //系统时钟频率
+parameter  CLK_FREQ = 30_000_000;            //系统时钟频率
 parameter  UART_BPS = 128000;                //串口波特率
 localparam  BPS_CNT  = CLK_FREQ/UART_BPS;   //为得到指定波特率,对系统时钟计数BPS_CNT次
 

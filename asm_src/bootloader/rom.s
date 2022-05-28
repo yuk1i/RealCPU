@@ -9,6 +9,10 @@ __rom_start:
     sync 17
     # enable write through
 
+    .rept 10
+        nop
+    .endr
+
     li $v0, 0xFFFF0080
     li $v1, 1
     sw $v1, 0($v0)
@@ -50,6 +54,10 @@ __rom_start:
     sync 16
     # dismiss all instruction cache
     sync 01
+
+    .rept 10
+        nop
+    .endr
 
     li $v0, 0xFFFF0080
     li $v1, 1

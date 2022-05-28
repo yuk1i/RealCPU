@@ -66,9 +66,9 @@ unsigned int get_seg7_char(char a) {
 //         d = d >> 4;
 //     }
 // }
-int bit[8] = {0b00000001, 0b00000010, 0b00000100, 0b00001000, 0b00010000, 0b00100000, 0b01000000, 0b10000000};
 
-__attribute__((section(".text"))) extern int main() {
+unsigned int last_decide = 0;
+extern int main() {
     put_string("run demo1\n");
     register int c = 0;
     unsigned int decide = 0;
@@ -77,14 +77,13 @@ __attribute__((section(".text"))) extern int main() {
     unsigned int highbit;
     unsigned int is_palindrome = 0;
 
-    unsigned int last_decide = 0;
     while (1)
     {
         
         mmio_led[23] = mmio_sw[23];
         mmio_led[22] = mmio_sw[22];
         mmio_led[21] = mmio_sw[21];
-        if (last_decide!=decide) {
+        if (last_decide != decide) {
             put_string("change mode to ");
             put_char(decide + '0');
             put_char('\n');
@@ -147,12 +146,12 @@ __attribute__((section(".text"))) extern int main() {
         }else if(decide == 5){
             c = a << b;
             for(int i = 0; i < 8; i++){
-                mmio_led[i] = (bit[i] & c) != 0;
+                mmio_led[i] = ((1<<i) & c) != 0;
             }
         }else if(decide == 6){
             c = a >> b;
             for(int i = 0; i < 8; i++){
-                mmio_led[i] = (bit[i] & c) != 0;
+                mmio_led[i] = ((1<<i) & c) != 0;
             }
         }else if(decide == 7) {
             for(int i=8;i<16;++i) {

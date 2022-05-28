@@ -12,14 +12,18 @@ SECTIONS
   
   .text . : {
     *(.start)
-    *(.text) 
+    *(.text)
+    *(.text.*)
   }
   
   . = __DATA_START_AT;
   .data . : {
     *(.data)
+    *(.data.*)
     *(.rodata)
+    *(.rodata.*)
     *(.bss)
+    *(.bss.*)
     LONG(0x00000000);
   }
 }

@@ -139,7 +139,7 @@ module l1icache(
         else
             _mmio_done_neg <= mmu_l1_done && addr_is_mmio;
     end
-    wire _mmio_available = _mmio_done_neg || _mmio_done && l1_addr == _mmio_ins_addr;
+    wire _mmio_available = _mmio_done_neg || (_mmio_done && l1_addr == _mmio_ins_addr);
 
     // L1 Interfaces
     // miss stall should be sync to negedge when l1_addr changed
@@ -155,7 +155,7 @@ module l1icache(
 
     reg mmu_rcache_pos_sync;
     always @(posedge sys_clk) mmu_rcache_pos_sync <= mmu_req_read_cache;
-    // mmu_req_read_cache is changed at negedge, so sync it to posedge
+    // mmu_req_read_cache is changed at posedge, so sync it to next posedge
 
     assign l1_mmu_req_read = (mmu_rcache_pos_sync && !addr_is_mmio) || (addr_is_mmio && mmio_read_pos);
 

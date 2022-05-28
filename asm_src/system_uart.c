@@ -1,6 +1,5 @@
-#include "utils/seg7.h"
-#include "utils/uart.h"
-#include "utils/string.h"
+#include "utils/seg7.c"
+#include "utils/uart.c"
 
 volatile int* mmio_sw = (int*) 0xFFFF0000;
 volatile int* mmio_led = (int*) 0xFFFF0080;

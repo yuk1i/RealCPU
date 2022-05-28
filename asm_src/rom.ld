@@ -13,7 +13,9 @@ SECTIONS
   . = __DATA_START_AT;
   .data . : {
     *(.data)
+    *(.data.*)
     *(.rodata)
+    *(.rodata.*)
     *(.bss)
     LONG(0x00000000);
   }
