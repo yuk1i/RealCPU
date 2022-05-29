@@ -178,12 +178,13 @@ module execute(
             result = 0;
     end
 
-    // Branch Comparator: is_branch, [beq, bneq, blez, bgtz], REGIMM: [bgez, bal, nal]
+    // Branch Comparator: is_branch, [beq, bneq, blez, bgtz], REGIMM: [bltz, bgez, bal, nal]
     reg do_branch;
     always @* begin
         if (is_regimm_op) begin
             case (rt_id)
-                5'b00001: do_branch = reg1[31] == 0;            // bgez
+                5'b00000: do_branch = $signed(reg1) < 0;        // bltz
+                5'b00001: do_branch = $signed(reg1) >= 0;       // bgez
                 5'b10001: do_branch = 1;                        // bal
                 default:  do_branch = 0;                        // other, including nal
             endcase
@@ -191,8 +192,8 @@ module execute(
             case (opcode[1:0])
                 2'b00: do_branch = reg1 == reg2;
                 2'b01: do_branch = ~(reg1 == reg2);
-                2'b10: do_branch = $signed(reg1) <= 0;          // Signed comparison, less or equal to zero
-                2'b11: do_branch = $signed(reg1) > 0;           // Signed comparison, greater than zero
+                2'b10: do_branch = $signed(reg1) <= 0;          // blez, Signed comparison, less or equal to zero
+                2'b11: do_branch = $signed(reg1) > 0;           // bgtz, Signed comparison, greater than zero
             endcase
         end
     end
