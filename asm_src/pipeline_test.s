@@ -2,6 +2,12 @@
 .text
 main:
 
+    # test multiply
+    li $a0, 114
+    li $a1, 514
+    mul $v0, $a0, $a1
+    muh $v0, $a0, $a1
+
     # test load
     la $a0, test
     lw $v0, ($a0)
