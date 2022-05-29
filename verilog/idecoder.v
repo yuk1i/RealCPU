@@ -63,15 +63,18 @@ module idecoder(
     wire [4:0] rd_id = ins_i[15:11];        // 5 bits
     
     assign is_sync_ins = R_op && func == 6'b001111;
-    wire is_special3    = opcode == 6'b011111;
     // ***** END Decoder ***** //
     
 
     // ***** BEGIN Controller ***** //
 
+    wire is_special3_bshfl = opcode == 6'b011111 && func == 6'b100000;
+
     // reg_dst: write rd when R-type, write to rt when I-type and jal/jalr
+    // SPECIAL3: case: BSHFL [seb, seh] -> rd
+    //           case: INS/EXT          -> rt
     // 1:rd, 0:rt
-    wire reg_dst = R_op || is_special3;
+    wire reg_dst = R_op || is_special3_bshfl;
     assign reg_dst_id = reg_dst ? rd_id : rt_id;
     // alu_src: I-type, exclude [beq 04, bne 05, blez 06, bgtz 07]
     assign alu_src = I_op & opcode[5:2] != 4'b0001;
