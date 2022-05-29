@@ -73,7 +73,7 @@ module mem_wb(
     // Write Back, for [lh,lhu,lb,lbu], do sign or zero extension 
     reg [31:0] wb_ext_data;    
     wire [7:0] wb_byte_extra = reg_mem_read_data[reg_ex_result[1:0] * 8+:8];
-    wire [16:0] wb_hw_extra = reg_mem_read_data[reg_ex_result[1] * 16+:16];
+    wire [15:0] wb_hw_extra = reg_mem_read_data[reg_ex_result[1] * 16+:16];
     always @* begin
         case(reg_opcode[2:0])
             3'b000: wb_ext_data = {{24{wb_byte_extra[7]}}, wb_byte_extra[7:0]};     // lb

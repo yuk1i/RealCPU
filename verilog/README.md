@@ -12,3 +12,7 @@
 3. MIPS32 ISA: https://www.mips.com/?do-download=the-mips32-instruction-set-v6-06
 4. MIPS32 Quick Reference: https://inst.eecs.berkeley.edu/~cs61c/resources/MIPS_help.html
 
+## Support Instructions
+
+1. seleqz : R-type, Func: 6'b110101
+2. selnez : R-type, Func: 6'b110111

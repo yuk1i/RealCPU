@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="700.408 ns"></ZoomEndTime>
-      <Cursor1Time time="68.880 ns"></Cursor1Time>
+      <ZoomStartTime time="3,701.200 ns"></ZoomStartTime>
+      <ZoomEndTime time="4,346.801 ns"></ZoomEndTime>
+      <Cursor1Time time="3,909.284 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="199"></NameColumnWidth>
+      <NameColumnWidth column_width="195"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="18" />
@@ -281,10 +281,14 @@
       <wvobject type="array" fp_name="/sim_top/ttop/id_exi/eo_reg1">
          <obj_property name="ElementShortName">eo_reg1[31:0]</obj_property>
          <obj_property name="ObjectShortName">eo_reg1[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/sim_top/ttop/id_exi/eo_reg2">
          <obj_property name="ElementShortName">eo_reg2[31:0]</obj_property>
          <obj_property name="ObjectShortName">eo_reg2[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/sim_top/ttop/id_exi/eo_immd">
          <obj_property name="ElementShortName">eo_immd[31:0]</obj_property>
@@ -485,9 +489,12 @@
    <wvobject type="group" fp_name="group326">
       <obj_property name="label">EX/MEM</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/sim_top/ttop/em_memi/ei_result">
          <obj_property name="ElementShortName">ei_result[31:0]</obj_property>
          <obj_property name="ObjectShortName">ei_result[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF0080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/sim_top/ttop/em_memi/ei_ins">
          <obj_property name="ElementShortName">ei_ins[31:0]</obj_property>

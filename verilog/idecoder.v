@@ -99,10 +99,11 @@ module idecoder(
     reg _reg_write_i;
     always @* begin
         casez(func)
-            6'b000zzz : _reg_write_r = 1;   // [sll,srl,sra,sllv,srlv,srav]
+            6'b000zzz : _reg_write_r = 1;   // [sll,srl,sra,sllv,srlv,srav, MIPS32r6: lsa]
             6'b0010zz : _reg_write_r = 1;   // MIPS32r6: jalr
             6'b0110zz : _reg_write_r = 1;   // MIPS32r6: [mul, div] 
             6'b10zzzz : _reg_write_r = 1;   // [add,addu,sub,subu, and,or,xor,nor], [slt, sltu]
+            6'b1101z1 : _reg_write_r = 1;   // [seleqz, selnez]
             default   : _reg_write_r = 0;
         endcase
         casez(opcode)
@@ -153,7 +154,7 @@ module idecoder(
     // I_op; check rs
     // R_op: check rs + rt
     assign insert_bubble = id_ex_mem_read && id_ex_reg_dst_id != 5'b0 
-            && (id_ex_reg_dst_id == rs_id || ((R_op || opcode == 6'b011111) && id_ex_reg_dst_id == rt_id))
+            && (id_ex_reg_dst_id == rs_id || id_ex_reg_dst_id == rt_id)
             && !(mem_write && rt_id == id_ex_reg_dst_id);
             // only exclude lw $rt, addr then sw $st, addr
 

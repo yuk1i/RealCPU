@@ -1,28 +1,61 @@
 #include "utils/seg7.h"
 #include "utils/uart.h"
 
+#define ADDR_BTN 0xFFFF0200
 
 volatile int* mmio_sw = (int*) 0xFFFF0000;
 volatile int* mmio_led = (int*) 0xFFFF0080;
+int src[20] = {9,7,1,3,5 ,2,3,9,12,3 ,4};
+int data1[20];
 
 extern int main() {
     while(1) {
-        unsigned int b = 0;
-        for(int i=0;i<8;i++) {
-            b = b | ((mmio_sw[i] & 0x1) << (i));
+        register volatile int * mmio_btn = (int*) ADDR_BTN;
+        int len = 11;
+        for(int i=0;i<len;i++) {
+            data1[i] = src[i];
         }
-        unsigned int a = 0;
-        for(int i=8;i<16;i++) {
-            a = a | ((mmio_sw[i] & 0x1) << (i-8));
+        for(int i=0;i<len;i++) {
+            put_hexstr_int32(data1[i]);
+            put_char(' ');
         }
-        unsigned int c;
-        c = a << b;
-        // display(b | (a<<8) | (c<<16));
-        // put_string("h1");
-        for(int i = 0; i < 8; i++){
-            mmio_led[i] = ((1<<i) & c) != 0;
-            // put_char('0' + i);
+        put_string("\n");
+        for(int i = 0; i < len - 1; i++) {
+            put_string("i: ");
+            put_hexstr_int32(i);
+            put_string("\n");
+            int k = i;
+            for(int j = i + 1; j < len; j++){
+                if(data1[j] < data1[k]){ 
+                    k = j;
+                    // put_string("find k: ");
+                    // put_hexstr_int32(k);
+                    // put_string("\n");
+                }
+            }
+            if(i != k){
+                put_string("swap ik, i: ");
+                put_hexstr_int32(data1[i]);
+                put_string(" k:");
+                put_hexstr_int32(data1[k]);
+                put_string("\n");
+                int temp = data1[i];
+                data1[i] = data1[k];
+                data1[k] = temp;
+            }
+            put_char('\n');
+            put_string("current:");
+            for(int i=0;i<len;i++) {
+                put_hexstr_int32(data1[i]);
+                put_char(' ');
+            }
+            put_char('\n');
         }
-        // put_string("h2");
+        while(!mmio_btn[0]) asm volatile ("":::"memory");
+        for(int i=0;i<len;i++) {
+            put_hexstr_int32(data1[i]);
+            put_char(' ');
+        }
+        put_char('\n');
     }
 }
