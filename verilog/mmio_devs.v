@@ -24,7 +24,9 @@ module mmio_devs(
     input uart_rx_pin,
     output uart_tx_pin,
     // 5. Button
-    input [4:0] button_pins 
+    input  [4:0]    button_pins,
+    output [3:0]    keypad_scan,
+    input  [3:0]    keypad_detect
 
 );
     wire addr_is_mmio;
@@ -147,7 +149,9 @@ module mmio_devs(
         .mmio_done(btn_done),
         .mmio_read_data(btn_rdata),
 
-        .button_pins(button_pins)
+        .button_pins(button_pins),
+        .keypad_scan_pins(keypad_scan),
+        .keypad_detect_pins(keypad_detect)
     );
 
     always @* begin

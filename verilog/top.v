@@ -5,13 +5,15 @@ module top(
     input bank_rst,
 
     // IO Devices
-    input [23:0] switches_pin,
-    output [23:0] leds_pin,
-    output [7:0] seg7_bits_pin, 
-    output [7:0] seg7_led_pin,
-    input uart_rx_pin,
-    output uart_tx_pin,
-    input [4:0] button_pins
+    input  [23:0]   switches_pin,
+    output [23:0]   leds_pin,
+    output [7:0]    seg7_bits_pin, 
+    output [7:0]    seg7_led_pin,
+    input           uart_rx_pin,
+    output          uart_tx_pin,
+    input  [4:0]    button_pins,
+    output [3:0]    keypad_scan,
+    input  [3:0]    keypad_detect
 );
 
 //#region SYS_CLK & RST Generator
@@ -422,7 +424,9 @@ module top(
         .bank_sys_clk(bank_sys_clk),
         .uart_rx_pin(uart_rx_pin),
         .uart_tx_pin(uart_tx_pin),
-        .button_pins(button_pins)
+        .button_pins(button_pins),
+        .keypad_scan(keypad_scan),
+        .keypad_detect(keypad_detect)
     );
     
 

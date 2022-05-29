@@ -87,3 +87,15 @@ set_property -dict {PACKAGE_PIN P5 IOSTANDARD LVCMOS33} [get_ports {button_pins[
 set_property -dict {PACKAGE_PIN P1 IOSTANDARD LVCMOS33} [get_ports {button_pins[2]}]
 set_property -dict {PACKAGE_PIN P2 IOSTANDARD LVCMOS33} [get_ports {button_pins[3]}]
 set_property -dict {PACKAGE_PIN R1 IOSTANDARD LVCMOS33} [get_ports {button_pins[4]}]
+
+
+set_property -dict {PACKAGE_PIN K3 IOSTANDARD LVCMOS33} [get_ports {keypad_scan[0]}]
+set_property -dict {PACKAGE_PIN L3 IOSTANDARD LVCMOS33} [get_ports {keypad_scan[1]}]
+set_property -dict {PACKAGE_PIN J4 IOSTANDARD LVCMOS33} [get_ports {keypad_scan[2]}]
+set_property -dict {PACKAGE_PIN K4 IOSTANDARD LVCMOS33} [get_ports {keypad_scan[3]}]
+
+set_property -dict {PACKAGE_PIN L5 IOSTANDARD LVCMOS33} [get_ports {keypad_detect[0]}]
+set_property -dict {PACKAGE_PIN J6 IOSTANDARD LVCMOS33} [get_ports {keypad_detect[1]}]
+set_property -dict {PACKAGE_PIN K6 IOSTANDARD LVCMOS33} [get_ports {keypad_detect[2]}]
+set_property -dict {PACKAGE_PIN M2 IOSTANDARD LVCMOS33} [get_ports {keypad_detect[3]}]
+
