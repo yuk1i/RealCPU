@@ -56,10 +56,10 @@ unsigned int get_seg7_char(char a) {
     return (unsigned int) 0b00000001;
 }
 
-unsigned char data0[257];
-unsigned char data1[257];
-char data2[257];
-char data3[257];
+int data0[257];
+int data1[257];
+int data2[257];
+int data3[257];
 int num0 = 0;
 int num1 = 0;
 int num2 = 0;
@@ -87,6 +87,7 @@ extern int main() {
             put_hexstr_int32(0x0B000000);
             put_char('\n');
         }
+        display(num0);
         decide = (mmio_sw[23] << 2) | (mmio_sw[22] << 1) | mmio_sw[21];
         a = (mmio_sw[7] << 7) | (mmio_sw[6] << 6) | (mmio_sw[5] << 5) | (mmio_sw[4] << 4) | (mmio_sw[3] << 3) | (mmio_sw[2] << 2) | (mmio_sw[1] << 1) | mmio_sw[0];
         dataset = (mmio_sw[20] << 1) | mmio_sw[19];
@@ -101,7 +102,7 @@ extern int main() {
                 while(mmio_btn[0]) asm volatile ("":::"memory");
                 data0[num0] = a;
                 num0++;
-                put_hexstr_int32(data0[num0 - 1]);
+                put_hexstr_int32(a);
             }
             // c = 0;
             // for(int i = 0; i < num0; i++){
@@ -140,7 +141,13 @@ extern int main() {
             joint = 0;
             num2 = num0;
             for(int i = 0; i < num0; i++){
-                data2[i] = (signed char) data0[i];
+                if((data0[i] & (1 << 7)) == 0){
+                    data2[i] = data0[i];
+                }else{
+                    joint = data0[i] - (1 << 7);
+                    data2[i] = -joint;
+                }
+                // data2[i] = (signed char) data0[i];
             }
             for(int i = 0; i < num0; i++){
                 put_hexstr_int32(data2[i]);
