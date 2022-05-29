@@ -16,7 +16,7 @@ void put_char(char a) {
 
 void put_string(char* str) {
     while(*str) {
-    while (read_io_u32(ADDR_UART_TX_FULL)) asm volatile ("":::"memory");
+        while (read_io_u32(ADDR_UART_TX_FULL)) asm volatile ("":::"memory");
         write_io_u32(ADDR_UART_TX_FIFO, (unsigned int) *str);
         str++;
     }
@@ -25,9 +25,23 @@ void put_string(char* str) {
 
 void put_hex_int32(unsigned int d) {
     for(int i=0;i<4;i++) {
+        while (read_io_u32(ADDR_UART_TX_FULL)) asm volatile ("":::"memory");
         register unsigned int tmp = (d & 0xFF000000U) >> 24;
         write_io_u32(ADDR_UART_TX_FIFO, tmp);
         d = d << 8;
+    }
+}
+
+void put_hexstr_int32(unsigned int d) {
+    for(int i=0;i<8;i++) {
+        
+        while (read_io_u32(ADDR_UART_TX_FULL)) asm volatile ("":::"memory");
+        register unsigned int tmp = (d & 0xF0000000U) >> 28;
+        // 0 - 9, A-F
+        if (tmp < 10) tmp += '0';
+            else tmp += 'A' - 10;
+        write_io_u32(ADDR_UART_TX_FIFO, tmp);
+        d = d << 4;
     }
 }
 

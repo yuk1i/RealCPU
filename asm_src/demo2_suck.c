@@ -1,3 +1,8 @@
+#include "utils/uart.h"
+#include "utils/seg7.h"
+#include "io.h"
+
+#define ADDR_BTN 0xFFFF0200
 
 volatile int* mmio_sw = (int*) 0xFFFF0000;
 volatile int* mmio_led = (int*) 0xFFFF0080;
@@ -51,10 +56,10 @@ unsigned int get_seg7_char(char a) {
     return (unsigned int) 0b00000001;
 }
 
-int data0[257];
-int data1[257];
-int data2[257];
-int data3[257];
+unsigned char data0[257];
+unsigned char data1[257];
+char data2[257];
+char data3[257];
 int num0 = 0;
 int num1 = 0;
 int num2 = 0;
@@ -64,7 +69,7 @@ int needtime = 3333333333;
 int bit[8] = {0b00000001, 0b00000010, 0b00000100, 0b00001000, 0b00010000, 0b00100000, 0b01000000, 0b10000000};
 extern int main() {
     unsigned int decide;
-    unsigned int a;
+    unsigned char a;
     int b;
     unsigned int highbit;
     unsigned int is_palindrome = 1;
@@ -75,23 +80,39 @@ extern int main() {
     int complement;
     while (1)
     {
+        register volatile int * mmio_btn = (int*) ADDR_BTN;
+        if (mmio_btn[1]) {
+            put_hexstr_int32(0x00120034);
+            put_hexstr_int32(0xA0000000);
+            put_hexstr_int32(0x0B000000);
+            put_char('\n');
+        }
         decide = (mmio_sw[23] << 2) | (mmio_sw[22] << 1) | mmio_sw[21];
         a = (mmio_sw[7] << 7) | (mmio_sw[6] << 6) | (mmio_sw[5] << 5) | (mmio_sw[4] << 4) | (mmio_sw[3] << 3) | (mmio_sw[2] << 2) | (mmio_sw[1] << 1) | mmio_sw[0];
         dataset = (mmio_sw[20] << 1) | mmio_sw[19];
         index = (mmio_sw[18] << 3) | (mmio_sw[17] << 2) | (mmio_sw[16] << 1) | mmio_sw[15];
         complement = -(mmio_sw[7] << 7) + (mmio_sw[6] << 6) + (mmio_sw[5] << 5) + (mmio_sw[4] << 4) + (mmio_sw[3] << 3) + (mmio_sw[2] << 2) + (mmio_sw[1] << 1) + mmio_sw[0];
         if(decide == 0){
-            c = 0;
-            for(int i = 0; i < num0; i++){
-                if(a == data0[i]){
-                    c = 1;
-                    break;
-                }
-            }
-            if(c == 0){
+            mmio_led[20] = mmio_sw[20];
+            mmio_led[19] = mmio_sw[19];
+            mmio_led[18] = mmio_sw[18];
+            mmio_led[17] = mmio_sw[17];
+            if (mmio_btn[0]) {
+                while(mmio_btn[0]) asm volatile ("":::"memory");
                 data0[num0] = a;
                 num0++;
+                put_hexstr_int32(data0[num0 - 1]);
             }
+            // c = 0;
+            // for(int i = 0; i < num0; i++){
+            //     if(a == data0[i]){
+            //         c = 1;
+            //         break;
+            //     }
+            // }
+            // if(c == 0){
+                
+            // }
         }else if(decide == 1){
             num1 = num0;
             for(int i = 0; i < num0; i++){
@@ -110,21 +131,22 @@ extern int main() {
                     data1[k] = temp;
                 }   
             }
+            for(int i = 0; i < num0; i++){
+                put_hexstr_int32(data1[i]);
+                put_char(' ');
+            }
+            put_char('\n');
         }else if(decide == 2){
             joint = 0;
             num2 = num0;
             for(int i = 0; i < num0; i++){
-                c = data0[i];
-                temp = c & (1 << 7);
-                if(temp == 0){
-                    data2[i] = c;
-                }else{
-                    for(int i = 0; i < 7; i++){
-                        joint += c & (1 << i);
-                    }
-                    data2[i] = -joint;
-                }
+                data2[i] = (signed char) data0[i];
             }
+            for(int i = 0; i < num0; i++){
+                put_hexstr_int32(data2[i]);
+                put_char(' ');
+            }
+            put_char('\n');
         }else if(decide == 3){
             num3 = num2;
             for(int i = 0; i < num2; i++){
@@ -143,6 +165,11 @@ extern int main() {
                     data3[k] = temp;
                 }   
             }
+            for(int i = 0; i < num0; i++){
+                put_hexstr_int32(data3[i]);
+                put_char(' ');
+            }
+            put_char('\n');
         }else if(decide == 4){
             if(dataset == 1){
                 c = data1[num1 - 1] - data1[0];
@@ -151,7 +178,8 @@ extern int main() {
             }else{
                 c = 0;
             }
-
+            put_hexstr_int32(c);
+            put_char('\n');
             for(int i = 0; i < 8; i++){
                 mmio_led[i] = (bit[i] & c) != 0;
             }
@@ -197,7 +225,7 @@ extern int main() {
             
         }else if(decide == 7){
             for(int j = 0; j < 5; j++){
-                for(int i = 0; i < 3333333333; i++){
+                for(int i = 0; i < 10000000; i++){
                     i = 0;
                 }
             }
@@ -208,7 +236,7 @@ extern int main() {
             }
 
             for(int j = 0; j < 5; j++){
-                for(int i = 0; i < 3333333333; i++){
+                for(int i = 0; i < 10000000; i++){
                     i = 0;
                 }
             }
