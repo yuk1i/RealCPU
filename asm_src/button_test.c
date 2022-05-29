@@ -1,10 +1,10 @@
 #include "utils/uart.h"
 #include "io.h"
 
-#define ADDR_BTN 0xFFFF0140
+#define ADDR_BTN 0xFFFF0200
 
 extern int main() {
-    register volatile int * mmio_btn = (int*) 0xFFFF0140;
+    register volatile int * mmio_btn = (int*) ADDR_BTN;
     put_string("qwq");
     while(1) {
         for(int i=0;i<5;i++) {

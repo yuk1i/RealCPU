@@ -16,12 +16,13 @@ module mmio_btn(
     input [4:0] button_pins 
 );
     // 5 switches
-    // Address:     // Button  : 0xFFFF0140 - 0xFFFF014F 16 words
-    // 0b1111111111111111 0000000101 0000 00
+    // Address:     // Button  : 0xFFFF0200 - 0xFFFF027F 32 words, 128 bytes
+    // 0b1111111111111111 000000100 00000 00
+    // 0b1111111111111111 000000100 11111 11
     wire [4:0] _addr = mmio_addr[6:2];
-    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:6] == 10'b0000000101;
+    assign mmio_work = mmio_addr[31:16] == 16'HFFFF && mmio_addr[15:7] == 9'b000000100;
     
-    wire [4:0] button_status;
+    wire [31:0] button_status;
 
     always @(posedge sys_clk) begin
         if (!rst_n) begin

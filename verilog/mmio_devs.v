@@ -180,11 +180,11 @@ module mmio_devs(
         end
     end
 
-    // Switches: 0xFFFF0000 - 0xFFFF007F, 32 words, 128 bytes, last 7 bits, last 2 bits remain 0
+    // Switches: 0xFFFF0000 - 0xFFFF007F, 32 words, 128 bytes, last 7 bits, last 2 bits ignored
     // LEDs    : 0xFFFF0080 - 0xFFFF00FF, 32 words, 128 bytes, last 7 bits, last 2 bits ignored
-    // SEG7    : 0xFFFF0100 - 0xFFFF011F, 8  words, 32 bytes
-    // UARAT   : 0xFFFF0120 - 0xFFFF013F
-    // Button  : 0xFFFF0140 - 0xFFFF014F 16 words
+    // SEG7    : 0xFFFF0100 - 0xFFFF011F, 8  words, 32  bytes
+    // UARAT   : 0xFFFF0120 - 0xFFFF013F, 8  words, 32  bytes
+    // Button  : 0xFFFF0200 - 0xFFFF027F, 32 words, 128 bytes
     // ROM     : 0xFFFFE000 - 0xFFFFFFFF
 
 endmodule
