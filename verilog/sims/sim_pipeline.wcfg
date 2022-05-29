@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="2,472.199 ns"></ZoomStartTime>
-      <ZoomEndTime time="2,999.800 ns"></ZoomEndTime>
-      <Cursor1Time time="2,574.999 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="700.408 ns"></ZoomEndTime>
+      <Cursor1Time time="68.880 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="200"></NameColumnWidth>
-      <ValueColumnWidth column_width="81"></ValueColumnWidth>
+      <NameColumnWidth column_width="199"></NameColumnWidth>
+      <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="17" />
+   <WVObjectSize size="18" />
    <wvobject type="logic" fp_name="/sim_top/ttop/mem_wbi/sys_clk">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -119,7 +119,6 @@
       <wvobject type="group" fp_name="group259">
          <obj_property name="label">ifetch</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/sim_top/ttop/fetch/stall">
             <obj_property name="ElementShortName">stall</obj_property>
             <obj_property name="ObjectShortName">stall</obj_property>
@@ -238,6 +237,7 @@
       <wvobject type="group" fp_name="group1939">
          <obj_property name="label">Bubble</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/sim_top/ttop/decoder/insert_bubble">
             <obj_property name="ElementShortName">insert_bubble</obj_property>
             <obj_property name="ObjectShortName">insert_bubble</obj_property>
@@ -350,67 +350,136 @@
    <wvobject type="group" fp_name="group1377">
       <obj_property name="label">EX</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_link">
-         <obj_property name="ElementShortName">is_link</obj_property>
-         <obj_property name="ObjectShortName">is_link</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="group" fp_name="group6748">
+         <obj_property name="label">Basic &amp; Special</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_link">
+            <obj_property name="ElementShortName">is_link</obj_property>
+            <obj_property name="ObjectShortName">is_link</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_jump">
+            <obj_property name="ElementShortName">is_jump</obj_property>
+            <obj_property name="ObjectShortName">is_jump</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_branch">
+            <obj_property name="ElementShortName">is_branch</obj_property>
+            <obj_property name="ObjectShortName">is_branch</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_load_store">
+            <obj_property name="ElementShortName">is_load_store</obj_property>
+            <obj_property name="ObjectShortName">is_load_store</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_special_Rop">
+            <obj_property name="ElementShortName">is_special_Rop</obj_property>
+            <obj_property name="ObjectShortName">is_special_Rop</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_regimm_op">
+            <obj_property name="ElementShortName">is_regimm_op</obj_property>
+            <obj_property name="ObjectShortName">is_regimm_op</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_set_op">
+            <obj_property name="ElementShortName">is_set_op</obj_property>
+            <obj_property name="ObjectShortName">is_set_op</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_shift">
+            <obj_property name="ElementShortName">is_shift</obj_property>
+            <obj_property name="ObjectShortName">is_shift</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_def">
+            <obj_property name="ElementShortName">is_def</obj_property>
+            <obj_property name="ObjectShortName">is_def</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_aui">
+            <obj_property name="ElementShortName">is_aui</obj_property>
+            <obj_property name="ObjectShortName">is_aui</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_mul">
+            <obj_property name="ElementShortName">is_mul</obj_property>
+            <obj_property name="ObjectShortName">is_mul</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_jr">
+            <obj_property name="ElementShortName">is_jr</obj_property>
+            <obj_property name="ObjectShortName">is_jr</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/ins_lsb">
+            <obj_property name="ElementShortName">ins_lsb[4:0]</obj_property>
+            <obj_property name="ObjectShortName">ins_lsb[4:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/ins_msb">
+            <obj_property name="ElementShortName">ins_msb[4:0]</obj_property>
+            <obj_property name="ObjectShortName">ins_msb[4:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_special3">
+            <obj_property name="ElementShortName">is_special3</obj_property>
+            <obj_property name="ObjectShortName">is_special3</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/special3_out">
+            <obj_property name="ElementShortName">special3_out[31:0]</obj_property>
+            <obj_property name="ObjectShortName">special3_out[31:0]</obj_property>
+         </wvobject>
       </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_jump">
-         <obj_property name="ElementShortName">is_jump</obj_property>
-         <obj_property name="ObjectShortName">is_jump</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_branch">
-         <obj_property name="ElementShortName">is_branch</obj_property>
-         <obj_property name="ObjectShortName">is_branch</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_load_store">
-         <obj_property name="ElementShortName">is_load_store</obj_property>
-         <obj_property name="ObjectShortName">is_load_store</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_regimm_op">
-         <obj_property name="ElementShortName">is_regimm_op</obj_property>
-         <obj_property name="ObjectShortName">is_regimm_op</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_set_op">
-         <obj_property name="ElementShortName">is_set_op</obj_property>
-         <obj_property name="ObjectShortName">is_set_op</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_shift">
-         <obj_property name="ElementShortName">is_shift</obj_property>
-         <obj_property name="ObjectShortName">is_shift</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_def">
-         <obj_property name="ElementShortName">is_def</obj_property>
-         <obj_property name="ObjectShortName">is_def</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_aui">
-         <obj_property name="ElementShortName">is_aui</obj_property>
-         <obj_property name="ObjectShortName">is_aui</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_mul">
-         <obj_property name="ElementShortName">is_mul</obj_property>
-         <obj_property name="ObjectShortName">is_mul</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_jr">
-         <obj_property name="ElementShortName">is_jr</obj_property>
-         <obj_property name="ObjectShortName">is_jr</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/ex/ins_lsb">
-         <obj_property name="ElementShortName">ins_lsb[4:0]</obj_property>
-         <obj_property name="ObjectShortName">ins_lsb[4:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/ex/ins_msb">
-         <obj_property name="ElementShortName">ins_msb[4:0]</obj_property>
-         <obj_property name="ObjectShortName">ins_msb[4:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_special3">
-         <obj_property name="ElementShortName">is_special3</obj_property>
-         <obj_property name="ObjectShortName">is_special3</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/ex/special3_out">
-         <obj_property name="ElementShortName">special3_out[31:0]</obj_property>
-         <obj_property name="ObjectShortName">special3_out[31:0]</obj_property>
+      <wvobject type="group" fp_name="group6747">
+         <obj_property name="label">Mul / Div</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/clk">
+            <obj_property name="ElementShortName">clk</obj_property>
+            <obj_property name="ObjectShortName">clk</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/rst_n">
+            <obj_property name="ElementShortName">rst_n</obj_property>
+            <obj_property name="ObjectShortName">rst_n</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/enable">
+            <obj_property name="ElementShortName">enable</obj_property>
+            <obj_property name="ObjectShortName">enable</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/is_unsign">
+            <obj_property name="ElementShortName">is_unsign</obj_property>
+            <obj_property name="ObjectShortName">is_unsign</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/a">
+            <obj_property name="ElementShortName">a[31:0]</obj_property>
+            <obj_property name="ObjectShortName">a[31:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/b">
+            <obj_property name="ElementShortName">b[31:0]</obj_property>
+            <obj_property name="ObjectShortName">b[31:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/result">
+            <obj_property name="ElementShortName">result[63:0]</obj_property>
+            <obj_property name="ObjectShortName">result[63:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/done">
+            <obj_property name="ElementShortName">done</obj_property>
+            <obj_property name="ObjectShortName">done</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/counter">
+            <obj_property name="ElementShortName">counter[2:0]</obj_property>
+            <obj_property name="ObjectShortName">counter[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/re_unsign">
+            <obj_property name="ElementShortName">re_unsign[63:0]</obj_property>
+            <obj_property name="ObjectShortName">re_unsign[63:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/re_sign">
+            <obj_property name="ElementShortName">re_sign[63:0]</obj_property>
+            <obj_property name="ObjectShortName">re_sign[63:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/_done">
+            <obj_property name="ElementShortName">_done</obj_property>
+            <obj_property name="ObjectShortName">_done</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/_done_delay">
+            <obj_property name="ElementShortName">_done_delay</obj_property>
+            <obj_property name="ObjectShortName">_done_delay</obj_property>
+         </wvobject>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group326">
@@ -524,7 +593,6 @@
    <wvobject type="group" fp_name="group381">
       <obj_property name="label">MEM</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/dcache/l1_read">
          <obj_property name="ElementShortName">l1_read</obj_property>
          <obj_property name="ObjectShortName">l1_read</obj_property>
@@ -761,7 +829,6 @@
    <wvobject type="group" fp_name="group384">
       <obj_property name="label">MMU - Mux</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/dmmu_pending">
          <obj_property name="ElementShortName">dmmu_pending</obj_property>
          <obj_property name="ObjectShortName">dmmu_pending</obj_property>
@@ -838,7 +905,6 @@
    <wvobject type="group" fp_name="group798">
       <obj_property name="label">SIM - RX</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/test_recv/uart_rxd">
          <obj_property name="ElementShortName">uart_rxd</obj_property>
          <obj_property name="ObjectShortName">uart_rxd</obj_property>
@@ -1052,7 +1118,6 @@
    <wvobject type="group" fp_name="group395">
       <obj_property name="label">MMIO - SW</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_sw/switches_pin">
          <obj_property name="ElementShortName">switches_pin[23:0]</obj_property>
          <obj_property name="ObjectShortName">switches_pin[23:0]</obj_property>
@@ -1089,7 +1154,6 @@
    <wvobject type="group" fp_name="group5451">
       <obj_property name="label">LED</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/mmiodevs/mmio_led/mmio_read">
          <obj_property name="ElementShortName">mmio_read</obj_property>
          <obj_property name="ObjectShortName">mmio_read</obj_property>
@@ -1121,6 +1185,24 @@
       <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_led/leds_pin">
          <obj_property name="ElementShortName">leds_pin[23:0]</obj_property>
          <obj_property name="ObjectShortName">leds_pin[23:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group5352">
+      <obj_property name="label">MMIO - Keypad</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_btn_ins/keypad">
+         <obj_property name="ElementShortName">keypad[15:0]</obj_property>
+         <obj_property name="ObjectShortName">keypad[15:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_btn_ins/keypad_scan">
+         <obj_property name="ElementShortName">keypad_scan[3:0]</obj_property>
+         <obj_property name="ObjectShortName">keypad_scan[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/mmiodevs/mmio_btn_ins/keypad_detect">
+         <obj_property name="ElementShortName">keypad_detect[3:0]</obj_property>
+         <obj_property name="ObjectShortName">keypad_detect[3:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

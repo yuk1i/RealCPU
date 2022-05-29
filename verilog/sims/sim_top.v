@@ -4,6 +4,7 @@ module sim_top();
     reg bank_sys_clk;
     reg bank_rst;
     reg [23:0] switches_pin;
+    reg [3:0] keypad_detect;
 
     initial begin 
         bank_sys_clk = 0;
@@ -18,6 +19,11 @@ module sim_top();
         #1000 switches_pin = 24'b10100000_11000011_00000111;
     end
 
+    initial begin
+        keypad_detect = 4'b1111;
+        #5000 keypad_detect = 4'b1110;
+    end
+
     always #5 bank_sys_clk = ~bank_sys_clk;
     wire sys_clk;
     assign sys_clk = ttop.sys_clk;
@@ -29,7 +35,8 @@ module sim_top();
         .switches_pin(switches_pin),
 
         .uart_rx_pin(uart_rx),
-        .uart_tx_pin(uart_tx)
+        .uart_tx_pin(uart_tx),
+        .keypad_detect(keypad_detect)
     );
     reg send;
     reg [7:0] dsend;

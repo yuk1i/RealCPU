@@ -60,6 +60,19 @@ module execute(
         endcase
     end
 
+    wire is_special_Rop = R_op && (func == 6'b110101 || func == 6'b110111);
+    reg [31:0] special_Rop;
+    // R_op, SELEQZ, SELNEZ
+    always @* begin
+        if (func[1] ^ (reg2 == 0)) begin
+            // SELNEZ and reg2 != 0
+            // SELEQZ and reg2 == 0
+            special_Rop = reg1;
+        end else 
+            special_Rop = 32'b0;
+    end
+
+
     // Set Checker:is_set_op, [slti,sltiu], [slt,sltu]. 
     reg slt_result;
     always @* begin
@@ -73,25 +86,6 @@ module execute(
                 slt_result = $unsigned(reg1) < $unsigned(immd); // sltiu
             else
                 slt_result = $signed(reg1) < $signed(immd);     // slti
-        end
-    end
-
-    // Branch Comparator: is_branch, [beq, bneq, blez, bgtz], REGIMM: [bgez, bal, nal]
-    reg do_branch;
-    always @* begin
-        if (is_regimm_op) begin
-            case (rt_id)
-                5'b00001: do_branch = reg1[31] == 0;            // bgez
-                5'b10001: do_branch = 1;                        // bal
-                default:  do_branch = 0;                        // other, including nal
-            endcase
-        end else begin
-            case (opcode[1:0])
-                2'b00: do_branch = reg1 == reg2;
-                2'b01: do_branch = ~(reg1 == reg2);
-                2'b10: do_branch = $signed(reg1) <= 0;          // Signed comparison, less or equal to zero
-                2'b11: do_branch = $signed(reg1) > 0;           // Signed comparison, greater than zero
-            endcase
         end
     end
 
@@ -178,8 +172,29 @@ module execute(
             result = 0;
         else if (is_special3)
             result = special3_out;
+        else if (is_special_Rop)
+            result = special_Rop;
         else
             result = 0;
+    end
+
+    // Branch Comparator: is_branch, [beq, bneq, blez, bgtz], REGIMM: [bgez, bal, nal]
+    reg do_branch;
+    always @* begin
+        if (is_regimm_op) begin
+            case (rt_id)
+                5'b00001: do_branch = reg1[31] == 0;            // bgez
+                5'b10001: do_branch = 1;                        // bal
+                default:  do_branch = 0;                        // other, including nal
+            endcase
+        end else begin
+            case (opcode[1:0])
+                2'b00: do_branch = reg1 == reg2;
+                2'b01: do_branch = ~(reg1 == reg2);
+                2'b10: do_branch = $signed(reg1) <= 0;          // Signed comparison, less or equal to zero
+                2'b11: do_branch = $signed(reg1) > 0;           // Signed comparison, greater than zero
+            endcase
+        end
     end
 
     // Jump & Branch

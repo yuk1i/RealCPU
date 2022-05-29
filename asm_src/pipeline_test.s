@@ -2,6 +2,15 @@
 .text
 main:
 
+    li $a0, 1234
+    li $v0, 1
+    seleqz $v1, $a0, $v0
+    selnez $v1, $a0, $v0
+
+    li $v0, 0
+    seleqz $v1, $a0, $v0
+    selnez $v1, $a0, $v0
+
     # test multiply
     li $a0, 114
     li $a1, 514
