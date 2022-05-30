@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="2,758.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="4,090.001 ns"></ZoomEndTime>
-      <Cursor1Time time="2,905.000 ns"></Cursor1Time>
+      <ZoomStartTime time="752,955.567 ns"></ZoomStartTime>
+      <ZoomEndTime time="753,222.768 ns"></ZoomEndTime>
+      <Cursor1Time time="753,018.567 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="171"></NameColumnWidth>
+      <NameColumnWidth column_width="167"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="18" />
@@ -349,9 +349,11 @@
    <wvobject type="group" fp_name="group1377">
       <obj_property name="label">EX</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="group" fp_name="group6748">
          <obj_property name="label">Basic &amp; Special</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_link">
             <obj_property name="ElementShortName">is_link</obj_property>
             <obj_property name="ObjectShortName">is_link</obj_property>
@@ -400,23 +402,27 @@
             <obj_property name="ElementShortName">is_jr</obj_property>
             <obj_property name="ObjectShortName">is_jr</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/ex/ins_lsb">
-            <obj_property name="ElementShortName">ins_lsb[4:0]</obj_property>
-            <obj_property name="ObjectShortName">ins_lsb[4:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/ex/ins_msb">
-            <obj_property name="ElementShortName">ins_msb[4:0]</obj_property>
-            <obj_property name="ObjectShortName">ins_msb[4:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_special3">
-            <obj_property name="ElementShortName">is_special3</obj_property>
-            <obj_property name="ObjectShortName">is_special3</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/ex/special3_out">
-            <obj_property name="ElementShortName">special3_out[31:0]</obj_property>
-            <obj_property name="ObjectShortName">special3_out[31:0]</obj_property>
+         <wvobject type="group" fp_name="group278">
+            <obj_property name="label">Speicial</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/ins_lsb">
+               <obj_property name="ElementShortName">ins_lsb[4:0]</obj_property>
+               <obj_property name="ObjectShortName">ins_lsb[4:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/ins_msb">
+               <obj_property name="ElementShortName">ins_msb[4:0]</obj_property>
+               <obj_property name="ObjectShortName">ins_msb[4:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_special3">
+               <obj_property name="ElementShortName">is_special3</obj_property>
+               <obj_property name="ObjectShortName">is_special3</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/special3_out">
+               <obj_property name="ElementShortName">special3_out[31:0]</obj_property>
+               <obj_property name="ObjectShortName">special3_out[31:0]</obj_property>
+            </wvobject>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group2061">
@@ -467,7 +473,6 @@
          <wvobject type="group" fp_name="group2062">
             <obj_property name="label">Div</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="isExpanded"></obj_property>
             <wvobject type="array" fp_name="/sim_top/ttop/ex/divider/divisor">
                <obj_property name="ElementShortName">divisor[31:0]</obj_property>
                <obj_property name="ObjectShortName">divisor[31:0]</obj_property>
