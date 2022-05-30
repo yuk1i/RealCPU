@@ -25,5 +25,6 @@ loop:
     bne $a0, $a1, loop
     lw $a0, 4($sp)
     lw $a1, 8($sp)
+    addiu $sp, $sp, 8
     jr $ra
 
