@@ -12,11 +12,15 @@ main:
     # selnez $v1, $a0, $v0
 
     # test multiply
+    li $t0, 0xFFFFE000
     li $a0, 114
     li $a1, 514
     mulu $v0, $a0, $a1
     muhu $v0, $a0, $a1
+
+    lw $s0, ($t0)
     div $v0, $a1, $a0
+
     mod $v0, $a1, $a0
 
     neg $a0

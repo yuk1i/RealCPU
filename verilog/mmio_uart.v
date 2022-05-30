@@ -37,36 +37,22 @@ module mmio_uart(
     wire acc_tx_send    = mmio_work && _addr == 3'b100;  // wr
     wire acc_tx_fifo    = mmio_work && _addr == 3'b101;  // wo
 
-    reg acc_rx_fifo_d;
-    always @(posedge sys_clk) acc_rx_fifo_d <= acc_rx_fifo;
     reg uart_tx_start;
     always @(posedge sys_clk) begin
         if (!rst_n) begin
             mmio_done <= 0;
-            mmio_read_data <= 0;
             uart_tx_start <= 0;
         end else begin
             if (mmio_done) begin
                 mmio_done <= 0;
-                mmio_read_data <= 0;
             end else if (mmio_work) begin
-                if (acc_rx_fifo && !acc_rx_fifo_d)
-                    mmio_done <= 0;
-                else 
-                    mmio_done <= 1;
-                if (acc_rx_valid)       mmio_read_data <= {31'b0, !rx_fifo_empty};
-                else if (acc_rx_fifo)   mmio_read_data <= {24'b0, rx_fifo_r_dout};
-                //  rx_fifo_read is done at sys_clk negedge, sampling at posedge 
-                else if (acc_tx_busy)   mmio_read_data <= {31'b0, !tx_fifo_empty};
-                else if (acc_tx_full)   mmio_read_data <= {31'b0, tx_fifo_full};
-                else if (acc_tx_send)   mmio_read_data <= {31'b0,  uart_tx_start};
-                else if (acc_tx_fifo)   mmio_read_data <= 32'b0;
-                else mmio_read_data <= 32'b0;
+                mmio_done <= 1;
                 if (mmio_write && acc_tx_send)
                     uart_tx_start <= mmio_write_data[0];
                 else
                     uart_tx_start <= uart_tx_start;
             end else begin
+                mmio_done <= 0;
                 if (uart_tx_start && tx_fifo_empty)
                     uart_tx_start <= 0;
                 else begin
@@ -74,6 +60,16 @@ module mmio_uart(
                 end
             end
         end
+    end
+
+    always @* begin
+        if (acc_rx_valid)       mmio_read_data = {31'b0, !rx_fifo_empty};
+        else if (acc_rx_fifo)   mmio_read_data = {24'b0, rx_fifo_r_dout};
+        else if (acc_tx_busy)   mmio_read_data = {31'b0, !tx_fifo_empty};
+        else if (acc_tx_full)   mmio_read_data = {31'b0, tx_fifo_full};
+        else if (acc_tx_send)   mmio_read_data = {31'b0, uart_tx_start};
+        else if (acc_tx_fifo)   mmio_read_data = 32'b0;
+        else mmio_read_data = 32'b0;
     end
     
     wire [7:0]  tx_fifo_w_din  =  mmio_write_data[7:0];
@@ -154,9 +150,8 @@ module mmio_uart(
     wire [7:0]  rx_fifo_w_din   = uart_rx_data_algn;
     wire        rx_fifo_w_en    = uart_rx_done_algn && ! rx_fifo_full;
     wire        rx_fifo_full;
-    reg [7:0]  rx_fifo_r_dout;
-    wire [7:0]  rx_fifo_r_dout_w;
-    wire        rx_fifo_r_en    = mmio_work && mmio_read && acc_rx_fifo && !mmio_done && !acc_rx_fifo_d;
+    wire [7:0]  rx_fifo_r_dout;
+    wire        rx_fifo_r_en    = mmio_work && mmio_read && acc_rx_fifo && !mmio_done;
     wire        rx_fifo_empty;
     rx_uart_fifo rx_fifo(
         .rst(fifo_rst),
@@ -166,16 +161,10 @@ module mmio_uart(
         .wr_en(rx_fifo_w_en),
         .full(rx_fifo_full),
         // read, from host, use cpu clk
-        .dout(rx_fifo_r_dout_w),
+        .dout(rx_fifo_r_dout),
         .rd_en(rx_fifo_r_en),
         .empty(rx_fifo_empty)
     );
-    always @(negedge sys_clk) begin
-        if (mmio_work && mmio_read && acc_rx_fifo && !mmio_done && acc_rx_fifo_d)
-            rx_fifo_r_dout <= rx_fifo_r_dout_w;
-        else 
-            rx_fifo_r_dout <= 8'b0;
-    end
     reg [7:0] uart_rx_data_algn;
     reg       uart_rx_done_algn;
     reg       uart_rx_done_wait_neg;

@@ -13,8 +13,8 @@ module uart_recv(
   );
   
 //parameter define
-parameter   CLK_FREQ = 35_000_000;            //系统时钟频率
-parameter   UART_BPS = 128000;              //串口波特率
+parameter   CLK_FREQ = 40_000_000;            //系统时钟频率
+parameter   UART_BPS = 384000;              //串口波特率
 localparam  BPS_CNT  = CLK_FREQ/UART_BPS;     //为得到指定波特率,
                                 //需要对系统时钟计数BPS_CNT次
 //reg define
