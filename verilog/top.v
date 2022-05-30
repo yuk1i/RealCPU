@@ -240,7 +240,8 @@ module top(
         .result(e_result),
         .do_jump(e_do_jump),
         .j_addr(e_j_addr),
-        .stall(e_stall)
+        .stall(e_stall),
+        .out_stall(global_stall)
     );
 
     // EX/MEM to MEM

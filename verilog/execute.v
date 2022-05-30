@@ -9,18 +9,19 @@ module execute(
     input [31:0] reg2,  // rt
     input [31:0] immd,
     input [31:0] next_pc,
-    input alu_src, // 0: reg2, 1: immd
+    input        alu_src, // 0: reg2, 1: immd
 
     // From Decoder
-    input is_link,
-    input is_jump,
-    input is_branch,
-    input is_load_store,
+    input       is_link,
+    input       is_jump,
+    input       is_branch,
+    input       is_load_store,
 
     output reg [31:0] result,
-    output reg do_jump,
+    output reg  do_jump,
     output reg [31:0] j_addr,
-    output stall            // stall request from multiplier
+    output      stall,            // stall request from multiplier
+    input       out_stall         // outside request stall
 );
 
     wire [5:0]  opcode   = ins[31:26];       // 6 bits
@@ -136,32 +137,79 @@ module execute(
     end
 
     // Multiplier
-    wire is_mul = R_op && func[5:1] == 5'b01100;
-    wire mul_unsign = func[0];
-    wire mul_done;
-
-    wire [63:0] mul_out;
-    wire mul_low = ins_shamt == 5'b00010;
-    wire [31:0] mul_mux = mul_low ? mul_out[31:0] : mul_out[63:32];
-    assign stall = is_mul && !mul_done;
-    
+    wire is_mul         = R_op && func[5:1] == 5'b01100;
+    wire mul_unsign     = func[0];
+    wire mul_low        = ins_shamt == 5'b00010;
+    wire [31:0] mul_out;
+    wire        mul_done;
     multiplier mult(
-        .clk(sys_clk),
+        .sys_clk(sys_clk),
         .rst_n(rst_n),
-        .enable(is_mul),
+        .enable(is_mul && !mul_div_done),
         .is_unsign(mul_unsign),
+        .mul_low(mul_low),
         .a(reg1),
         .b(reg2),
         .result(mul_out),
         .done(mul_done)
     );
 
+    wire is_div_mod     = R_op && func[5:1] == 5'b01101;
+    wire is_div_unsign  = func[0] == 1;
+    wire is_mod         = ins_shamt == 5'b00011;
+    wire [31:0] div_out;
+    wire        div_done;
+    mdivider divider(
+        .sys_clk(sys_clk),
+        .rst_n(rst_n),
+
+        .divisor(reg2),
+        .dividend(reg1),
+
+        .enable(is_div_mod && !mul_div_done),
+        .unsign(is_div_unsign),
+        .mod(is_mod),
+
+        .result(div_out),
+        .done(div_done)
+    );
+
+    reg         mul_div_done;
+    reg [31:0]  mul_div_result;
+    always @(posedge sys_clk) begin
+        if (!rst_n) begin
+           mul_div_done <= 0;
+           mul_div_result <= 0; 
+        end else begin 
+            if (is_mul || is_div_mod) begin
+                if (!mul_div_done) begin
+                    mul_div_done <= (is_mul && mul_done) || (is_div_mod && div_done);
+                    mul_div_result <= is_mul ? mul_out : div_out;
+                end else begin
+                    if (out_stall) begin
+                        mul_div_done <= mul_div_done;
+                        mul_div_result <= mul_div_result;
+                    end else begin
+                        mul_div_done <= 0;
+                        mul_div_result <= 0; 
+                    end
+                end
+            end else begin
+                mul_div_done <= 0;
+                mul_div_result <= 0;
+            end
+        end
+    end
+
+    assign stall = (is_mul || is_div_mod) && !mul_div_done;
+
+
     // Mux Output
     always @* begin
         if (is_set_op)
             result = {31'b0, slt_result};
-        else if (is_mul)
-            result = mul_mux;
+        else if (is_mul || is_div_mod)
+            result = mul_div_result;
         else if (is_def)
             result = result_mux;
         else if (is_shift)

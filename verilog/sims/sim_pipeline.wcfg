@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="3,701.200 ns"></ZoomStartTime>
-      <ZoomEndTime time="4,346.801 ns"></ZoomEndTime>
-      <Cursor1Time time="3,909.284 ns"></Cursor1Time>
+      <ZoomStartTime time="2,976.142 ns"></ZoomStartTime>
+      <ZoomEndTime time="8,324.143 ns"></ZoomEndTime>
+      <Cursor1Time time="5,252.142 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="195"></NameColumnWidth>
+      <NameColumnWidth column_width="179"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="18" />
@@ -426,63 +426,87 @@
             <obj_property name="ObjectShortName">special3_out[31:0]</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group6747">
+      <wvobject type="group" fp_name="group2061">
          <obj_property name="label">Mul / Div</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/clk">
-            <obj_property name="ElementShortName">clk</obj_property>
-            <obj_property name="ObjectShortName">clk</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mul_div_done">
+            <obj_property name="ElementShortName">mul_div_done</obj_property>
+            <obj_property name="ObjectShortName">mul_div_done</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/rst_n">
-            <obj_property name="ElementShortName">rst_n</obj_property>
-            <obj_property name="ObjectShortName">rst_n</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/enable">
-            <obj_property name="ElementShortName">enable</obj_property>
-            <obj_property name="ObjectShortName">enable</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/is_unsign">
-            <obj_property name="ElementShortName">is_unsign</obj_property>
-            <obj_property name="ObjectShortName">is_unsign</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/a">
-            <obj_property name="ElementShortName">a[31:0]</obj_property>
-            <obj_property name="ObjectShortName">a[31:0]</obj_property>
+         <wvobject type="array" fp_name="/sim_top/ttop/ex/mul_div_result">
+            <obj_property name="ElementShortName">mul_div_result[31:0]</obj_property>
+            <obj_property name="ObjectShortName">mul_div_result[31:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/b">
-            <obj_property name="ElementShortName">b[31:0]</obj_property>
-            <obj_property name="ObjectShortName">b[31:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <wvobject type="group" fp_name="group6747">
+            <obj_property name="label">Mul</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/enable">
+               <obj_property name="ElementShortName">enable</obj_property>
+               <obj_property name="ObjectShortName">enable</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/is_unsign">
+               <obj_property name="ElementShortName">is_unsign</obj_property>
+               <obj_property name="ObjectShortName">is_unsign</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/mul_low">
+               <obj_property name="ElementShortName">mul_low</obj_property>
+               <obj_property name="ObjectShortName">mul_low</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/a">
+               <obj_property name="ElementShortName">a[31:0]</obj_property>
+               <obj_property name="ObjectShortName">a[31:0]</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/b">
+               <obj_property name="ElementShortName">b[31:0]</obj_property>
+               <obj_property name="ObjectShortName">b[31:0]</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/result">
+               <obj_property name="ElementShortName">result[31:0]</obj_property>
+               <obj_property name="ObjectShortName">result[31:0]</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/done">
+               <obj_property name="ElementShortName">done</obj_property>
+               <obj_property name="ObjectShortName">done</obj_property>
+            </wvobject>
          </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/result">
-            <obj_property name="ElementShortName">result[63:0]</obj_property>
-            <obj_property name="ObjectShortName">result[63:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/done">
-            <obj_property name="ElementShortName">done</obj_property>
-            <obj_property name="ObjectShortName">done</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/counter">
-            <obj_property name="ElementShortName">counter[2:0]</obj_property>
-            <obj_property name="ObjectShortName">counter[2:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/re_unsign">
-            <obj_property name="ElementShortName">re_unsign[63:0]</obj_property>
-            <obj_property name="ObjectShortName">re_unsign[63:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/ex/mult/re_sign">
-            <obj_property name="ElementShortName">re_sign[63:0]</obj_property>
-            <obj_property name="ObjectShortName">re_sign[63:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/_done">
-            <obj_property name="ElementShortName">_done</obj_property>
-            <obj_property name="ObjectShortName">_done</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/sim_top/ttop/ex/mult/_done_delay">
-            <obj_property name="ElementShortName">_done_delay</obj_property>
-            <obj_property name="ObjectShortName">_done_delay</obj_property>
+         <wvobject type="group" fp_name="group2062">
+            <obj_property name="label">Div</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/divider/divisor">
+               <obj_property name="ElementShortName">divisor[31:0]</obj_property>
+               <obj_property name="ObjectShortName">divisor[31:0]</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/divider/dividend">
+               <obj_property name="ElementShortName">dividend[31:0]</obj_property>
+               <obj_property name="ObjectShortName">dividend[31:0]</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/sim_top/ttop/ex/divider/enable">
+               <obj_property name="ElementShortName">enable</obj_property>
+               <obj_property name="ObjectShortName">enable</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/sim_top/ttop/ex/divider/unsign">
+               <obj_property name="ElementShortName">unsign</obj_property>
+               <obj_property name="ObjectShortName">unsign</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/sim_top/ttop/ex/divider/mod">
+               <obj_property name="ElementShortName">mod</obj_property>
+               <obj_property name="ObjectShortName">mod</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/divider/result">
+               <obj_property name="ElementShortName">result[31:0]</obj_property>
+               <obj_property name="ObjectShortName">result[31:0]</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/sim_top/ttop/ex/divider/done">
+               <obj_property name="ElementShortName">done</obj_property>
+               <obj_property name="ObjectShortName">done</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/sim_top/ttop/ex/divider/dout">
+               <obj_property name="ElementShortName">dout[63:0]</obj_property>
+               <obj_property name="ObjectShortName">dout[63:0]</obj_property>
+            </wvobject>
          </wvobject>
       </wvobject>
    </wvobject>

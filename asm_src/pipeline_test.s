@@ -2,20 +2,26 @@
 .text
 main:
 
-    li $a0, 1234
-    li $v0, 1
-    seleqz $v1, $a0, $v0
-    selnez $v1, $a0, $v0
+    # li $a0, 1234
+    # li $v0, 1
+    # seleqz $v1, $a0, $v0
+    # selnez $v1, $a0, $v0
 
-    li $v0, 0
-    seleqz $v1, $a0, $v0
-    selnez $v1, $a0, $v0
+    # li $v0, 0
+    # seleqz $v1, $a0, $v0
+    # selnez $v1, $a0, $v0
 
     # test multiply
     li $a0, 114
     li $a1, 514
+    mulu $v0, $a0, $a1
+    muhu $v0, $a0, $a1
+    div $v0, $a1, $a0
+    mod $v0, $a1, $a0
+
+    neg $a0
     mul $v0, $a0, $a1
-    muh $v0, $a0, $a1
+
 
     # test load
     la $a0, test
