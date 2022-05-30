@@ -13,6 +13,7 @@ module l1dcache(
 
     output [31:0] l1_data_o,
     output stall,
+    input  out_stall,
 
     input is_sync_ins,
     input [4:0] sync_type,
@@ -124,13 +125,37 @@ module l1dcache(
     // write to cache line, 
 
     assign cache_w = !addr_is_mmio && c_work && (c_hit && l1_write || !c_hit && mmu_l1_done) && !disable_write_cache_wt;
-    // write to cache metadata, 1. after 
-
-    parameter   STATUS_IDLE     = 1'b0,
-                STATUS_WAITING  = 1'b1; 
+    // write to cache metadata, 1. after hit & write, 2. after unhit & read done
     
     wire   write_after_mmu_read = c_work && !addr_is_mmio && l1_write && !c_hit;
 
+    // Stage MMIO data
+    reg        mmio_done;
+    reg [31:0] mmio_data;
+    always @(posedge sys_clk) begin
+        if (!rst_n) begin
+            mmio_done <= 0;
+            mmio_data <= 32'b0;
+        end else begin
+            if (addr_is_mmio && (l1_read || l1_write)) begin
+                if (!mmio_done) begin
+                    mmio_done <= mmu_l1_done;
+                    mmio_data <= mmu_l1_read_data[31:0];
+                end else begin
+                    if (out_stall) begin
+                        mmio_done <= mmio_done;
+                        mmio_data <= mmio_data;
+                    end else begin
+                        mmio_done <= 0;
+                        mmio_data <= 32'b0;
+                    end
+                end
+            end else begin
+                mmio_done <= 0;
+                mmio_data <= 32'b0;
+            end
+        end
+    end
 
     // L1 Interfaces
     // stall : read not hit          :  down immd after mmu_read_done, but contains read_stall
@@ -143,12 +168,12 @@ module l1dcache(
                                                     || write_after_mmu_read
                                                     || read_stall
                                                 ))
-                                             || (addr_is_mmio && !mmu_l1_done));
-    assign l1_data_o            = addr_is_mmio ? mmu_l1_read_data[31:0] : bram_out;
+                                             || (addr_is_mmio && !mmio_done));
+    assign l1_data_o            = addr_is_mmio ? mmio_data : bram_out;
     
     // MMU Interfaces
-    assign l1_mmu_req_read      = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty || (addr_is_mmio && l1_read);
-    assign l1_mmu_req_write     = !addr_is_mmio && c_work && ((!c_hit && flush_dirty_set_mmu_write) || (c_write_through_d0)) || (addr_is_mmio && l1_write);
+    assign l1_mmu_req_read      = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty || (addr_is_mmio && l1_read && !mmio_done);
+    assign l1_mmu_req_write     = !addr_is_mmio && c_work && ((!c_hit && flush_dirty_set_mmu_write) || (c_write_through_d0)) || (addr_is_mmio && l1_write && !mmio_done);
     assign l1_mmu_req_addr      = (!addr_is_mmio && (c_flush_dirty || c_write_through_d0)) ? {c_o_tag, addr_idx, 5'b00000} : l1_addr;
     assign l1_mmu_write_data    = addr_is_mmio ? {224'b0, l1_write_data}: bram_cl_out;
 

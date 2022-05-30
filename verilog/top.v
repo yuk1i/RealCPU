@@ -257,7 +257,7 @@ module top(
     wire          mo_reg_write    ;
     wire [4:0]    mo_reg_dst_id   ;
 
-    ex_mem em_memi(
+    ex_mem ex_memi(
         .sys_clk(sys_clk),
         .rst_n(rst_n),
         .ex_mem_stall(global_stall),
@@ -339,6 +339,7 @@ module top(
 
         .l1_data_o(mem_data_out),
         .stall(m_stall),
+        .out_stall(global_stall),
 
         .l1_mmu_req_read(dmmu_read),
         .l1_mmu_req_write(dmmu_write),
