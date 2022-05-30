@@ -30,11 +30,11 @@ void put_hex_int32(unsigned int d) {
         write_io_u32(ADDR_UART_TX_FIFO, tmp);
         d = d << 8;
     }
+    write_io_u32(ADDR_UART_TX_SEND, 1);
 }
 
 void put_hexstr_int32(unsigned int d) {
     for(int i=0;i<8;i++) {
-        
         while (read_io_u32(ADDR_UART_TX_FULL)) asm volatile ("":::"memory");
         register unsigned int tmp = (d & 0xF0000000U) >> 28;
         // 0 - 9, A-F
@@ -43,6 +43,7 @@ void put_hexstr_int32(unsigned int d) {
         write_io_u32(ADDR_UART_TX_FIFO, tmp);
         d = d << 4;
     }
+    write_io_u32(ADDR_UART_TX_SEND, 1);
 }
 
 
