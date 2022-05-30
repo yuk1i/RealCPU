@@ -11,8 +11,7 @@ module seg7 (
 
     reg [2:0] LED_activating_counter;
 
-    reg [12:0] cnt;
-    wire div_clk = cnt[12] == 1;
+    reg [13:0] cnt;
 
     always @(posedge clk) begin
         if (!rst_n) begin
@@ -20,17 +19,28 @@ module seg7 (
         end else begin
             cnt <= cnt + 1;
         end
-    end    
+    end
 
-    always @(posedge div_clk) begin
+    wire div_clk = cnt[13] == 1;
+    reg  div_clk_d0;
+    always @(posedge clk) div_clk_d0 <= div_clk;
+    wire div_clk_posedge = div_clk && !div_clk_d0;
+
+    always @(posedge clk) begin
         if(!rst_n) begin
             LED_activating_counter <= 0;
             LED_BITS <= 8'b0000_0001;
             LED <= 0;
         end else begin
-            LED_activating_counter = LED_activating_counter + 1;
-            LED_BITS <= ~(1 << LED_activating_counter);
-            LED <= ~numbers[LED_activating_counter*8+:8];
+            if (div_clk_posedge) begin
+                LED_activating_counter = LED_activating_counter + 1;
+                LED_BITS <= ~(1 << LED_activating_counter);
+                LED <= ~numbers[LED_activating_counter*8+:8];        
+            end else begin
+                LED_activating_counter <= LED_activating_counter;
+                LED_BITS <= LED_BITS;
+                LED <= LED;
+            end
         end
     end
 
