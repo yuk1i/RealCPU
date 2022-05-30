@@ -17,7 +17,7 @@ module mmio_btn(
     output [3:0]    keypad_scan_pins,
     input  [3:0]    keypad_detect_pins
 );
-    // 5 switches
+    // 5 Button & 15 Keypad
     // Address:     // Button  : 0xFFFF0200 - 0xFFFF027F 32 words, 128 bytes
     // 0b1111111111111111 000000100 00000 00
     // 0b1111111111111111 000000100 11111 11

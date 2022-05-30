@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="2,976.142 ns"></ZoomStartTime>
-      <ZoomEndTime time="8,324.143 ns"></ZoomEndTime>
-      <Cursor1Time time="5,252.142 ns"></Cursor1Time>
+      <ZoomStartTime time="2,758.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="4,090.001 ns"></ZoomEndTime>
+      <Cursor1Time time="2,905.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="179"></NameColumnWidth>
+      <NameColumnWidth column_width="171"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="18" />
@@ -47,6 +47,10 @@
       <wvobject type="array" fp_name="/sim_top/ttop/id_exi/di_ins">
          <obj_property name="ElementShortName">di_ins[31:0]</obj_property>
          <obj_property name="ObjectShortName">di_ins[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/sim_top/ttop/fetch/pc">
+         <obj_property name="ElementShortName">pc[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pc[31:0]</obj_property>
       </wvobject>
       <wvobject type="group" fp_name="group367">
          <obj_property name="label">L1I</obj_property>
@@ -122,14 +126,6 @@
          <wvobject type="logic" fp_name="/sim_top/ttop/fetch/stall">
             <obj_property name="ElementShortName">stall</obj_property>
             <obj_property name="ObjectShortName">stall</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/fetch/pc">
-            <obj_property name="ElementShortName">pc[31:0]</obj_property>
-            <obj_property name="ObjectShortName">pc[31:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/sim_top/ttop/fetch/next_pc">
-            <obj_property name="ElementShortName">next_pc[31:0]</obj_property>
-            <obj_property name="ObjectShortName">next_pc[31:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/sim_top/ttop/fetch/il1/l1_data_o">
             <obj_property name="ElementShortName">l1_data_o[31:0]</obj_property>
@@ -237,7 +233,6 @@
       <wvobject type="group" fp_name="group1939">
          <obj_property name="label">Bubble</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/sim_top/ttop/decoder/insert_bubble">
             <obj_property name="ElementShortName">insert_bubble</obj_property>
             <obj_property name="ObjectShortName">insert_bubble</obj_property>
@@ -354,11 +349,9 @@
    <wvobject type="group" fp_name="group1377">
       <obj_property name="label">EX</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="group" fp_name="group6748">
          <obj_property name="label">Basic &amp; Special</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/sim_top/ttop/ex/is_link">
             <obj_property name="ElementShortName">is_link</obj_property>
             <obj_property name="ObjectShortName">is_link</obj_property>
@@ -514,84 +507,6 @@
       <obj_property name="label">EX/MEM</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/ei_result">
-         <obj_property name="ElementShortName">ei_result[31:0]</obj_property>
-         <obj_property name="ObjectShortName">ei_result[31:0]</obj_property>
-         <obj_property name="CustomSignalColor">#FF0080</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/ei_ins">
-         <obj_property name="ElementShortName">ei_ins[31:0]</obj_property>
-         <obj_property name="ObjectShortName">ei_ins[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/em_memi/ei_is_sync">
-         <obj_property name="ElementShortName">ei_is_sync</obj_property>
-         <obj_property name="ObjectShortName">ei_is_sync</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/ei_reg_read2">
-         <obj_property name="ElementShortName">ei_reg_read2[31:0]</obj_property>
-         <obj_property name="ObjectShortName">ei_reg_read2[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/em_memi/ei_mem_to_reg">
-         <obj_property name="ElementShortName">ei_mem_to_reg</obj_property>
-         <obj_property name="ObjectShortName">ei_mem_to_reg</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/em_memi/ei_mem_write">
-         <obj_property name="ElementShortName">ei_mem_write</obj_property>
-         <obj_property name="ObjectShortName">ei_mem_write</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/em_memi/ei_reg_write">
-         <obj_property name="ElementShortName">ei_reg_write</obj_property>
-         <obj_property name="ObjectShortName">ei_reg_write</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/ei_reg_dst_id">
-         <obj_property name="ElementShortName">ei_reg_dst_id[4:0]</obj_property>
-         <obj_property name="ObjectShortName">ei_reg_dst_id[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/em_memi/mo_mem_read">
-         <obj_property name="ElementShortName">mo_mem_read</obj_property>
-         <obj_property name="ObjectShortName">mo_mem_read</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/em_memi/mo_mem_write">
-         <obj_property name="ElementShortName">mo_mem_write</obj_property>
-         <obj_property name="ObjectShortName">mo_mem_write</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/mo_ex_result">
-         <obj_property name="ElementShortName">mo_ex_result[31:0]</obj_property>
-         <obj_property name="ObjectShortName">mo_ex_result[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/mo_mem_write_data">
-         <obj_property name="ElementShortName">mo_mem_write_data[31:0]</obj_property>
-         <obj_property name="ObjectShortName">mo_mem_write_data[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/mo_mem_write_type">
-         <obj_property name="ElementShortName">mo_mem_write_type[1:0]</obj_property>
-         <obj_property name="ObjectShortName">mo_mem_write_type[1:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/em_memi/mo_is_sync_ins">
-         <obj_property name="ElementShortName">mo_is_sync_ins</obj_property>
-         <obj_property name="ObjectShortName">mo_is_sync_ins</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/mo_sync_type">
-         <obj_property name="ElementShortName">mo_sync_type[4:0]</obj_property>
-         <obj_property name="ObjectShortName">mo_sync_type[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/mo_opcode">
-         <obj_property name="ElementShortName">mo_opcode[5:0]</obj_property>
-         <obj_property name="ObjectShortName">mo_opcode[5:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/em_memi/mo_reg_write">
-         <obj_property name="ElementShortName">mo_reg_write</obj_property>
-         <obj_property name="ObjectShortName">mo_reg_write</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/sim_top/ttop/em_memi/mo_reg_dst_id">
-         <obj_property name="ElementShortName">mo_reg_dst_id[4:0]</obj_property>
-         <obj_property name="ObjectShortName">mo_reg_dst_id[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/sim_top/ttop/em_memi/foward_mem">
-         <obj_property name="ElementShortName">foward_mem</obj_property>
-         <obj_property name="ObjectShortName">foward_mem</obj_property>
-      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group345">
       <obj_property name="label">Forward</obj_property>
@@ -624,6 +539,7 @@
    <wvobject type="group" fp_name="group381">
       <obj_property name="label">MEM</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/sim_top/ttop/dcache/l1_read">
          <obj_property name="ElementShortName">l1_read</obj_property>
          <obj_property name="ObjectShortName">l1_read</obj_property>

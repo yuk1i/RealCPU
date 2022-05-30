@@ -189,6 +189,7 @@ module mmio_devs(
     // SEG7    : 0xFFFF0100 - 0xFFFF011F, 8  words, 32  bytes
     // UARAT   : 0xFFFF0120 - 0xFFFF013F, 8  words, 32  bytes
     // Button  : 0xFFFF0200 - 0xFFFF027F, 32 words, 128 bytes
+    // Timer   : 0xFFFF0280 - 0xFFFF
     // ROM     : 0xFFFFE000 - 0xFFFFFFFF
 
 endmodule
