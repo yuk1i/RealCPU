@@ -155,7 +155,7 @@ module l1icache(
 
     reg mmu_rcache_pos_sync;
     always @(posedge sys_clk) mmu_rcache_pos_sync <= mmu_req_read_cache && !mmu_l1_done;
-    // mmu_req_read_cache is changed at posedge, so sync it to next posedge
+    // mmu_req_read_cache is changed at negedge, so sync it to posedge
 
     assign l1_mmu_req_read = (mmu_rcache_pos_sync && !addr_is_mmio) || (addr_is_mmio && mmio_read_pos);
 
