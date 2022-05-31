@@ -19,53 +19,14 @@ extern int main() {
     while(1) {
         register volatile int * mmio_btn = (int*) ADDR_BTN;
         int len = 11;
-        for(int i=0;i<len;i++) {
-            data1[i] = src[i];
-        }
-        for(int i=0;i<len;i++) {
-            put_hexstr_int32(data1[i]);
+        for (int i=0;i<len;i++) {
+            put_hexstr_int32(src[i]);
             put_char(' ');
-            delay(500);
-        }
-        put_string("\n");
-        for(int i = 0; i < len - 1; i++) {
-            put_string("i: ");
-            put_hexstr_int32(i);
-            put_string("\n");
-            int k = i;
-            for(int j = i + 1; j < len; j++){
-                if(data1[j] < data1[k]){ 
-                    k = j;
-                    // put_string("find k: ");
-                    // put_hexstr_int32(k);
-                    // put_string("\n");
-                }
-            }
-            if(i != k){
-                put_string("swap ik, i: ");
-                put_hexstr_int32(data1[i]);
-                put_string(" k:");
-                put_hexstr_int32(data1[k]);
-                put_string("\n");
-                delay(500);
-                int temp = data1[i];
-                data1[i] = data1[k];
-                data1[k] = temp;
-            }
-            put_char('\n');
-            put_string("current:");
-            for(int i=0;i<len;i++) {
-                put_hexstr_int32(data1[i]);
-                put_char(' ');
-                delay(500);
-            }
+            float a = src[i];
+            void * ptr = &a;
+            int intf = *((int*)ptr);
+            put_hexstr_int32(intf);
             put_char('\n');
         }
-        while(!mmio_btn[0]) asm volatile ("":::"memory");
-        for(int i=0;i<len;i++) {
-            put_hexstr_int32(data1[i]);
-            put_char(' ');
-        }
-        put_char('\n');
     }
 }

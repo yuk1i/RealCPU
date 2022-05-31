@@ -6,13 +6,13 @@ OBJDUMP=mipsel-linux-gnu-objdump
 STRIP=mipsel-linux-gnu-strip
 # Configures for bin file
 
-TEXT_START_AT=0x0100
-DATA_START_AT=0x1000
+TEXT_START_AT=0x1000
+DATA_START_AT=0x9000
 
 CC_OPT=-frename-registers -fcombine-stack-adjustments -fcprop-registers
-CC_FLAGS=-mabi=32 -mlong32 -mips32r6 -Werror -nostdlib -ffreestanding -O1 -fno-delayed-branch -fomit-frame-pointer -fno-pic -mcompact-branches=never -mno-llsc -msoft-float -mno-abicalls -static -fno-stack-protector
-AS_FLAGS=-mips32r6 --alternate -mgp32 -call_nonpic -non_shared -mno-ginv -msoft-float --fatal-warnings -O0
-LD_FLAGS=--script linker.ld --no-compact-branches -nostdlib -static
+CC_FLAGS=-mabi=32 -mlong32 -mips32r6 -Werror -ffreestanding -mno-abicalls -fno-pic -mno-shared -O1 -fno-delayed-branch -fomit-frame-pointer -mcompact-branches=never -mno-llsc -msoft-float -static -fno-stack-protector
+AS_FLAGS=-mips32r6 -mno-shared -msoft-float --fatal-warnings -O0
+LD_FLAGS=--script linker.ld --no-compact-branches -static
 
 BUILDDIR=tmp
 SRCS=
@@ -55,7 +55,7 @@ $(BUILDDIR)/%.o : %.s
 
 link: $(OBJS)
 	@echo "[LD] link"
-	@$(LD) $(LD_FLAGS) $(OBJS) -o $(BUILDDIR)/a.out
+	@$(LD) $(LD_FLAGS) $(OBJS) -L/usr/mipsel-linux-gnu/lib -lm -o $(BUILDDIR)/a.out
 	@$(STRIP) -R .reginfo $(BUILDDIR)/a.out
 	@$(STRIP) -R .MIPS.abiflags $(BUILDDIR)/a.out
 	@$(STRIP) -R .gnu.attributes $(BUILDDIR)/a.out
