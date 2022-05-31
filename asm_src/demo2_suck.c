@@ -98,6 +98,7 @@ extern int main() {
             mmio_led[19] = mmio_sw[19];
             mmio_led[18] = mmio_sw[18];
             mmio_led[17] = mmio_sw[17];
+            mmio_led[8] = 0;
             if (mmio_btn[0]) {
                 while(mmio_btn[0]) asm volatile ("":::"memory");
                 data0[num0] = a;
@@ -118,6 +119,7 @@ extern int main() {
             mmio_led[20] = 0;
             mmio_led[19] = 0;
             mmio_led[18] = 0;
+            mmio_led[8] = 0;
             num1 = num0;
             for(int i = 0; i < num0; i++){
                 data1[i] = data0[i];
@@ -144,6 +146,7 @@ extern int main() {
             mmio_led[20] = 0;
             mmio_led[19] = 0;
             mmio_led[18] = 0;
+            mmio_led[8] = 0;
             joint = 0;
             num2 = num0;
             for(int i = 0; i < num0; i++){
@@ -164,6 +167,7 @@ extern int main() {
             mmio_led[20] = 0;
             mmio_led[19] = 0;
             mmio_led[18] = 0;
+            mmio_led[8] = 0;
             num3 = num2;
             for(int i = 0; i < num2; i++){
                 data3[i] = data2[i];
@@ -190,6 +194,7 @@ extern int main() {
             mmio_led[20] = 0;
             mmio_led[19] = 0;
             mmio_led[18] = 0;
+            mmio_led[8] = 0;
             if(dataset == 1){
                 c = data1[num1 - 1] - data1[0];
             }else if(dataset == 3){
@@ -204,6 +209,7 @@ extern int main() {
             }
         
         }else if(decide == 5){
+            mmio_led[8] = 0;
             if(dataset == 1){
                 c = data1[index];
             }else if(dataset == 3){
@@ -242,12 +248,20 @@ extern int main() {
             }
             put_hexstr_int32(b);
             put_char('\n');
-            for(int i = 0; i < b; i++){
-                mmio_led[i] = 1;
+            b = b + 127;
+            for(int i = 0; i < 8; i++){
+                if((b & (1 << i)) != 0){
+                    mmio_led[i] = 1;
+                }else{
+                    mmio_led[i] = 0;
+                }
             }
-            for(int i = b; i < 8; i++){
-                mmio_led[i] = 0;
-            }
+            // for(int i = 0; i < b; i++){
+            //     mmio_led[i] = 1;
+            // }
+            // for(int i = b; i < 8; i++){
+            //     mmio_led[i] = 0;
+            // }
             
         }else if(decide == 7){
             mmio_led[20] = 0;
@@ -317,20 +331,29 @@ extern int main() {
             }
 
             b = 0;
-            for(int i = 7; i >= 0; i--){
+            for(int i = 6; i >= 0; i--){
                 if((fi & (1 << i)) != 0){
                     b = i;
                     break;
                 }
             }
+            b = b + 127;
+            for(int i = 0; i < 8; i++){
+                if((b & (1 << i)) != 0){
+                    mmio_led[i] = 1;
+                }else{
+                    mmio_led[i] = 0;
+                }
+            }
             put_hexstr_int32(fi);
             put_char('\n');
-            for(int i = 0; i < b; i++){
-                mmio_led[i] = 1;
-            }
-            for(int i = b; i < 8; i++){
-                mmio_led[i] = 0;
-            }
+
+            // for(int i = 0; i < b; i++){
+            //     mmio_led[i] = 1;
+            // }
+            // for(int i = b; i < 8; i++){
+            //     mmio_led[i] = 0;
+            // }
         }
     }
 }
