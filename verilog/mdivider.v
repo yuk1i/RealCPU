@@ -17,10 +17,14 @@ module mdivider (
     wire [63:0] dout;
     assign result = mod ? dout[31:0] : dout[63:32];
     
+    reg enable_d0;
+    always @(posedge sys_clk) enable_d0 <= enable;
+    wire divrst_n = enable && !done;
+
     divider ipdiv(
         .aclk(sys_clk),
         .aclken(enable),
-        .aresetn(rst_n),
+        .aresetn(divrst_n),
 
         .s_axis_divisor_tdata(divisor),
         .s_axis_divisor_tvalid(enable),
