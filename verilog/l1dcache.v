@@ -52,10 +52,10 @@ module l1dcache(
 
     // L1 Cache, 1024 * 32B = 32KB
     // [dirty 1b][valid 1b][tag 17b]
-    wire [16:0] c_wd_tag        = c_flush_dirty ? 17'b0 : addr_tag;
-    wire [1:0]  c_wd_st         = c_flush_dirty ? 2'b00 : (!c_hit ? 2'b01 : {!write_through, 1'b1});    // when write_through, never mark dirty
-    wire [18:0] cache_wd        = {c_wd_st, c_wd_tag};
-    wire        cache_w;
+    wire [16:0] c_wd_tag        = c_flush_dirty ? 17'b0 : addr_tag;                                     // tag
+    wire [1:0]  c_wd_st         = c_flush_dirty ? 2'b00 : (!c_hit ? 2'b01 : {!write_through, 1'b1});    // status bits. when write_through, never mark dirty
+    wire [18:0] cache_wd        = {c_wd_st, c_wd_tag};  // Distributed RAM write data: cache status + tag
+    wire        cache_w;                                // Distributed RAM write control signal
     wire [18:0] c_o;
     l1c_dismem dismem(
         .clk(sys_clk),
@@ -63,15 +63,15 @@ module l1dcache(
         .d(cache_wd),
         .we(cache_w),
         .spo(c_o));
-    reg [3:0]   bram_w_type;
-    reg [31:0]  bram_w_word;
-    wire [63:0] bram_w_dword = {bram_w_word, bram_w_word};    // simply duplicate it, control write through wea
-    wire        bram_w_port_a;
-    wire        bram_w_port_b;
+    reg [3:0]   bram_w_type;                                    // byte write enable 
+    reg [31:0]  bram_w_word;                                    // the word write into cache
+    wire [63:0] bram_w_dword = {bram_w_word, bram_w_word};      // simply duplicate it, control write through wea
+    wire        bram_w_port_a;                                  // Port A write enable
+    wire        bram_w_port_b;                                  // Port B write enable
     wire [31:0] bram_w_port_a_ext   = {32{bram_w_port_a}};
     wire [7:0]  bram_w_port_b_ext  = bram_w_port_b ? (addr_h_word ? {bram_w_type, 4'b0} : {4'b0, bram_w_type}) : 8'b0;
-    wire [63:0] bram_dout;
-    wire [255:0] bram_cl_out;
+    wire [63:0] bram_dout;                                      // Port B read out
+    wire [255:0] bram_cl_out;                                   // Port A read out
     dcache_bram cb(
         .clka(sys_clk),
         .addra(addr_idx),
@@ -92,17 +92,18 @@ module l1dcache(
     wire [16:0] c_o_tag         = c_o[16:0];
     wire        c_hit           = c_o_valid && c_o_tag == addr_tag;
     wire        c_flush_dirty   = c_o_dirty && c_o_valid && c_o_tag != addr_tag;
-    // need to write back cache line first, then read out new cache line
+    // need to write back the dirty cache line first, then read out the new cache line
 
     wire        c_write_through = c_work && c_hit && write_through && l1_write && !mmu_l1_done;
     reg         c_write_through_d0;
     always @(posedge sys_clk) c_write_through_d0 <= c_write_through;
+    // Wait one clock to write into cache and read out
 
     wire need_flush_dirty = c_flush_dirty && c_work;
     reg flush_dirty_delayed;
     always @(posedge sys_clk) flush_dirty_delayed <= need_flush_dirty;
     wire flush_dirty_set_mmu_write = flush_dirty_delayed && need_flush_dirty;
-    // need one clk to read out the cache line
+    // Delay a clk to set MMU Write. A clk is needed to read out the cache line from Port A
 
     // Whether this address is MMIO address
     mmio_addr mmio_addr_1(
@@ -114,15 +115,17 @@ module l1dcache(
     reg can_read_d0;
     always @(posedge sys_clk) can_read_d0 <= can_read;
     wire read_stall = can_read && !can_read_d0;
+    // Read Operation needs two clock, A clk is needed to read out data from Port B
+    // TODO: Make BRAM works at negedge, to optimize read latency
 
     wire disable_write_cache_wt = write_through && c_write_through_d0;
     // disable write to bram from port B during flush cache line under write through mode
 
     assign bram_w_port_a = !addr_is_mmio && c_work && !c_hit && !c_flush_dirty && mmu_l1_done;
-    // Retrive new cache line, flush bram at posedge after mmu_done at posedge
+    // Retrive new cache line, flush bram at posedge after next clock to posedge mmu_done
     
-    assign bram_w_port_b = c_work && c_hit && l1_write && !disable_write_cache_wt;
-    // write to cache line, 
+    assign bram_w_port_b = !addr_is_mmio && c_work && c_hit && l1_write && !disable_write_cache_wt;
+    // write to cache line from Port B, when write hit
 
     assign cache_w = !addr_is_mmio && c_work && (c_hit && l1_write || !c_hit && mmu_l1_done) && !disable_write_cache_wt;
     // write to cache metadata, 1. after hit & write, 2. after unhit & read done
@@ -195,8 +198,10 @@ module l1dcache(
             4'b0001 : bram_w_word = {16'b0, l1_write_data[7:0], 8'b0};
             4'b0010 : bram_w_word = {8'b0, l1_write_data[7:0], 16'b0};
             4'b0011 : bram_w_word = {l1_write_data[7:0], 24'b0};
+            // TODO: Optimize it to 4'b00xx : bram_w_word = {l1_write_data[7:0], l1_write_data[7:0], l1_write_data[7:0], l1_write_data[7:0]};
             4'b010x : bram_w_word = {16'b0, l1_write_data[15:0]};
             4'b011x : bram_w_word = {l1_write_data[15:0], 16'b0};
+            // TODO: Optimize it to 4'b01xx : bram_w_word = {l1_write_data[15:0], l1_write_data[15:0]};
             4'b10xx : bram_w_word = 32'b0;
             4'b11xx : bram_w_word = l1_write_data;
             default : bram_w_word = 32'b0;
