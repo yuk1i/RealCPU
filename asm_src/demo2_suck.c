@@ -248,7 +248,7 @@ extern int main() {
             }
             put_hexstr_int32(b);
             put_char('\n');
-            b = b + 127;
+            // b = b + 127;
             for(int i = 0; i < 8; i++){
                 if((b & (1 << i)) != 0){
                     mmio_led[i] = 1;

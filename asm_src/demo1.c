@@ -69,7 +69,7 @@ extern int main() {
         }
         is_palindrome = 0;
 
-        if(decide == 0) {
+        if(decide == 1) {
             // use least 8 bit
             mmio_led[19] = 0;
             mmio_led[15] = mmio_sw[15];
@@ -95,7 +95,7 @@ extern int main() {
             }
             display(highbit | (is_palindrome << 4) | (left << 8) | (1<<12));
             mmio_led[20] = is_palindrome;
-        }else if(decide == 1){
+        }else if(decide == 0){
             mmio_led[20] = 0;
             mmio_led[19] = 0;
             if (mmio_btn[0]) {

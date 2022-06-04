@@ -20,8 +20,10 @@ main:
 
     lw $s0, ($t0)
     div $v0, $a1, $a0
+    divu $v0, $a1, $a0
 
     mod $v0, $a1, $a0
+    modu $v0, $a1, $a0
 
     neg $a0
     mul $v0, $a0, $a1
