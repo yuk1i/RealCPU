@@ -95,7 +95,7 @@ The Distributed RAM behaves like register array: `reg [18:0] cache_metadata [0:1
 
 **Read operation at Distributed RAM is async**, while the Block RAM read operation is sync to clock. Write Operation is sync to clock at both Block RAM and Distributed RAM.
 
-The Distributed RAM can used to store metadata in cache, such as `[dirty bit][valid bit][tag]`. The Async read feature can be used to determine operation on cache: r/w on cache line, replace, or flush then replace, and determine stall signal to `IF`.
+The Distributed RAM can be used to store metadata in cache, such as `[dirty bit][valid bit][tag]`. The Async read feature can be used to determine operation on cache: r/w on cache line, replace, or flush then replace, and determine stall signal to `IF`.
 
 Compared to use a register array, a Distributed RAM IPcore uses significantly less LUT resources and speeds up Synthesis. ( idk why:) )
 
@@ -253,6 +253,18 @@ always @* begin
         mmio_read_data = 0;
     end
 end
+```
+
+
+
+### MMIO Continuous Address Design
+
+In LED and Switch MMIO module, every led/switch is mapped to a single-bit register. But their addresses are contiguous in a difference of 4. Then the addresses of 24 leds/switches can be expressed by an array:
+
+```c
+volatile int* mmio_led = (int*) 0xFFFF0100;
+
+// mmio_led[2] -> the third led
 ```
 
 
